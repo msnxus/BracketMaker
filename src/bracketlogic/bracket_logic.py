@@ -112,6 +112,21 @@ class Bracket():
     
     # Determine winner of a match
     def determine_winner(self, player1, player2, round):
+        # checks if valid players are entered - this is tough because
+        # we need to ensure they are both in the same round and adjacent
+        # meaning they play against each other
+
+        # checks if valid players are entered
+        if round >= self.max_round() or round < 0: return None # invalid round
+        if player1 != self._bracket_list[self.player_index_by_round(player1, round)][0]:
+            print("AHHHHHH1")
+            return None
+        if player2 != self._bracket_list[self.player_index_by_round(player2, round)][0]:
+            print("AHHHHHH2")
+            return None
+        # need to check if the players actually play against one another
+
+
         score1 = self.get_score(player1, round)
         score2 = self.get_score(player2, round)
 
@@ -125,6 +140,11 @@ class Bracket():
         index = self.player_index_by_round(player, round)
         return self._bracket_list[index][1]
 
+    # Determines if bracket is complete based on if there is a champion
+    def is_complete(self):
+        if self._bracket_list[len(self._bracket_list) - 1] is None:
+            return False
+        return True
         
 
 #-----------------------------------------------------------------------
@@ -186,6 +206,8 @@ def main():
     print("Updated Bracket:")
     print("To string: " + bracket.to_string())
     print('')
+
+    print("Bracket complete?", bracket.is_complete())
     return
 
 #-----------------------------------------------------------------------
