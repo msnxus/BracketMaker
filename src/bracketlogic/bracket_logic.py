@@ -39,11 +39,17 @@ class Bracket():
         teams = len(players)
         bracket_size = closest_power_of_two(teams)
         self._bracket_list.append(teams)
+        i = 0
         for player in players:
             self._bracket_list.append([player, 0])
+            i += 1
+        # Append None for missing teams of all games
+        for j in range(bracket_size-i):
+            self._bracket_list.append([None, 0])
         # Append None for the winners of all games
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
+        print(i)
 
     # Given player and round return index in underlying bracketlist
     # If nonreal round or nonexistent player return None
@@ -93,7 +99,7 @@ class Bracket():
         index = self.player_index_by_round(player, round)
         self._bracket_list[index][1] = score
         
-    # Update Bracket to hold the winner of a match    
+    # Update Bracket to hold the winner of a match   
     def update_winner(self, player, round):
         if round >= self.max_round() or round < 0: return None # invalid round
 
@@ -103,6 +109,22 @@ class Bracket():
     # Return bracketlist state as string
     def to_string(self):
         return str(self._bracket_list)
+    
+    # Determine winner of a match
+    def determine_winner(self, player1, player2, round):
+        score1 = self.get_score(player1, round)
+        score2 = self.get_score(player2, round)
+
+        if score1 > score2: return player1
+        return player2
+
+    # Get score of a player after a round 
+    def get_score(self, player, round):
+        if round >= self.max_round() or round < 0: return None # invalid round
+
+        index = self.player_index_by_round(player, round)
+        return self._bracket_list[index][1]
+
         
 
 #-----------------------------------------------------------------------
@@ -132,8 +154,36 @@ def main():
     print("P3 index of round 4: " + str(bracket.player_index_by_round("P3", 4)))
     print("P3 index of round 5: " + str(bracket.player_index_by_round("P3", 5)))
     print('')
+    print('Testing Bracket Flow')
     bracket.update_score("P3", 0, 75)
-    bracket.update_winner("P3", 0)
+    bracket.update_score("P4", 0, 50)
+    print("P3 score in round 0:", bracket.get_score("P3", 0))
+    print("P4 score in round 0:", bracket.get_score("P4", 0))
+    print("The winner of this matchup is:", bracket.determine_winner("P3","P4", 0))
+    bracket.update_winner(bracket.determine_winner("P3","P4", 0), 0)
+
+    print("Updated Bracket:")
+    print("To string: " + bracket.to_string())
+
+    bracket.update_score("P1", 0, 15)
+    bracket.update_score("P2", 0, 100)
+    print("P1 score in round 0:", bracket.get_score("P1", 0))
+    print("P2 score in round 0:", bracket.get_score("P2", 0))
+    print("The winner of this matchup is:", bracket.determine_winner("P1","P2", 0))
+    bracket.update_winner(bracket.determine_winner("P1","P2", 0), 0)
+    
+    print("Updated Bracket:")
+    print("To string: " + bracket.to_string())
+
+    bracket.update_score("P2", 1, 275)
+    bracket.update_score("P3", 1, 305)
+    print("P2 score in round 0:", bracket.get_score("P2", 1))
+    print("P3 score in round 0:", bracket.get_score("P3", 1))
+    print("The winner of this matchup is:", bracket.determine_winner("P2","P3", 1))
+    bracket.update_winner(bracket.determine_winner("P2","P3", 1), 1)
+
+
+    print("Updated Bracket:")
     print("To string: " + bracket.to_string())
     print('')
     return
