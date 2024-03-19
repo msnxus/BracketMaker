@@ -145,6 +145,20 @@ class Bracket():
         if self._bracket_list[len(self._bracket_list) - 1] is None:
             return False
         return True
+    
+    # Checks if a player has a BYE
+    # Invariant - player will always be listed before the empty bye slot
+    def has_bye(self, player, round):
+        if round >= self.max_round() or round < 0: return None # invalid round
+
+        index = self.player_index_by_round(player, round)
+
+        # Checks is player is last in the round
+
+        #checks if subsequent index is None to see if the player has a bye
+
+
+        return 
         
 
 #-----------------------------------------------------------------------
@@ -206,6 +220,15 @@ def main():
     print("Updated Bracket:")
     print("To string: " + bracket.to_string())
     print('')
+
+
+
+    # TEST FOR BYE - should automatically put P7 into next round because
+    # P7 has no 0 round opponent
+    # bracket.update_score("P7", 0, 100)
+    # print("P7 score in round 0:", bracket.get_score("P7", 0))
+    # print("The winner of this matchup is:", bracket.determine_winner("P7","P4", 0))
+    # bracket.update_winner(bracket.determine_winner("P3","P4", 0), 0)
 
     print("Bracket complete?", bracket.is_complete())
     return
