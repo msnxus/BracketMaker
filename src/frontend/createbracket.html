@@ -7,6 +7,25 @@
     {% include 'header.html' %}
     <h1 align="center">Create a Bracket</h1>
     <hr>
+
+    <form action="/createbracket/?" method="get">
+        <table>
+          <tr>
+            <td align="right">Bracket Name:</td>
+            <th><input type="text" name="name" value="{{name}}" /></th>
+          </tr>
+          <tr>
+            <td align="right">Total Number of Teams:</td>
+            <th><input type="text" name="teams" value="{{teams}}" /></th>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" /></td>
+          </tr>
+        </table>
+
+
+
     <br>
     {% include 'footer.html' %}
     </body>

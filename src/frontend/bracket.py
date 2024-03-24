@@ -34,12 +34,49 @@ def index():
 @app.route('/createbracket', methods=['GET'])
 
 def create_bracket():
-    html_code = flask.render_template('createbracket.html')
+    # Take in query
+    name = flask.request.args.get('name')
+    if name is None:
+        name = ''
+
+    teams = flask.request.args.get('teams')
+    if teams is None:
+        teams = ''
+
+    html_code = flask.render_template('createbracket.html', name=name, teams=teams)
     response = flask.make_response(html_code)
     return response
 
-@app.route('/viewbracket', methods=['GET'])
+@app.route('/createbracket/', methods=['GET'])
+def see_created_bracket():
+    name = flask.request.args.get('name')
+    teams = flask.request.args.get('teams')
+    
 
+    # for i in range(teams):
+    team1 = flask.request.args.get('team')
+    team2 = flask.request.args.get('team')
+    team3 = flask.request.args.get('team')
+    team4 = flask.request.args.get('team')
+
+
+    html_code = flask.render_template('seecreatedbracket.html',name=name, teams=teams, team1=team1, team2=team2, team3=team3, team4=team4)
+
+
+    
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/bracket/', methods=['GET'])
+def test():
+    code = __generate_code__()
+    # create a list of team names and enter it in the following code as an argument to bracketpreview
+    html_code = flask.render_template('bracketpreview.html')
+    response = flask.make_response(html_code)
+    return response
+
+
+@app.route('/viewbracket', methods=['GET'])
 def view_bracket():
     # Take in query
     code = flask.request.args.get('code')
@@ -51,14 +88,23 @@ def view_bracket():
     return response
 
 @app.route('/viewbracket/', methods=['GET'])
-
 def view_bracket_code():
-    html_code = flask.render_template('test.html')
+    code = flask.request.args.get('code')
+    # Would need to check if this code exists
+    html_code = flask.render_template('viewspecificbracket.html',name=__code_to_name__(code), code=code)
     response = flask.make_response(html_code)
     return response
 
+def __generate_code__():
+    # generate random 4 digit code
+    return 1234
 
+# Takes in the bracket Code and outputs the name of the bracket
+def __code_to_name__(code):
+    # insert code
+    return "Smash Bros"
 
+# ---------------------
     # # Take in query
     # dept = flask.request.args.get('dept')
     # if dept is None:
