@@ -1,22 +1,18 @@
 import os
 import sys
 import psycopg2
-from create_bracket import create_bracket
 
 DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
 
-def main():
-    create_bracket(1234, "Super Smash Bros", ["Nico", "Billy", "Ryan"])
+def create_bracket(code, game_title, names):
+    stmt_str = "INSERT INTO bracket (code, game_title, names) VALUES (%s, %s, %s)"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM bracket")
-                table = cursor.fetchall()
-                for row in table:
-                    print(row)
+                cursor.execute(stmt_str, (code, game_title, names))
+                connection.commit()
+                print("New Bracket Successfully Created")
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
         
-if __name__ == '__main__':
-    main()
