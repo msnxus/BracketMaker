@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bracket</title>
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <h1> Here are your teams</h1>
+
+    <h2> {{team[0]}} </h2>
+    <h2> {{team[1]}} </h2>
+    <h2> {{team[2]}} </h2>
+    <h2> {{team[3]}} </h2>
+
+    <h3> Below is your bracket code. Click this button to create you bracket</h3>
+    <!-- Here, we can allow users to create their own code, or let them use one we generate -->
+    <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
+    <form action="/createdbracket/"  method="get">
+        <input type="text" name="code" value= "{{ code }}" />
+        <input type="submit" value="Create Bracket"/>
+    </form>
+    <br>
+    {% include 'footer.html' %}
+  </body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>{{name}} Bracket</title>
+  </head>
+  <body>
+    {% include 'header.html' %}
+    <h1 align='center'> Welcome to {{name}} Bracket</h1>
+    <h1 align='center'> There are {{teams}} teams</h1>
+
+    <hr> -->

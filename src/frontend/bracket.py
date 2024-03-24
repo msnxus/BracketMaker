@@ -47,31 +47,51 @@ def create_bracket():
     response = flask.make_response(html_code)
     return response
 
-@app.route('/createbracket/', methods=['GET'])
-def see_created_bracket():
+@app.route('/createbracket/addteams/', methods=['GET'])
+def add_teams():
     name = flask.request.args.get('name')
     teams = flask.request.args.get('teams')
     
 
     # for i in range(teams):
-    team1 = flask.request.args.get('team')
-    team2 = flask.request.args.get('team')
-    team3 = flask.request.args.get('team')
-    team4 = flask.request.args.get('team')
+
+    # Why does none populate?
+    team1 = flask.request.args.get('team1')
+    team2 = flask.request.args.get('team2')
+    team3 = flask.request.args.get('team3')
+    team4 = flask.request.args.get('team4')
 
 
-    html_code = flask.render_template('seecreatedbracket.html',name=name, teams=teams, team1=team1, team2=team2, team3=team3, team4=team4)
+    html_code = flask.render_template('addteams.html',name=name, teams=teams, team1=team1, team2=team2, team3=team3, team4=team4)
 
 
-    
     response = flask.make_response(html_code)
     return response
 
-@app.route('/bracket/', methods=['GET'])
-def test():
+@app.route('/createbracket/confirmation/', methods=['GET'])
+def bracket_confirmation():
     code = __generate_code__()
-    # create a list of team names and enter it in the following code as an argument to bracketpreview
-    html_code = flask.render_template('bracketpreview.html')
+    # need to automate
+    team_names = []
+    team_names.append(flask.request.args.get('team1'))
+    team_names.append(flask.request.args.get('team2'))
+    team_names.append(flask.request.args.get('team3'))
+    team_names.append(flask.request.args.get('team4'))
+
+    html_code = flask.render_template('bracketconfirmation.html',team=team_names, code=code)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/createdbracket/', methods=['GET'])
+def run_bracket():
+    team_names = []
+    team_names.append(flask.request.args.get('team1'))
+    team_names.append(flask.request.args.get('team2'))
+    team_names.append(flask.request.args.get('team3'))
+    team_names.append(flask.request.args.get('team4'))
+    name = flask.request.args.get('name') # how do i keep passing this along? same goes for code?
+    # Would need to check if this code exists
+    html_code = flask.render_template('runbracket.html',team=team_names, name=name)
     response = flask.make_response(html_code)
     return response
 
@@ -94,6 +114,7 @@ def view_bracket_code():
     html_code = flask.render_template('viewspecificbracket.html',name=__code_to_name__(code), code=code)
     response = flask.make_response(html_code)
     return response
+
 
 def __generate_code__():
     # generate random 4 digit code
