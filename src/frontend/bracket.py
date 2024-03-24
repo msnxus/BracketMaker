@@ -41,9 +41,23 @@ def create_bracket():
 @app.route('/viewbracket', methods=['GET'])
 
 def view_bracket():
-    html_code = flask.render_template('viewbracket.html')
+    # Take in query
+    code = flask.request.args.get('code')
+    if code is None:
+        code = ''
+
+    html_code = flask.render_template('viewbracket.html', code=code)
     response = flask.make_response(html_code)
     return response
+
+@app.route('/viewbracket/', methods=['GET'])
+
+def view_bracket_code():
+    html_code = flask.render_template('test.html')
+    response = flask.make_response(html_code)
+    return response
+
+
 
     # # Take in query
     # dept = flask.request.args.get('dept')
