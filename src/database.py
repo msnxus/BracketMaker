@@ -3,7 +3,7 @@ import sys
 import psycopg2
 
 # You will need to set up 
-DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='Majorcheck112233!'"
+DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password='cos333'"
 
 def initialize():
 
