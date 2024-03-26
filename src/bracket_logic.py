@@ -11,6 +11,7 @@ import math
 import sys
 import os
 import json
+import database
 
 # Add the parent directory to the Python path
 utilsdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
@@ -31,8 +32,9 @@ def closest_power_of_two(num):
 class Bracket():
 
     # Given a list of players, make the initial bracket
-    def __init__(self, players):
+    def __init__(self, name, players):
         self._bracket_list = []
+        self.name = name
         self.init_bracket(players)
         return
   
@@ -82,6 +84,10 @@ class Bracket():
     def num_players(self):
         return self._bracket_list[0]
     
+    # Return the name of this bracket
+    def name(self):
+        return self.name
+    
     # Return list of all player names
     def players(self):
         players = []
@@ -113,13 +119,31 @@ class Bracket():
     
     # serialize the bracket into a string
     def serialize(self):
-        return json.dumps(self._bracket_list)
+        ser = []
+        ser.append(self.name)
+        ser.append(self._bracket_list)
+        return json.dumps(ser)
 
     # return a bracket object represented by the string
     def deserialize(self, string):
 
-        bracket_list = json.loads(string)
-        self._bracket_list = bracket_list
+        deser = json.loads(string)
+        self.name = deser[0]
+        self._bracket_list = deser[1]
+
+    #Stores this bracket in the data base
+    def store(self, code):
+
+        ser = self.serialize()
+        database.create_bracket(code, ser)
+
+    #Retrieves bracket with said code from database
+    def load(self, code):
+        data = database.get_bracket_from_code(code)
+        data = data[0]
+        print(data)
+        self.name = data[0]
+        self._bracket_list = data[1]
 
         
 

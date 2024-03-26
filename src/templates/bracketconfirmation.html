@@ -17,7 +17,7 @@
     <h3> Below is your bracket code. Click this button to create you bracket</h3>
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
-    <form action="/createdbracket/"  method="get">
+    <form action="/storebracket/"  method="post">
         <input type="text" name="code" value= "{{ code }}" />
         <input type="submit" value="Create Bracket"/>
     </form>
