@@ -11,6 +11,7 @@ import sqlite3
 import flask
 from flask import redirect, url_for
 from bracket_logic import Bracket
+from database import get_bracket_from_code
 
 #-----------------------------------------------------------------------
 
@@ -139,8 +140,19 @@ def view_bracket():
 @app.route('/viewbracket/', methods=['GET'])
 def view_bracket_code():
     code = flask.request.args.get('code')
+    data = get_bracket_from_code(code)
+    title= data[0][0]
+    bracket = data[0][1]
+    print('title: ', title)
+    print('bracket: ', bracket)
+    for i in range(1, len(bracket)):
+        if bracket[i] is not None:
+            print(bracket[i][0])
+        else: print("none")
+    
+    # print(bracket)
     # Would need to check if this code exists
-    html_code = flask.render_template('viewspecificbracket.html',name=__code_to_name__(code), code=code)
+    html_code = flask.render_template('viewspecificbracket.html',title = title, code=code, bracket = bracket)
     response = flask.make_response(html_code)
     return response
 
