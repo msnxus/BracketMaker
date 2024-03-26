@@ -52,7 +52,6 @@ class Bracket():
         # Append None for the winners of all games
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
-        print(i)
 
     # Given player and round return index in underlying bracketlist
     # If nonreal round or nonexistent player return None
@@ -97,7 +96,7 @@ class Bracket():
     
     # Return max round
     def max_round(self):
-        return math.log(closest_power_of_two(self.num_players()), 2)
+        return int(math.log(closest_power_of_two(self.num_players()), 2))
 
     # Update functions
     def update_score(self, player, round, score):
@@ -113,6 +112,38 @@ class Bracket():
         new_index = self.player_index_by_round(player, round+1)
         self._bracket_list[new_index] = [player, 0]
 
+    #Format the names of the bracket in a friendly way to be displayed in
+    # a grid.  The players will be ordered by 
+    # (player 1, round 1) (player 1, round 2) ... (player 2, round 1) (player 2 round 2) ....
+    def grid_friendly_players(self):
+        grid_friendly_players = []
+
+        print("Players: ", self.num_players())
+        print("Rounds: ", self.max_round())
+
+        ignored_rounds = -1
+        for player_index in range(self.num_players()):
+            if player_index == 1:
+                ignored_rounds += 1
+            if (player_index) % 2 == 0:
+                ignored_rounds += 1
+
+            for round in range(self.max_round() + 1):
+                if (round < (self.max_round() +1) - ignored_rounds):
+                    index = self.first_index_of_round(round) + player_index
+                    grid_friendly_players.append(self._bracket_list[index])
+                    print("normal", index)
+
+                else:
+                    grid_friendly_players.append(["blank", 0])
+                    print("blank")
+
+        print (grid_friendly_players)
+        return grid_friendly_players
+
+
+
+    #Formatting and storage functions
     # Return bracketlist state as string
     def to_string(self):
         return str(self._bracket_list)
@@ -133,7 +164,6 @@ class Bracket():
 
     #Stores this bracket in the data base
     def store(self, code):
-
         ser = self.serialize()
         database.create_bracket(code, ser)
 
@@ -141,7 +171,6 @@ class Bracket():
     def load(self, code):
         data = database.get_bracket_from_code(code)
         data = data[0]
-        print(data)
         self.name = data[0]
         self._bracket_list = data[1]
 

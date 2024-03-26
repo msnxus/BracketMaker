@@ -3,16 +3,71 @@
   <head>
     <title>Bracket</title>
   </head>
+
+  <style>
+    .topbox{
+      width: 100px;
+      height: 16px;
+      padding: 10px;
+      border: 5px solid gray;
+      margin: 0;
+      margin-top: 30px;
+      margin-bottom: 5px;
+    }
+
+    .bottombox{
+      width: 100px;
+      height: 16px;
+      padding: 10px;
+      border: 5px solid gray;
+      margin: 0;
+      margin-top: 5px;
+      margin-bottom: 30px;
+    }
+
+    .lastbox{
+      width: 100px;
+      height: 16px;
+      padding: 10px;
+      border: 5px solid gray;
+      margin: 0;
+      margin-top: 5px;
+      margin-bottom: 30px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(var(--num-columns), auto);
+      gap: 10px;
+      background-color: #2196F3;
+      padding: 10px;
+    }
+
+    .grid-container > div {
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid black;
+      text-align: center;
+      font-size: 30px;
+    }
+  </style>
   <body>
     {% include 'header.html' %}
     <h1> EVENTUALLY WE WILL BUILD THIS AS THE BRACKET PAGE</h1>
 
-    <h1> Here are the teams in {{name}} Bracket</h1>
-
-    <h2> {{team[0]}} </h2>
-    <h2> {{team[1]}} </h2>
-    <h2> {{team[2]}} </h2>
-    <h2> {{team[3]}} </h2>
+    <div class="grid-container" style="--num-columns: 3;">
+      <div>{{team_names[0]}}</div>
+      <div>{{team_names[1]}}</div>
+      <div>{{team_names[2]}}</div>  
+      <div>{{team_names[3]}}</div>
+      <div>{{team_names[4]}}</div>
+      <div>{{team_names[5]}}</div>
+      <div>{{team_names[6]}}</div>
+      <div>{{team_names[7]}}</div>
+      <div>{{team_names[8]}}</div>
+      <div>{{team_names[9]}}</div>
+      <div>{{team_names[10]}}</div>
+      <div>{{team_names[11]}}</div>
+    </div>
 
     <br>
     {% include 'footer.html' %}

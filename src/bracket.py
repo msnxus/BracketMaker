@@ -116,11 +116,12 @@ def run_bracket():
     code = flask.request.args.get("code")
     bracket.load(code)
 
-    team_names = bracket.players()
+    rounds = str(int(bracket.max_round()) + 1)
+    grid_friendly_names = bracket.grid_friendly_players()
     name = bracket.name
 
     # Would need to check if this code exists
-    html_code = flask.render_template('runbracket.html',team=team_names, name=name)
+    html_code = flask.render_template('runbracket.html',team_names=grid_friendly_names, name=name, rounds=rounds)
     response = flask.make_response(html_code)
     return response
 
