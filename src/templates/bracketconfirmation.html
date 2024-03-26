@@ -8,10 +8,11 @@
 
     <h1> Here are your teams</h1>
 
-    <h2> {{team[0]}} </h2>
-    <h2> {{team[1]}} </h2>
-    <h2> {{team[2]}} </h2>
-    <h2> {{team[3]}} </h2>
+    {% for team in team_names%}
+
+    <h2> {{team}} </h2>
+
+    {% endfor %}
 
     <h3> Below is your bracket code. Click this button to create you bracket</h3>
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->

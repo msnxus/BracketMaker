@@ -10,6 +10,7 @@ import math
 # ASK SAM
 import sys
 import os
+import json
 
 # Add the parent directory to the Python path
 utilsdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
@@ -110,6 +111,18 @@ class Bracket():
     def to_string(self):
         return str(self._bracket_list)
     
+    # serialize the bracket into a string
+    def serialize(self):
+        return json.dumps(self._bracket_list)
+
+    # return a bracket object represented by the string
+    def deserialize(self, string):
+
+        bracket_list = json.loads(string)
+        self._bracket_list = bracket_list
+
+        
+
     # Determine winner of a match
     def determine_winner(self, player1, player2, round):
         # checks if valid players are entered - this is tough because

@@ -9,11 +9,12 @@ import sys
 import contextlib
 import sqlite3
 import flask
+from bracket_logic import Bracket
 # import registrar_helper as hlpr
 
 #-----------------------------------------------------------------------
 
-app = flask.Flask(__name__, template_folder='.')
+app = flask.Flask(__name__, template_folder='templates')
 DATABASE_URL = 'file:reg.sqlite?mode=ro'
 
 #-----------------------------------------------------------------------
@@ -50,22 +51,20 @@ def create_bracket():
 @app.route('/createbracket/addteams/', methods=['GET'])
 def add_teams():
     name = flask.request.args.get('name')
-    teams = flask.request.args.get('teams')
-    
 
-    # for i in range(teams):
-
-    # Why does none populate?
-    team1 = flask.request.args.get('team1')
-    team2 = flask.request.args.get('team2')
-    team3 = flask.request.args.get('team3')
-    team4 = flask.request.args.get('team4')
+    #Lucas - Potential non-integer could be passed - have to account for this
+    teams = int(flask.request.args.get('teams'))
 
 
-    html_code = flask.render_template('addteams.html',name=name, teams=teams, team1=team1, team2=team2, team3=team3, team4=team4)
+    html_code = flask.render_template('addteams.html',name=name, teams=teams)
 
 
     response = flask.make_response(html_code)
+
+    #Lucas - There might be problems setting this as a cookie
+    response.set_cookie("teams", str(teams))
+    response.set_cookie("name", name)
+
     return response
 
 @app.route('/createbracket/confirmation/', methods=['GET'])
@@ -73,23 +72,35 @@ def bracket_confirmation():
     code = __generate_code__()
     # need to automate
     team_names = []
-    team_names.append(flask.request.args.get('team1'))
-    team_names.append(flask.request.args.get('team2'))
-    team_names.append(flask.request.args.get('team3'))
-    team_names.append(flask.request.args.get('team4'))
+    teams = int(flask.request.cookies.get("teams"))
+    for team in range(1, teams+1):
+        team_names.append(flask.request.args.get("team%s" % (team)))
 
-    html_code = flask.render_template('bracketconfirmation.html',team=team_names, code=code)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code)
+
     response = flask.make_response(html_code)
+
+    # Lucas - Make the bracket object
+    bracket = Bracket(team_names)
+
+
+    ser_bracket = bracket.serialize()
+
+    response.set_cookie("bracket", ser_bracket)
+
     return response
 
 @app.route('/createdbracket/', methods=['GET'])
 def run_bracket():
-    team_names = []
-    team_names.append(flask.request.args.get('team1'))
-    team_names.append(flask.request.args.get('team2'))
-    team_names.append(flask.request.args.get('team3'))
-    team_names.append(flask.request.args.get('team4'))
-    name = flask.request.args.get('name') # how do i keep passing this along? same goes for code?
+
+    #Here we need to actually grab the bracket and put it in the database
+    players = []
+    bracket = Bracket(players)
+    bracket.deserialize(flask.request.cookies.get("bracket"))
+
+
+    team_names = bracket.players()
+    name = flask.request.cookies.get('name') # how do i keep passing this along? same goes for code?
     # Would need to check if this code exists
     html_code = flask.render_template('runbracket.html',team=team_names, name=name)
     response = flask.make_response(html_code)

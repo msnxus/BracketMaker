@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{name}} Bracket</title>
+  </head>
+  <body>
+    {% include 'header.html' %}
+    <h1 align='center'> Welcome to {{name}} Bracket</h1>
+    <h1 align='center'> There are {{teams}} teams</h1>
+    <hr>
+    <form action="/createbracket/confirmation/?" method="get">
+      <table>
+  
+        {% for team in range(1, teams + 1) %}
+          <tr>
+            <td align="right">Team {{team}}:</td>
+            <td><input type="text" name={{"team%s" % (team)}} /></td>
+          </tr>
+        {% endfor %}
+
+        <tr>
+          <td></td>
+          <td><input type="submit" /></td>
+        </tr>
+      </table>
+    </form>
+    <br>
+    {% include 'footer.html' %}
+    </body>
+</html>
