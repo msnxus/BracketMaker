@@ -11,7 +11,11 @@ import sqlite3
 import flask
 from flask import redirect, url_for
 from bracket_logic import Bracket
+
 from database import get_bracket_from_code
+
+import random
+
 
 #-----------------------------------------------------------------------
 
@@ -117,11 +121,12 @@ def run_bracket():
     code = flask.request.args.get("code")
     bracket.load(code)
 
-    team_names = bracket.players()
+    rounds = str(int(bracket.max_round()) + 1)
+    grid_friendly_names = bracket.grid_friendly_players()
     name = bracket.name
 
     # Would need to check if this code exists
-    html_code = flask.render_template('runbracket.html',team=team_names, name=name)
+    html_code = flask.render_template('runbracket.html',team_names=grid_friendly_names, name=name, rounds=rounds)
     response = flask.make_response(html_code)
     return response
 
@@ -159,7 +164,7 @@ def view_bracket_code():
 
 def __generate_code__():
     # generate random 4 digit code
-    return 1234
+    return '{:04}'.format(random.randint(0,9999))
 
 # Takes in the bracket Code and outputs the name of the bracket
 def __code_to_name__(code):
