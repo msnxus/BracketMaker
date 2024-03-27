@@ -11,6 +11,7 @@ import sqlite3
 import flask
 from flask import redirect, url_for
 from bracket_logic import Bracket
+import random
 
 #-----------------------------------------------------------------------
 
@@ -148,7 +149,7 @@ def view_bracket_code():
 
 def __generate_code__():
     # generate random 4 digit code
-    return 1234
+    return '{:04}'.format(random.randint(0,9999))
 
 # Takes in the bracket Code and outputs the name of the bracket
 def __code_to_name__(code):
