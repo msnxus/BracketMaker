@@ -105,6 +105,7 @@ class Bracket():
         index = self.player_index_by_round(player, round)
         self._bracket_list[index][1] = score
         
+        
     # Update Bracket to hold the winner of a match   
     def update_winner(self, player, round):
         if round >= self.max_round() or round < 0: return None # invalid round
@@ -162,7 +163,7 @@ class Bracket():
         self.name = deser[0]
         self._bracket_list = deser[1]
 
-    #Stores this bracket in the data base
+    #Stores this bracket in the database
     def store(self, code):
         ser = self.serialize()
         database.create_bracket(code, ser)

@@ -12,7 +12,7 @@ import flask
 from flask import redirect, url_for
 from bracket_logic import Bracket
 
-from database import get_bracket_from_code
+from database import get_bracket_from_code, update_score
 
 import random
 
@@ -148,18 +148,34 @@ def view_bracket_code():
     data = get_bracket_from_code(code)
     title= data[0][0]
     bracket = data[0][1]
-    print('title: ', title)
-    print('bracket: ', bracket)
-    for i in range(1, len(bracket)):
-        if bracket[i] is not None:
-            print(bracket[i][0])
-        else: print("none")
-    
-    # print(bracket)
+            
     # Would need to check if this code exists
     html_code = flask.render_template('viewspecificbracket.html',title = title, code=code, bracket = bracket)
     response = flask.make_response(html_code)
     return response
+        
+@app.route('/viewbracket/', methods=['POST'])
+def update_scores():
+    code = flask.request.args.get('code')
+    data = get_bracket_from_code(code)
+    bracket = data[0][1]
+    
+    players = []
+    my_bracket = Bracket("", players)
+    my_bracket.load(code)
+    for i in range(1, len(bracket)):
+        if bracket[i] is not None:
+            player_name = bracket[i][0]
+            player_value = flask.request.form.get(player_name)
+            my_bracket.update_score(player_name, 0, player_value)
+            bracket[i][1] = player_value
+
+    update_score(code, my_bracket.serialize())
+    
+    # updated_bracket.update(code)
+    return flask.redirect(f"/viewbracket/?code={code}")
+    
+    
 
 
 def __generate_code__():

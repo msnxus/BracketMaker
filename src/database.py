@@ -3,7 +3,7 @@ import sys
 import psycopg2
 
 # You will need to set up 
-DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password='cos333'"
+DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
 
 def initialize():
 
@@ -52,9 +52,22 @@ def get_bracket_from_code(code):
                 cursor.execute(stmt_str, (code,))
                 row = cursor.fetchone()
                 if row:
+                    print("Bracket:", row)
                     return row
                 else:
                     print("No bracket found with the given code.")
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+        
+def update_score(code, bracket):
+    stmt_str = "UPDATE bracket SET ser_bracket = %s WHERE code = %s "
+    try:
+        with psycopg2.connect(DATABASE_URL) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(stmt_str, (bracket, code))
+                connection.commit()
+                print("Updated Bracket")
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
