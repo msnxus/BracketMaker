@@ -52,7 +52,7 @@ def get_bracket_from_code(code):
                 cursor.execute(stmt_str, (code,))
                 row = cursor.fetchone()
                 if row:
-                    print("Bracket:", row)
+                    # print("Bracket:", row)
                     return row
                 else:
                     print("No bracket found with the given code.")
@@ -60,7 +60,7 @@ def get_bracket_from_code(code):
         print(ex, file=sys.stderr)
         sys.exit(1)
         
-def update_score(code, bracket):
+def update_bracket(code, bracket):
     stmt_str = "UPDATE bracket SET ser_bracket = %s WHERE code = %s "
     try:
         with psycopg2.connect(DATABASE_URL) as connection:

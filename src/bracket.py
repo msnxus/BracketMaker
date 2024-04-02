@@ -12,7 +12,7 @@ import flask
 from flask import redirect, url_for
 from bracket_logic import Bracket
 
-from database import get_bracket_from_code, update_score
+from database import get_bracket_from_code, update_bracket
 
 import random
 
@@ -160,24 +160,22 @@ def update_scores():
     data = get_bracket_from_code(code)
     bracket = data[0][1]
     
+    # Update player scores
     players = []
     my_bracket = Bracket("", players)
     my_bracket.load(code)
-    for i in range(1, len(bracket)):
+    for i in range(1, len(bracket)-1):
         if bracket[i] is not None:
+            round = my_bracket.get_round(i-1)
             player_name = bracket[i][0]
-            player_value = flask.request.form.get(player_name)
-            my_bracket.update_score(player_name, 0, player_value)
-            bracket[i][1] = player_value
-
-    update_score(code, my_bracket.serialize())
+            player_value = flask.request.form.get(str(i))
+            my_bracket.update_score(player_name, round, player_value)
+    print("using this bracket to set winners:", my_bracket.to_string())
+    my_bracket.set_winners()
+    update_bracket(code, my_bracket.serialize())
     
-    # updated_bracket.update(code)
     return flask.redirect(f"/viewbracket/?code={code}")
     
-    
-
-
 def __generate_code__():
     # generate random 4 digit code
     return '{:04}'.format(random.randint(0,9999))
