@@ -48,7 +48,7 @@ class Bracket():
             i += 1
         # Append None for missing teams of all games
         for j in range(bracket_size-i):
-            self._bracket_list.append([None, 0])
+            self._bracket_list.append(["Bye", 0])
         # Append None for the winners of all games
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
@@ -105,12 +105,17 @@ class Bracket():
         index = self.player_index_by_round(player, round)
         self._bracket_list[index][1] = score
         
+        
     # Update Bracket to hold the winner of a match   
     def update_winner(self, player, round):
         if round >= self.max_round() or round < 0: return None # invalid round
 
         new_index = self.player_index_by_round(player, round+1)
-        self._bracket_list[new_index] = [player, 0]
+        if self._bracket_list[new_index] == None:
+            self._bracket_list[new_index] = [player, 0]
+        elif self._bracket_list[new_index][0] != player:
+            self._bracket_list[new_index] = [player, 0]
+            
 
     #Format the names of the bracket in a friendly way to be displayed in
     # a grid.  The players will be ordered by 
@@ -162,7 +167,7 @@ class Bracket():
         self.name = deser[0]
         self._bracket_list = deser[1]
 
-    #Stores this bracket in the data base
+    #Stores this bracket in the database
     def store(self, code):
         ser = self.serialize()
         database.create_bracket(code, ser)
@@ -173,6 +178,40 @@ class Bracket():
         data = data[0]
         self.name = data[0]
         self._bracket_list = data[1]
+        
+    def get_round(self, index):
+        num_teams = self._bracket_list[0]
+        bracket_size = closest_power_of_two(num_teams)
+        max_index_for_round = 0
+        round = 0
+        while bracket_size != 1:
+            max_index_for_round += bracket_size
+            if index < max_index_for_round:
+                return round 
+            bracket_size = int(bracket_size/ 2)
+            round += 1
+
+    # Loop through the entire bracket and determine the winners of
+    # each round
+    def set_winners(self):
+        for i in range(1, len(self._bracket_list)-1, 2):
+            if self._bracket_list[i] is not None and self._bracket_list[i+1] is not None:
+                round = self.get_round(i)
+                player1 = self._bracket_list[i][0]
+                player2 = self._bracket_list[i+1][0]
+                if self.has_bye(player1, round):
+                    winner = player1
+                # elif self.has_bye(player2, round):
+                #     winner = player2
+                else:
+                    winner = self.determine_winner(player1, player2, round)
+                if winner != "tie":
+                    self.update_winner(winner, round)
+                else: print("TIE!")
+            print('')
+        print("set winners",self.to_string())
+        # print("hopefully dif", ret_bracket.to_string())
+        return
 
         
 
@@ -190,21 +229,21 @@ class Bracket():
         if player2 != self._bracket_list[self.player_index_by_round(player2, round)][0]:
             print("AHHHHHH2")
             return None
+
         # need to check if the players actually play against one another
-
-
         score1 = self.get_score(player1, round)
         score2 = self.get_score(player2, round)
 
         if score1 > score2: return player1
-        return player2
+        elif score2 > score1: return player2
+        else: return "tie"
 
     # Get score of a player after a round 
     def get_score(self, player, round):
         if round >= self.max_round() or round < 0: return None # invalid round
 
         index = self.player_index_by_round(player, round)
-        return self._bracket_list[index][1]
+        return int(self._bracket_list[index][1])
 
     # Determines if bracket is complete based on if there is a champion
     def is_complete(self):
@@ -222,16 +261,16 @@ class Bracket():
         # Checks is player is last in the round
 
         #checks if subsequent index is None to see if the player has a bye
-
-
-        return 
+        if self._bracket_list[index+1][0] == "Bye":
+            return True
+        return False
         
 
 #-----------------------------------------------------------------------
 
 def main():
     players = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
-    bracket = Bracket(players)
+    bracket = Bracket("hi", players)
 
     print("Num players: %d" % (bracket.num_players()))
     print('')
