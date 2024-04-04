@@ -126,7 +126,7 @@ def run_bracket():
     name = bracket.name
 
     # Would need to check if this code exists
-    html_code = flask.render_template('runbracket.html',team_names=grid_friendly_names, name=name, rounds=rounds)
+    html_code = flask.render_template('runbracketviewable.html',team_names=grid_friendly_names, name=name, rounds=rounds)
     response = flask.make_response(html_code)
     return response
 
