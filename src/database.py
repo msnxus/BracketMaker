@@ -46,6 +46,7 @@ def create_bracket(code, ser_bracket):
         print(ex, file=sys.stderr)
         sys.exit(1)
         
+# Return the bracket corresponding to the code
 def get_bracket_from_code(code):
     stmt_str = "SELECT ser_bracket FROM bracket WHERE code = %s"
     try:
@@ -58,6 +59,7 @@ def get_bracket_from_code(code):
                     return row
                 else:
                     print("No bracket found with the given code.")
+                    return False
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
@@ -73,3 +75,4 @@ def update_bracket(code, bracket):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+        

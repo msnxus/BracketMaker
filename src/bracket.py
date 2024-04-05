@@ -75,6 +75,7 @@ def add_teams():
 @app.route('/createbracket/confirmation/', methods=['GET'])
 def bracket_confirmation():
     code = __generate_code__()
+    
     # get cookies
     team_names = []
     teams = int(flask.request.cookies.get("teams"))
@@ -106,7 +107,7 @@ def store_bracket():
     bracket = Bracket("", players)
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
-    code = int(flask.request.form.get("code"))
+    code = flask.request.form.get("code")
 
     #Lucas - Put the bracket to the database
     bracket.store(code)
@@ -175,11 +176,15 @@ def update_scores():
     update_bracket(code, my_bracket.serialize())
     
     return flask.redirect(f"/viewbracket/?code={code}")
-    
+
 def __generate_code__():
     # generate random 4 digit code
-    return '{:04}'.format(random.randint(0,9999))
-
+    code = '{:04}'.format(random.randint(0,9999))
+    if not get_bracket_from_code(code):
+        return code
+    else: 
+        __generate_code__()
+     
 # Takes in the bracket Code and outputs the name of the bracket
 def __code_to_name__(code):
     # insert code
