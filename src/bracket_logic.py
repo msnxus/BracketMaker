@@ -59,7 +59,7 @@ class Bracket():
         if round > self.max_round() or round < 0: return None # nonreal round
 
         initial_index = 0
-        for i in range(self.num_players()):
+        for i in range(closest_power_of_two(self.num_players())):
             if self._bracket_list[i+1][0] == player:
                 initial_index = i+1
                 break
