@@ -17,21 +17,19 @@
   </head>
   <body>
     <h1 align='center'> Welcome to {{title}} Bracket</h1>
-    
-
-
-
-
-
-
-
     <h2 align='center'>Here are the players:</h2>
     <form action = "/viewbracket/?code={{ code }}" method = "post">
       {% for i in range(1, bracket|length) %}
         {% if bracket[i] is not none %}
             <label for="{{ i|string }}">{{'%s' %bracket[i][0]}}:</label>
-            <input type = "number" name="{{ i|string }}" step="1" value = "{{'%s' %bracket[i][1]}}">    
-            <br>        
+            {% if bracket[i][0] == "Bye" %}
+              <input type="number" name="{{ i|string }}" step="1" value="{{ '%s' % bracket[i][1] }}" readonly disabled>
+            {% else %}
+              {% if i != bracket|length-1 %}
+                <input type = "number" name="{{ i|string }}" step="1" value = "{{'%s' %bracket[i][1]}}">
+              {% endif %}
+            {% endif %}   
+            <br><br>
         {% endif %}
       
       {% endfor %}

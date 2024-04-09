@@ -59,7 +59,7 @@ class Bracket():
         if round > self.max_round() or round < 0: return None # nonreal round
 
         initial_index = 0
-        for i in range(self.num_players()):
+        for i in range(closest_power_of_two(self.num_players())):
             if self._bracket_list[i+1][0] == player:
                 initial_index = i+1
                 break
@@ -82,7 +82,7 @@ class Bracket():
     # Return number of players in bracket
     def num_players(self):
         return self._bracket_list[0]
-    
+
     # Return the name of this bracket
     def name(self):
         return self.name
@@ -103,6 +103,8 @@ class Bracket():
         if round >= self.max_round() or round < 0: return None # invalid round
 
         index = self.player_index_by_round(player, round)
+        print("player and round:", player, round)
+        print("player index:", index)
         self._bracket_list[index][1] = score
         
         
