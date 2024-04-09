@@ -4,6 +4,8 @@
     <title>Bracket</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}">
   </head>
+  {% include 'header.html' %}
+
 
 <main id="tournament">
     <ul class="round round-1">
@@ -109,3 +111,9 @@
       <li class="spacer">&nbsp;</li>
     </ul>   
   </main>
+  <!-- EDIT BRACKET BUTTON -->
+  <form align='center' action="/editbracket/" method="get">
+        <input type="submit" name = "code" value= "{{ code }}">
+    </form>
+  {% include 'footer.html' %}
+

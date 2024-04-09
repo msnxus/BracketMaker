@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>BracketMaker Homepage</title>
-  </head>
-  <body>
-    {% include 'header.html' %}    
-    <form align='center' action="/createbracket" method="get">
-        <input type="submit" value="Create a Bracket">
-    </form>
-    <br>
-    <form align='center' action="/viewbracket" method="get">
-        <input type="submit" value="View a Bracket">
-    </form>
-    <hr />
-    <br>
-    {% include 'footer.html' %}
-  </body>
+
+<head>
+  <title>BracketMaker Homepage</title>
+</head>
+
+<body>
+  {% include 'header.html' %}
+  <form align='center' action="/createbracket" method="get">
+    <input type="submit" value="Create a Bracket">
+  </form>
+  <br>
+  <form align='center' action="/viewbracket" method="get">
+    <input type="submit" value="View a Bracket">
+  </form>
+  <br>
+  <form align='center' action="/edit" method="get">
+    <input type="submit" value="Edit a Bracket">
+  </form>
+  <hr />
+  <br>
+  {% include 'footer.html' %}
+</body>
+
 </html>
