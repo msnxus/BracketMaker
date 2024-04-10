@@ -37,6 +37,7 @@ def initialize():
     
 
 def create_bracket(code, ser_bracket):
+    global _initialized
     if not _initialized: 
         initialize()
         _initialized = True
@@ -53,6 +54,7 @@ def create_bracket(code, ser_bracket):
         
 # Return the bracket corresponding to the code
 def get_bracket_from_code(code):
+    global _initialized
     if not _initialized: 
         initialize()
         _initialized = True
@@ -73,6 +75,7 @@ def get_bracket_from_code(code):
         sys.exit(1)
         
 def update_bracket(code, bracket):
+    global _initialized
     if not _initialized: 
         initialize()
         _initialized = True
