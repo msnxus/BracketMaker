@@ -1,12 +1,12 @@
 # Initializes the database !!!! Will clear all existing data
 #-----------------------------------------------------------------------
 # -------------- COMMENT THIS OUT TO RUN LOCALLY --------------
-# import src.database
+import src.database
 # -------------- UNCOMMENT THIS TO RUN LOCALLY --------------
-import database
+# import database
 
 def main():
-    database.initialize()
+    src.database.initialize()
 
 #-----------------------------------------------------------------------
 if __name__ == '__main__':
