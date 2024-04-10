@@ -9,6 +9,7 @@ import psycopg2
 DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
 _initialized = False
 
+
 def initialize():
 
     stmt_str = "DROP TABLE IF EXISTS bracket;"

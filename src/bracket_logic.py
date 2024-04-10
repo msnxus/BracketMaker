@@ -11,7 +11,10 @@ import math
 import sys
 import os
 import json
+# -------------- COMMENT THIS OUT TO RUN LOCALLY --------------
 import src.database
+# -------------- UNCOMMENT THIS TO RUN LOCALLY --------------
+# import database
 
 # Add the parent directory to the Python path
 utilsdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
