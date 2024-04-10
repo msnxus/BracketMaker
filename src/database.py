@@ -8,6 +8,7 @@ DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
 # DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
 # DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
 
+
 def initialize():
 
     stmt_str = "DROP TABLE IF EXISTS bracket;"
