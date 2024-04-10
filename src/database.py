@@ -7,6 +7,7 @@ import psycopg2
 # DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
 # DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
 DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
+_initialized = False
 
 def initialize():
 
@@ -36,6 +37,9 @@ def initialize():
     
 
 def create_bracket(code, ser_bracket):
+    if not _initialized: 
+        initialize()
+        _initialized = True
     stmt_str = "INSERT INTO bracket (code, ser_bracket) VALUES (%s, %s)"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
