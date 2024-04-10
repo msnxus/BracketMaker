@@ -1,6 +1,28 @@
 <head>
   <title>Bracket</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}">
+
+  <style>
+    input[type="text"] {
+      background-color: transparent;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      font-size: inherit;
+      max-width: 30px;
+      border-color:black;
+      border-width: 5px;
+    }
+
+    div {
+      display: inline-block; /* to make the div only take up as much width as necessary */
+    }
+
+    button {
+      display: block; /* to make the button a block element, causing it to appear on a new line */
+      margin-top: 5px; /* adjust the margin as needed to space it below the input */
+    }
+  </style>
 </head>
 <body>
 
@@ -13,9 +35,13 @@
     <li class="spacer">&nbsp;</li>
     {% for index in range(round_indicies[round][0], round_indicies[round][1])%}
     {% if (index % 2) != 0%}
-    <li class="game game-top ">{{bracket_list[index][0]}} <span>0</span></li>
-    <li class="game game-spacer">&nbsp;</li>
-    <li class="game game-bottom ">{{bracket_list[index + 1][0]}}<span>2</span></li>
+    <li class="game game-top ">{{bracket_list[index][0]}} <span>
+      <div>
+        <input type="text" value="{{bracket_list[index][1]}}" id="{{index}}">
+      </div>
+  </span></li>
+    <li class="game game-spacer">&nbsp; <span> <button type="submit">Submit</button></span></li>
+    <li class="game game-bottom ">{{bracket_list[index + 1][0]}}<span><input type="text" value="{{bracket_list[index + 1][1]}}" id="{{index + 1}}"></span></li></li>
 
 
     <li class="spacer">&nbsp;</li>
