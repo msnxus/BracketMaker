@@ -126,11 +126,13 @@ def view_bracket_with_code():
     code = flask.request.args.get("code")
     bracket.load(code)
 
-    rounds = str(int(bracket.max_round()) + 1)
-    grid_friendly_names = bracket.grid_friendly_players()
+    rounds = int(bracket.max_round()) + 1
+    bracket_list = bracket.bracket_list()
+    round_indicies = bracket.round_indicies()
     name = bracket.name
 
-    html_code = flask.render_template('runbracketviewable.html',team_names=grid_friendly_names, name=name, rounds=rounds, code=code)
+    html_code = flask.render_template('runbracketviewable.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
+                                      bracket_list=bracket_list)
     response = flask.make_response(html_code)
     return response
 

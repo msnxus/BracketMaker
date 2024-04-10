@@ -94,9 +94,25 @@ class Bracket():
             players.append(self._bracket_list[i+1][0]) # tuple, only return name
         return players
     
+    # Return bracket list
+    def bracket_list(self):
+        print(self._bracket_list)
+        return self._bracket_list
+    
+    # Return a list specifying the beggining and ending indicies of a round
+    # as [round][lower index, higher index]
+    def round_indicies(self):
+        round_indicies = []
+        for round in range(self.max_round() - 1):
+            round_indicies.append([self.first_index_of_round(round), self.first_index_of_round(round + 1) -1])
+
+        round_indicies.append([self.first_index_of_round(self.max_round() - 1), self.first_index_of_round(self.max_round() - 1) + 1])
+        print(round_indicies)
+        return round_indicies
     # Return max round
     def max_round(self):
         return int(math.log(closest_power_of_two(self.num_players()), 2))
+
 
     # Update functions
     def update_score(self, player, round, score):
