@@ -28,65 +28,42 @@
 </head>
 <body>
 
-
-<main id="tournament">
-
-
-  {% for round in range(rounds - 1)%}
-  <ul class="round round-{{ round + 1}}">
-    <li class="spacer">&nbsp;</li>
-    {% for index in range(round_indicies[round][0], round_indicies[round][1])%}
-    {% if (index % 2) != 0%}
-    <li class="game game-top ">{{bracket_list[index][0]}} <span>
-      <div>
-        <input type="text" value="{{bracket_list[index][1]}}" id="{{index}}">
-      </div>
-  </span></li>
-    <li class="game game-spacer">&nbsp; <span> <button type="submit">Submit</button></span></li>
-    <li class="game game-bottom ">{{bracket_list[index + 1][0]}}<span><input type="text" value="{{bracket_list[index + 1][1]}}" id="{{index + 1}}"></span></li></li>
-
-
-    <li class="spacer">&nbsp;</li>
-    {% endif%}
+<form action="/viewbracket/?code={{ code }}" method="post">
+  <main id="tournament">
+    {% for round in range(rounds - 1)%}
+    <ul class="round round-{{ round + 1}}">
+      <li class="spacer">&nbsp;</li>
+      {% for i in range(round_indicies[round][0], round_indicies[round][1])%}
+        {% if (i % 2) != 0%}
+          {% if bracket_list[i][0] == "Bye" %}
+            <li class="game game-top ">{{bracket_list[i][0]}}</li>
+          {% else %}
+            <li class="game game-top ">{{bracket_list[i][0]}} <span>
+              <div>
+                <input type="text" name = "{{i|string}}" value="{{bracket_list[i][1]}}" id="{{i}}">
+              </div>
+              </span></li>
+          {% endif %}
+          {% if bracket_list[i + 1][0] == "Bye" %}
+              <li class="game game-bottom ">{{bracket_list[i + 1][0]}}</li>
+              </li>
+          {% else %}
+              {% set index = i + 1 %}
+              <li class="game game-top ">{{bracket_list[i + 1][0]}} <span>
+                  <div>
+                    <input type="text" name="{{index|string}}" value="{{bracket_list[i + 1][1]}}" id="{{i + 1}}">
+                  </div>
+                </span></li>
+          {% endif %}
+          <li class="spacer">&nbsp;</li>
+        {% endif%}
+      {% endfor %}
+    </ul>
     {% endfor %}
-  </ul>
-  {% endfor %}
- 
-</main>
+  </main>
+  <input type="submit" value="Update Scores" , class="submit-btn">
+</form>
 
-
-
-<script>
-  // Get all buttons
-const buttons = document.querySelectorAll('button');
-
-// Add click event listener to each button, could individu
-buttons.forEach(button => {
-  button.addEventListener('click', () => {
-    // Get the index from the button's name attribute
-    const index_of_first_player = button.getAttribute('name');
-
-    // Find the corresponding scores
-    const input1 = document.getElementById(index);
-    const input2 = document.getElementById(String(Number(index) + 1));
-    const codeDiv = document.getElementById("code")
-    const code = codeDiv.getAttribute('name')
-
-
-    const score1 = input1.value;
-    const score2 = input2.value;
-
-    const scores = [score1, score2]
-    
-    data = {
-      "index": index_of_first_player,
-      "scores": scores,
-      "code": code
-    }
-
-    //As you will
-  });
-});
-
-</script>
+<br><br>
+{% include 'footer.html' %}
 </body>

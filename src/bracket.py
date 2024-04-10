@@ -138,70 +138,9 @@ def view_bracket_with_code():
     response = flask.make_response(html_code)
     return response
 
-# CAN DELETE
-# @app.route('/viewcreatedbracket/', methods=['GET'])
-# def view_created_bracket():
-#     players = []
-#     bracket = Bracket("", players)
-
-#     code = flask.request.args.get("code")
-#     bracket.load(code)
-
-#     rounds = str(int(bracket.max_round()) + 1)
-#     grid_friendly_names = bracket.grid_friendly_players()
-#     name = bracket.name
-
-#     html_code = flask.render_template('runbracketviewable.html',team_names=grid_friendly_names, name=name, rounds=rounds, code=code)
-#     response = flask.make_response(html_code)
-#     return response
-
-
-
-# CAN DELETE
-# @app.route('/createdbracket/', methods=['GET'])
-# def run_bracket():
-#     players = []
-#     bracket = Bracket("", players)
-
-#     code = flask.request.args.get("code")
-#     bracket.load(code)
-
-#     rounds = str(int(bracket.max_round()) + 1)
-#     grid_friendly_names = bracket.grid_friendly_players()
-#     name = bracket.name
-
-#     # Would need to check if this code exists
-#     html_code = flask.render_template('runbracketviewable.html',team_names=grid_friendly_names, name=name, rounds=rounds)
-#     response = flask.make_response(html_code)
-#     return response
-
-# FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
-@app.route('/viewbracket', methods=['GET'])
-def view_bracket():
-    # Take in query
-    code = flask.request.args.get('code')
-    if code is None:
-        code = ''
-
-    html_code = flask.render_template('viewbracket.html', code=code)
-    response = flask.make_response(html_code)
-    return response
-
-@app.route('/editbracket/', methods=['GET'])
-def view_bracket_code():
-    code = flask.request.args.get('code')
-    data = get_bracket_from_code(code)
-    title= data[0][0]
-    bracket = data[0][1]
-            
-    # Would need to check if this code exists
-
-    html_code = flask.render_template('editbracket.html',title = title, code=code, bracket = bracket)
-    response = flask.make_response(html_code)
-    return response
-        
-@app.route('/editbracket/', methods=['POST'])
+@app.route('/viewbracket/', methods = ['POST'])
 def update_scores():
+    print("POST-----------------")
     code = flask.request.args.get('code')
     data = get_bracket_from_code(code)
     bracket = data[0][1]
@@ -219,18 +158,17 @@ def update_scores():
     print("using this bracket to set winners:", my_bracket.to_string())
     my_bracket.set_winners()
     update_bracket(code, my_bracket.serialize())
-    
-    return flask.redirect(f"/editbracket/?code={code}")
+    return flask.redirect(f"/viewbracket/?code={code}")
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
-@app.route('/edit', methods=['GET'])
-def edit_bracket():
+@app.route('/viewbracket', methods=['GET'])
+def view_bracket():
     # Take in query
     code = flask.request.args.get('code')
     if code is None:
         code = ''
 
-    html_code = flask.render_template('editbracketnocode.html', code=code)
+    html_code = flask.render_template('viewbracket.html', code=code)
     response = flask.make_response(html_code)
     return response
 
