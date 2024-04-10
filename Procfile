@@ -1,1 +1,1 @@
-web: gunicorn bracket:app
+web: gunicorn src.bracket:app
