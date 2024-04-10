@@ -1,9 +1,9 @@
 # Initializes the database !!!! Will clear all existing data
 #-----------------------------------------------------------------------
-import database
+import src.database
 
 def main():
-    database.initialize()
+    src.database.initialize()
 
 #-----------------------------------------------------------------------
 if __name__ == '__main__':

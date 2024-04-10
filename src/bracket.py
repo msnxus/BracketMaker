@@ -12,7 +12,7 @@ import flask
 from flask import redirect, url_for
 from src.bracket_logic import Bracket
 
-from database import get_bracket_from_code, update_bracket
+from src.database import get_bracket_from_code, update_bracket
 
 import random
 
