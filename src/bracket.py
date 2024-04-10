@@ -15,12 +15,21 @@ from bracket_logic import Bracket
 from database import get_bracket_from_code
 
 import random
+import CASClient as CASClient
+import database
 
 
 #-----------------------------------------------------------------------
 
 app = flask.Flask(__name__, template_folder='templates')
-DATABASE_URL = 'file:reg.sqlite?mode=ro'
+# DATABASE_URL = 'file:reg.sqlite?mode=ro'
+_cas = CASClient.CASClient()
+
+# private method that redirects to landing page
+# if user is not logged in with CAS
+# or if user is logged in with CAS, but doesn't have entry in DB
+def redirect_login():
+    return not _cas.is_logged_in() or not database.is_user_created(_cas.authenticate())
 
 #-----------------------------------------------------------------------
 
@@ -32,9 +41,28 @@ DATABASE_URL = 'file:reg.sqlite?mode=ro'
 
 # loads basic page with course results from query
 def index():
-    html_code = flask.render_template('index.html')
+    if redirect_login():
+        return redirect(url_for('login'))
+    user = _cas.authenticate()
+    html_code = flask.render_template('index.html', user=user)
     response = flask.make_response(html_code)
     return response
+
+@app.route('/login', methods=['GET'])
+def login():
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+    # if _db.is_blacklisted(netid):
+    #     _db._add_admin_log(
+    #         f'blacklisted user {netid} attempted to access the app')
+    #     return flask.make_response(flask.render_template('blacklisted.html'))
+
+    database.add_system_log('user', netid, f'Login by user {netid}')
+
+    if not database.is_user_created(netid):
+        database.create_user(netid)
+
+    return redirect(url_for('index'))
 
 # displays when url is regdetails, course specific page
 @app.route('/createbracket', methods=['GET'])
