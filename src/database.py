@@ -9,7 +9,6 @@ import psycopg2
 DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
 _initialized = False
 
-
 def initialize():
 
     stmt_str = "DROP TABLE IF EXISTS bracket;"
@@ -54,6 +53,9 @@ def create_bracket(code, ser_bracket):
         
 # Return the bracket corresponding to the code
 def get_bracket_from_code(code):
+    if not _initialized: 
+        initialize()
+        _initialized = True
     stmt_str = "SELECT ser_bracket FROM bracket WHERE code = %s"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
@@ -71,6 +73,9 @@ def get_bracket_from_code(code):
         sys.exit(1)
         
 def update_bracket(code, bracket):
+    if not _initialized: 
+        initialize()
+        _initialized = True
     stmt_str = "UPDATE bracket SET ser_bracket = %s WHERE code = %s "
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
