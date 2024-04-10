@@ -11,7 +11,7 @@
       font-size: inherit;
       max-width: 30px;
       border-color:black;
-      border-width: 5px;
+      border-width: 2px;
     }
 
     div {
@@ -23,6 +23,8 @@
       margin-top: 5px; /* adjust the margin as needed to space it below the input */
     }
   </style>
+
+  <div name="{{code}}" id="code"></div>
 </head>
 <body>
 
@@ -51,4 +53,40 @@
   {% endfor %}
  
 </main>
+
+
+
+<script>
+  // Get all buttons
+const buttons = document.querySelectorAll('button');
+
+// Add click event listener to each button, could individu
+buttons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Get the index from the button's name attribute
+    const index_of_first_player = button.getAttribute('name');
+
+    // Find the corresponding scores
+    const input1 = document.getElementById(index);
+    const input2 = document.getElementById(String(Number(index) + 1));
+    const codeDiv = document.getElementById("code")
+    const code = codeDiv.getAttribute('name')
+
+
+    const score1 = input1.value;
+    const score2 = input2.value;
+
+    const scores = [score1, score2]
+    
+    data = {
+      "index": index_of_first_player,
+      "scores": scores,
+      "code": code
+    }
+
+    //As you will
+  });
+});
+
+</script>
 </body>

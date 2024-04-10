@@ -116,7 +116,7 @@ def store_bracket():
     # return redirect(url_for('view_created_bracket', code=code))
 
     return redirect(url_for('view_bracket_with_code', code=code))
- 
+
  # FROM CREATE BRACKET
 @app.route('/viewbracket/', methods=['GET'])
 def view_bracket_with_code():

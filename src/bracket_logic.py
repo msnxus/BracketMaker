@@ -196,6 +196,7 @@ class Bracket():
         data = data[0]
         self.name = data[0]
         self._bracket_list = data[1]
+
         
     def get_round(self, index):
         num_teams = self._bracket_list[0]
