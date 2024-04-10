@@ -30,6 +30,8 @@ DATABASE_URL = 'file:reg.sqlite?mode=ro'
 # # path when there are input fields into one of the four boxes
 @app.route('/?', methods=['GET'])
 
+# # path when there are input fields into one of the four boxes
+@app.route('/index', methods=['GET'])
 # loads basic page with course results from query
 def index():
     html_code = flask.render_template('index.html')
@@ -136,8 +138,6 @@ def view_bracket_with_code():
     response = flask.make_response(html_code)
     return response
 
-
-
 # CAN DELETE
 # @app.route('/viewcreatedbracket/', methods=['GET'])
 # def view_created_bracket():
@@ -186,10 +186,6 @@ def view_bracket():
     html_code = flask.render_template('viewbracket.html', code=code)
     response = flask.make_response(html_code)
     return response
-
-
-
-
 
 @app.route('/editbracket/', methods=['GET'])
 def view_bracket_code():
