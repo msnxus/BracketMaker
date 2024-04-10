@@ -10,9 +10,13 @@ import contextlib
 import sqlite3
 import flask
 from flask import redirect, url_for
-from src.bracket_logic import Bracket
 
-from src.database import get_bracket_from_code, update_bracket
+# -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
+# from src.bracket_logic import Bracket
+# from src.database import get_bracket_from_code, update_bracket
+# -------------- UNCOMMENT THESE TO RUN LOCALLY --------------
+from bracket_logic import Bracket
+from database import get_bracket_from_code, update_bracket
 
 import random
 
