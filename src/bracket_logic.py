@@ -11,7 +11,10 @@ import math
 import sys
 import os
 import json
-import src.database
+# -------------- COMMENT THIS OUT TO RUN LOCALLY --------------
+# import src.database
+# -------------- UNCOMMENT THIS TO RUN LOCALLY --------------
+import database
 
 # Add the parent directory to the Python path
 utilsdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
@@ -188,11 +191,11 @@ class Bracket():
     #Stores this bracket in the database
     def store(self, code):
         ser = self.serialize()
-        src.database.create_bracket(code, ser)
+        database.create_bracket(code, ser)
 
     #Retrieves bracket with said code from database
     def load(self, code):
-        data = src.database.get_bracket_from_code(code)
+        data = database.get_bracket_from_code(code)
         data = data[0]
         self.name = data[0]
         self._bracket_list = data[1]
