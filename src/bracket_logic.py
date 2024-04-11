@@ -52,17 +52,15 @@ class Bracket():
         # Append None for missing teams of all games
         for j in range(bracket_size-i):
             temp_teams.append("Bye")
-        print(temp_teams)
+        # print(temp_teams)
         # Enter players into real bracket based on matchup (1-16, 2-15, ...)
+        # NEXT STEP: Want it to be (1-16, 8-9 ... 7-10, 2-15)
         for i in range(bracket_size//2):
             self._bracket_list.append([temp_teams[i], 0])
             self._bracket_list.append([temp_teams[bracket_size - i - 1], 0])
             i += 1
         print(self._bracket_list)
-        # # Append None for missing teams of all games
-        # for j in range(bracket_size-i):
-        #     self._bracket_list.append(["Bye", 0])
-        # Append None for the winners of all games
+
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
 
