@@ -37,6 +37,15 @@ class Bracket():
         self.name = name
         self.init_bracket(players)
         return
+    
+    def __create_matchups__(temp_teams, bracket_size):
+        output = []
+        for i in range(bracket_size//2):
+            output.append([temp_teams[i], 0])
+            output.append([temp_teams[bracket_size - i - 1], 0])
+            i += 1
+        return output
+
   
     def init_bracket(self, players):
         teams = len(players)
@@ -55,14 +64,18 @@ class Bracket():
         # print(temp_teams)
         # Enter players into real bracket based on matchup (1-16, 2-15, ...)
         # NEXT STEP: Want it to be (1-16, 8-9 ... 7-10, 2-15)
-        for i in range(bracket_size//2):
-            self._bracket_list.append([temp_teams[i], 0])
-            self._bracket_list.append([temp_teams[bracket_size - i - 1], 0])
-            i += 1
-        print(self._bracket_list)
+        
 
+        output = Bracket.__create_matchups__(temp_teams, bracket_size)
+        print(output)
+        
+        print(self._bracket_list)
+        print("TEST!!!!")
+        self._bracket_list += output
+        print(self._bracket_list)
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
+        print(self._bracket_list)
 
     # Given player and round return index in underlying bracketlist
     # If nonreal round or nonexistent player return None
