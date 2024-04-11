@@ -106,7 +106,7 @@ def bracket_confirmation():
 def store_bracket():
     #Here we need to actually grab the bracket and put it in the database
     players = []
-    bracket = Bracket("", players)
+    bracket = Bracket("", players) # ADD TEAM NAME
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
     code = flask.request.form.get("code")

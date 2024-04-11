@@ -38,13 +38,44 @@ class Bracket():
         self.init_bracket(players)
         return
     
+    # Get ordering of indices
+    def __seed__(bracketsize):
+        print('bracketsize', bracketsize)
+
+        nbr_bits_required = len(bin(bracketsize)) - 3
+        binary_seeds = [[0] * nbr_bits_required for _ in range(bracketsize)]
+
+        for i in range(nbr_bits_required):
+            binary_seeds[0][i] = 0
+
+        for col in range(nbr_bits_required):
+            for row in range(1, bracketsize):
+                if row % (2 ** (col + 1)) == 0:
+                    binary_seeds[row][col] = binary_seeds[row - 1][col]
+                else:
+                    binary_seeds[row][col] = 1 if binary_seeds[row - 1][col] == 0 else 0
+
+        result = []
+        for i in range(bracketsize):
+            binary_string = ''.join(map(str, binary_seeds[i]))
+            if binary_string is '':
+                binary_string = '0'
+            decimal_value = int(binary_string, 2) + 1
+            result.append(decimal_value)
+        return result
+
+    
     def __create_matchups__(temp_teams, bracket_size):
-        output = []
-        for i in range(bracket_size//2):
-            output.append([temp_teams[i], 0])
-            output.append([temp_teams[bracket_size - i - 1], 0])
-            i += 1
-        return output
+        ordering = Bracket.__seed__(bracket_size)
+        print('ordering:', ordering)
+        final = []
+        for i in range(bracket_size):
+            final.append(temp_teams[ordering[i]-1])
+        print(final)
+
+
+        # print(Bracket.__seed__(temp_teams))
+        return final
 
   
     def init_bracket(self, players):
@@ -76,6 +107,7 @@ class Bracket():
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
         print(self._bracket_list)
+        # return self._bracket_list NO NEED TO RETURN 
 
     # Given player and round return index in underlying bracketlist
     # If nonreal round or nonexistent player return None
