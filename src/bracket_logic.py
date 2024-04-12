@@ -70,8 +70,8 @@ class Bracket():
         print('ordering:', ordering)
         final = []
         for i in range(bracket_size):
-            final.append(temp_teams[ordering[i]-1])
-        print(final)
+            final.append([temp_teams[ordering[i]-1], 0])
+        print("---------------",final)
 
 
         # print(Bracket.__seed__(temp_teams))
@@ -274,10 +274,11 @@ class Bracket():
                 round = self.get_round(i)
                 player1 = self._bracket_list[i][0]
                 player2 = self._bracket_list[i+1][0]
-                if self.has_bye(player1, round):
+                bye = self.has_bye(player1, round)
+                if bye == 1:
                     winner = player1
-                # elif self.has_bye(player2, round):
-                #     winner = player2
+                elif bye == 0:
+                    winner = player2
                 else:
                     winner = self.determine_winner(player1, player2, round)
                 if winner != "tie":
@@ -337,8 +338,10 @@ class Bracket():
 
         #checks if subsequent index is None to see if the player has a bye
         if self._bracket_list[index+1][0] == "Bye":
-            return True
-        return False
+            return 1 # Player against is BYE
+        elif player == "Bye":
+            return 0 # Player is BYE
+        return 2 # No BYEs
         
 
 #-----------------------------------------------------------------------

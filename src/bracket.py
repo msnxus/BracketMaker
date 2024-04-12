@@ -104,6 +104,7 @@ def bracket_confirmation():
 
 @app.route('/storebracket/', methods=['POST'])
 def store_bracket():
+
     #Here we need to actually grab the bracket and put it in the database
     players = []
     bracket = Bracket("", players) # ADD TEAM NAME
@@ -128,6 +129,7 @@ def view_bracket_with_code():
     code = flask.request.args.get("code")
     bracket.load(code)
 
+
     rounds = int(bracket.max_round()) + 1
     bracket_list = bracket.bracket_list()
     round_indicies = bracket.round_indicies()
@@ -135,6 +137,7 @@ def view_bracket_with_code():
 
     html_code = flask.render_template('runbracketviewable.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
                                       bracket_list=bracket_list)
+    
     response = flask.make_response(html_code)
     return response
 
@@ -154,6 +157,8 @@ def update_scores():
             round = my_bracket.get_round(i-1)
             player_name = bracket[i][0]
             player_value = flask.request.form.get(str(i))
+            if player_value == None:
+                player_value = 0
             my_bracket.update_score(player_name, round, player_value)
     print("using this bracket to set winners:", my_bracket.to_string())
     my_bracket.set_winners()
