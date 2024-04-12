@@ -21,16 +21,8 @@ def initialize():
         sys.exit(1)
 
     stmt_str = "CREATE TABLE bracket (code CHAR(4) PRIMARY KEY, ser_bracket JSONB)"
-    stmt_str_syslog = 'CREATE TABLE system_log ('
-    'id SERIAL PRIMARY KEY,'
-    'type VARCHAR(255),'
-    'time TIMESTAMP WITHOUT TIME ZONE,'
-    'netid VARCHAR(255) NULL,'
-    'description TEXT NULL)'
-    stmt_str_users = 'CREATE TABLE users ('
-    'netid VARCHAR PRIMARY KEY,'
-    'email VARCHAR,'
-    'phone VARCHAR);'
+    stmt_str_syslog = 'CREATE TABLE system_log (id SERIAL PRIMARY KEY,type VARCHAR(255),time TIMESTAMP WITHOUT TIME ZONE,netid VARCHAR(255) NULL,description TEXT NULL)'
+    stmt_str_users = 'CREATE TABLE users (netid VARCHAR PRIMARY KEY,email VARCHAR,phone VARCHAR);'
 
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
@@ -72,7 +64,7 @@ def get_bracket_from_code(code):
         sys.exit(1)
 
 # Adds a system log into the database
-def add_system_log(self, type, netid=None, description=''):
+def add_system_log(type, netid=None, description=''):
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
@@ -86,7 +78,7 @@ def add_system_log(self, type, netid=None, description=''):
         sys.exit(1)
 
 # Checks if netid exists in users table
-def is_user_created(self, netid):
+def is_user_created(netid):
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
                 with connection.cursor() as cursor:
@@ -97,8 +89,8 @@ def is_user_created(self, netid):
         return False
 
 # Creates user if it doesn't already exist
-def create_user(self, netid):
-    if self.is_user_created(netid):
+def create_user(netid):
+    if is_user_created(netid):
         print(f'user {netid} already exists', file=sys.stderr)
         return
     netid_cleaned = netid.rstrip()

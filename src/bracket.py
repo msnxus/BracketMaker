@@ -20,8 +20,10 @@ import database
 
 
 #-----------------------------------------------------------------------
+secret_key = 'RyansBigOlBalls'
 
 app = flask.Flask(__name__, template_folder='templates')
+app.secret_key = secret_key
 # DATABASE_URL = 'file:reg.sqlite?mode=ro'
 _cas = CASClient.CASClient()
 
@@ -39,12 +41,14 @@ def redirect_login():
 # # path when there are input fields into one of the four boxes
 @app.route('/?', methods=['GET'])
 
+@app.route('/index', methods=['GET'])
 # loads basic page with course results from query
 def index():
     if redirect_login():
         return redirect(url_for('login'))
-    user = _cas.authenticate()
-    html_code = flask.render_template('index.html', user=user)
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+    html_code = flask.render_template('index.html', user=netid)
     response = flask.make_response(html_code)
     return response
 
