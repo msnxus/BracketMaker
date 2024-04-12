@@ -147,8 +147,8 @@ def view_bracket_with_code():
     bracket = Bracket("", players)
 
     code = flask.request.args.get("code")
+    #NEXT: ENTERING A CODE TO A BRACKET THAT DOESN'T APPEAR CAUSES ERROR
     bracket.load(code)
-
 
     rounds = int(bracket.max_round()) + 1
     bracket_list = bracket.bracket_list()
