@@ -247,7 +247,7 @@ class Bracket():
     #Stores this bracket in the database
     def store(self, code):
         ser = self.serialize()
-        database.create_bracket(code, ser)
+        return database.create_bracket(code, ser)
 
     #Retrieves bracket with said code from database
     def load(self, code):

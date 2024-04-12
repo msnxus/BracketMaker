@@ -112,12 +112,28 @@ def store_bracket():
     #Here we need to actually grab the bracket and put it in the database
     players = []
     bracket = Bracket("", players) # ADD TEAM NAME
+    # try:
     bracket.deserialize(flask.request.cookies.get("bracket"))
+    # except Exception as ex:
+    #     print(str(sys.argv[0]) + ": " + str(ex), file=sys.stderr)
+    #     html_code = flask.render_template(
+    #                     'error.html',
+    #                     message = 'A bracket with this code already exists. Please create a new code.')
+    #     response = flask.make_response(html_code)
+    #     return response
 
     code = flask.request.form.get("code")
 
     #Lucas - Put the bracket to the database
-    bracket.store(code)
+    code_exists = bracket.store(code)
+    if code_exists:
+        html_code = flask.render_template(
+                        'error.html',
+                        message = 'A bracket with this code already exists. Please create a new code.')
+        
+        # MAKE THIS JUST APPEAR ON SCREEN, NOT MAKE A NEW SCREEN, ADD BUTTON
+        response = flask.make_response(html_code)
+        return response
 
     # return redirect(url_for('run_bracket', code=code))
     # return redirect(url_for('view_created_bracket', code=code))
