@@ -1,0 +1,70 @@
+<head>
+  <title>Bracket</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}">
+
+  <style>
+    input[type="number"] {
+      background-color: transparent;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      font-size: inherit;
+      max-width: 40px;
+      border-color: black;
+      border-width: 1px;
+    }
+
+    div {
+      display: inline-block;
+      /* to make the div only take up as much width as necessary */
+    }
+
+    button {
+      display: block;
+      /* to make the button a block element, causing it to appear on a new line */
+      margin-top: 5px;
+      /* adjust the margin as needed to space it below the input */
+    }
+  </style>
+
+  <div name="{{code}}" id="code"></div>
+</head>
+
+<body>
+
+  <form action="/editbracket/?code={{ code }}" method="post">
+    <main id="tournament">
+      {% for round in range(rounds - 1)%}
+      <ul class="round round-{{ round + 1}}">
+        <li class="spacer">&nbsp;</li>
+        {% for i in range(round_indicies[round][0], round_indicies[round][1])%}
+        {% if (i % 2) != 0 %}
+        {% set index = i + 1 %}
+        {% if bracket_list[i][0] == "Bye" or bracket_list[i+1][0] == "Bye" %}
+        <li class="game game-top ">{{bracket_list[i][0]}}</li>
+        <li class="game game-bottom ">{{bracket_list[i+1][0]}}</li>
+        {% else %}
+        <li class="game game-top ">{{bracket_list[i][0]}} <span>
+            <div>
+              <input type="number" name="{{i|string}}" value="{{bracket_list[i][1]}}" id="{{i}}">
+            </div>
+          </span></li>
+        <li class="game game-bottom ">{{bracket_list[i + 1][0]}} <span>
+            <div>
+              <input type="number" name="{{index|string}}" value="{{bracket_list[index][1]}}" id="{{index}}">
+            </div>
+          </span></li>
+        {% endif %}
+        {% endif%}
+        {% endfor %}
+      </ul>
+      {% endfor %}
+      {% if bracket_list[bracket_list|length - 1] != None %}
+      THE WINNER IS {{bracket_list[bracket_list|length - 1][0]}}
+      {% endif %}
+    </main>
+    <input type="submit" value="Update Scores" , class="submit-btn">
+  </form>
+  <br><br>
+  {% include 'footer.html' %}
+</body>

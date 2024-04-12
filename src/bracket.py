@@ -44,7 +44,6 @@ def index():
 
 # displays when url is regdetails, course specific page
 @app.route('/createbracket', methods=['GET'])
-
 def create_bracket():
     # Take in query
     name = flask.request.args.get('name')
@@ -58,6 +57,27 @@ def create_bracket():
     html_code = flask.render_template('createbracket.html', name=name, teams=teams)
     response = flask.make_response(html_code)
     return response
+
+@app.route('/viewbracket/', methods=['GET'])
+def temp_bracket():
+    players = []
+    bracket = Bracket("", players)
+
+    code = flask.request.args.get("code")
+    bracket.load(code)
+
+
+    rounds = int(bracket.max_round()) + 1
+    bracket_list = bracket.bracket_list()
+    round_indicies = bracket.round_indicies()
+    name = bracket.name
+
+    html_code = flask.render_template('viewbracketpage.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
+                                      bracket_list=bracket_list)
+    
+    response = flask.make_response(html_code)
+    return response
+    
 
 @app.route('/createbracket/addteams/', methods=['GET'])
 def add_teams():
@@ -116,16 +136,12 @@ def store_bracket():
 
     code = flask.request.form.get("code")
 
-    #Lucas - Put the bracket to the database
     bracket.store(code)
-
-    # return redirect(url_for('run_bracket', code=code))
-    # return redirect(url_for('view_created_bracket', code=code))
 
     return redirect(url_for('view_bracket_with_code', code=code))
 
  # FROM CREATE BRACKET
-@app.route('/viewbracket/', methods=['GET'])
+@app.route('/editbracket/', methods=['GET'])
 def view_bracket_with_code():
     players = []
     bracket = Bracket("", players)
@@ -139,13 +155,13 @@ def view_bracket_with_code():
     round_indicies = bracket.round_indicies()
     name = bracket.name
 
-    html_code = flask.render_template('runbracketviewable.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
+    html_code = flask.render_template('editbracket.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
                                       bracket_list=bracket_list)
     
     response = flask.make_response(html_code)
     return response
 
-@app.route('/viewbracket/', methods = ['POST'])
+@app.route('/editbracket/', methods = ['POST'])
 def update_scores():
     print("POST-----------------")
     code = flask.request.args.get('code')
@@ -167,17 +183,17 @@ def update_scores():
     print("using this bracket to set winners:", my_bracket.to_string())
     my_bracket.set_winners()
     update_bracket(code, my_bracket.serialize())
-    return flask.redirect(f"/viewbracket/?code={code}")
+    return flask.redirect(f"/editbracket/?code={code}")
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
-@app.route('/viewbracket', methods=['GET'])
+@app.route('/entercode', methods=['GET'])
 def view_bracket():
     # Take in query
     code = flask.request.args.get('code')
     if code is None:
         code = ''
 
-    html_code = flask.render_template('viewbracket.html', code=code)
+    html_code = flask.render_template('entercode.html', code=code)
     response = flask.make_response(html_code)
     return response
 
@@ -186,9 +202,9 @@ def __generate_code__():
     code = '{:04}'.format(random.randint(0,9999))
     if not get_bracket_from_code(code):
         return code
-    else: 
+    else:
         __generate_code__()
-     
+
 # Takes in the bracket Code and outputs the name of the bracket
 def __code_to_name__(code):
     # insert code
