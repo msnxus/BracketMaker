@@ -1,11 +1,12 @@
 import os
 import sys
 import psycopg2
+import flask
 
 # You will need to set up 
 
-DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
-# DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
+# DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
+DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
 # DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
 
 
@@ -37,6 +38,10 @@ def initialize():
     
 
 def create_bracket(code, ser_bracket):
+    if get_bracket_from_code(code) != False:
+        print("A bracket with code", code, "already exists. Please create a new code.")
+        return True
+
     stmt_str = "INSERT INTO bracket (code, ser_bracket) VALUES (%s, %s)"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
@@ -47,6 +52,7 @@ def create_bracket(code, ser_bracket):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+    return False
         
 # Return the bracket corresponding to the code
 def get_bracket_from_code(code):
