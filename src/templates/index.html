@@ -5,7 +5,11 @@
   </head>
   <body>
     <h1 align="center">Welcome to BracketMaker</h1>
-    <h1 align="center">User: {{user}}</h1>
+    {% if user != None %}
+      <h1 align="center">User: {{user}}</h1>
+    {% else %}
+    <form align='center' action="/login" method="get"><input type="submit" value="Login"></form>
+    {% endif %}
     <hr>
     <form align='center' action="/createbracket" method="get">
         <input type="submit" value="Create a Bracket">

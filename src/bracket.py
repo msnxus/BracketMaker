@@ -45,9 +45,10 @@ def redirect_login():
 # loads basic page with course results from query
 def index():
     if redirect_login():
-        return redirect(url_for('login'))
-    netid = _cas.authenticate()
-    netid = netid.rstrip()
+        netid = None
+    else:
+        netid = _cas.authenticate()
+        netid = netid.rstrip()
     html_code = flask.render_template('index.html', user=netid)
     response = flask.make_response(html_code)
     return response
@@ -72,6 +73,10 @@ def login():
 @app.route('/createbracket', methods=['GET'])
 
 def create_bracket():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
     # Take in query
     name = flask.request.args.get('name')
     if name is None:
@@ -87,6 +92,11 @@ def create_bracket():
 
 @app.route('/createbracket/addteams/', methods=['GET'])
 def add_teams():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+
     name = flask.request.args.get('name')
 
     #Lucas - Potential non-integer could be passed - have to account for this
@@ -106,6 +116,11 @@ def add_teams():
 
 @app.route('/createbracket/confirmation/', methods=['GET'])
 def bracket_confirmation():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+
     code = __generate_code__()
     # get cookies
     team_names = []
@@ -117,7 +132,7 @@ def bracket_confirmation():
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
 
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
 
     response = flask.make_response(html_code)
 
@@ -139,9 +154,10 @@ def store_bracket():
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
     code = int(flask.request.form.get("code"))
+    owner = str(flask.request.form.get("owner"))
 
     #Lucas - Put the bracket to the database
-    bracket.store(code)
+    bracket.store(code, owner)
 
     return redirect(url_for('run_bracket', code=code))
 

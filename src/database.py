@@ -9,18 +9,22 @@ DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password=
 def initialize():
 
     stmt_str = "DROP TABLE IF EXISTS bracket;"
+    stmt_str_syslog = "DROP TABLE IF EXISTS system_log;"
+    stmt_str_users = "DROP TABLE IF EXISTS users;"
 
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(stmt_str)
+                cursor.execute(stmt_str_syslog)
+                cursor.execute(stmt_str_users)
                 connection.commit()
                 print("Previous Table Deleted")
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-    stmt_str = "CREATE TABLE bracket (code CHAR(4) PRIMARY KEY, ser_bracket JSONB)"
+    stmt_str = "CREATE TABLE bracket (code CHAR(4) PRIMARY KEY, ser_bracket JSONB, owner TEXT)"
     stmt_str_syslog = 'CREATE TABLE system_log (id SERIAL PRIMARY KEY,type VARCHAR(255),time TIMESTAMP WITHOUT TIME ZONE,netid VARCHAR(255) NULL,description TEXT NULL)'
     stmt_str_users = 'CREATE TABLE users (netid VARCHAR PRIMARY KEY,email VARCHAR,phone VARCHAR);'
 
@@ -36,12 +40,12 @@ def initialize():
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-def create_bracket(code, ser_bracket):
-    stmt_str = "INSERT INTO bracket (code, ser_bracket) VALUES (%s, %s)"
+def create_bracket(code, ser_bracket, netid):
+    stmt_str = "INSERT INTO bracket (code, ser_bracket, owner) VALUES (%s, %s, %s)"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(stmt_str, (code, ser_bracket))
+                cursor.execute(stmt_str, (code, ser_bracket, netid))
                 connection.commit()
                 print("New Bracket Successfully Created")
     except Exception as ex:
