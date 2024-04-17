@@ -12,11 +12,11 @@ import flask
 from flask import redirect, url_for
 
 # -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
-from src.bracket_logic import Bracket
-from src.database import get_bracket_from_code, update_bracket
+# from src.bracket_logic import Bracket
+# from src.database import get_bracket_from_code, update_bracket
 # -------------- UNCOMMENT THESE TO RUN LOCALLY --------------
-# from bracket_logic import Bracket
-# from database import get_bracket_from_code, update_bracket
+from bracket_logic import Bracket
+from database import get_bracket_from_code, update_bracket
 
 import random
 
@@ -130,6 +130,7 @@ def view_bracket_with_code():
     bracket = Bracket("", players)
 
     code = flask.request.args.get("code")
+    print(code)
     bracket.load(code)
 
     rounds = int(bracket.max_round()) + 1
@@ -164,6 +165,42 @@ def update_scores():
     update_bracket(code, my_bracket.serialize())
     return flask.redirect(f"/viewbracket/?code={code}")
 
+@app.route('/editbracket/', methods = ['POST'])
+def edit_bracket():
+    print("edit!!!!")
+    # Get the JSON data sent in the request
+    data = flask.request.json
+
+    # Extract required information from the JSON data
+    index1 = data.get('index1')
+    index2 = data.get('index2')
+    score1 = data.get('score1')
+    score2 = data.get('score2')
+    code = data.get('code')
+
+    print("Received data:")
+    print("Index 1:", index1)
+    print("Index 2:", index2)
+    print("Score 1:", score1)
+    print("Score 2:", score2)
+    print("Code:", code)
+
+    my_bracket = Bracket("", [])
+    my_bracket.load(code)
+
+    bracket_list = my_bracket.bracket_list()
+
+    bracket_list[int(index1)][1] = int(score1)
+    bracket_list[int(index2)][1] = int(score2)
+
+    my_bracket.set_winners()
+
+    my_bracket.update(code)
+
+    response_data = {"message": "Data updated successfully"}
+    return flask.jsonify(response_data)
+
+
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
 @app.route('/viewbracket', methods=['GET'])
 def view_bracket():
@@ -175,6 +212,8 @@ def view_bracket():
     html_code = flask.render_template('viewbracket.html', code=code)
     response = flask.make_response(html_code)
     return response
+
+@app.route('/viewbracket', methods=['GET'])
 
 def __generate_code__():
     # generate random 4 digit code

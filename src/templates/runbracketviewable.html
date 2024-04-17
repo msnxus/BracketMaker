@@ -3,15 +3,15 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}">
 
   <style>
-    input[type="number"] {
+    input[type="text"] {
       background-color: transparent;
       width: auto;
       padding: 0;
       margin: 0;
       font-size: inherit;
-      max-width: 40px;
+      max-width: 30px;
       border-color:black;
-      border-width: 1px;
+      border-width: 2px;
     }
 
     div {
@@ -28,45 +28,131 @@
 </head>
 <body>
 
-<form action="/viewbracket/?code={{ code }}" method="post">
-  <main id="tournament">
-    {% for round in range(rounds - 1)%}
-    <ul class="round round-{{ round + 1}}">
-      <li class="spacer">&nbsp;</li>
-      {% for i in range(round_indicies[round][0], round_indicies[round][1])%}
-        {% if (i % 2) != 0%}
-          {% if bracket_list[i][0] == "Bye" %}
-            <li class="game game-top ">{{bracket_list[i][0]}}</li>
-          {% else %}
-            <li class="game game-top ">{{bracket_list[i][0]}} <span>
-              <div>
-                <input type="number" name = "{{i|string}}" value="{{bracket_list[i][1]}}" id="{{i}}">
-              </div>
-              </span></li>
-          {% endif %}
-          {% if bracket_list[i + 1][0] == "Bye" %}
-              <li class="game game-bottom ">{{bracket_list[i + 1][0]}}</li>
-              </li>
-          {% else %}
-              {% set index = i + 1 %}
-              <li class="game game-top ">{{bracket_list[i + 1][0]}} <span>
-                  <div>
-                    <input type="number" name="{{index|string}}" value="{{bracket_list[i + 1][1]}}" id="{{i + 1}}">
-                  </div>
-                </span></li>
-          {% endif %}
-          <li class="spacer">&nbsp;</li>
-        {% endif%}
-      {% endfor %}
-    </ul>
-    {% endfor %}
-    {% if bracket_list[bracket_list|length - 1] != None %}
-      THE WINNER IS {{bracket_list[bracket_list|length - 1][0]}}
-    {% endif %}
-  </main>
-  <input type="submit" value="Update Scores" , class="submit-btn">
-</form>
 
-<br><br>
-{% include 'footer.html' %}
+<main id="tournament">
+
+
+  {% for round in range(rounds - 1)%}
+  <ul class="round round-{{ round + 1}}">
+    <li class="spacer">&nbsp;</li>
+    {% for index in range(round_indicies[round][0], round_indicies[round][1])%}
+
+    {%if bracket_list[index][1] == 0 and bracket_list[index + 1][1] == 0%}
+
+    {% if (index % 2) != 0%}
+    <li class="game game-top ">{{bracket_list[index][0]}} <span>
+      <div>
+        <input type="text" value="{{bracket_list[index][1]}}" id="{{index}}">
+      </div>
+  </span></li>
+    <li class="game game-spacer">&nbsp; <span> <button type="submit" name="{{index}}">Submit</button></span></li>
+    <li class="game game-bottom ">{{bracket_list[index + 1][0]}}<span>
+
+        <input type="text" value="{{bracket_list[index + 1][1]}}" id="{{index + 1}}">
+
+      </span></li>
+    </li>
+      
+
+    <li class="spacer">&nbsp;</li>
+    {% endif%}
+    {% endif %}
+    
+    {%if bracket_list[index][1] != 0 or bracket_list[index + 1][1] != 0%}
+
+    {% if (index % 2) != 0%}
+    <li class="game game-top ">{{bracket_list[index][0]}} <span>
+      <div>
+        {{bracket_list[index][1]}}
+      </div>
+  </span></li>
+    <li class="game game-spacer">&nbsp;
+    <li class="game game-bottom ">{{bracket_list[index + 1][0]}}<span>
+
+        {{bracket_list[index + 1][1]}}
+
+      </span></li>
+    </li>
+      
+
+    <li class="spacer">&nbsp;</li>
+    {% endif%}
+    
+    {% endif %}
+
+    {% endfor %}
+  </ul>
+  {% endfor %}
+ 
+</main>
+
+
+<script>
+  // Get all buttons
+  const buttons = document.querySelectorAll('button');
+
+  // Add click event listener to each button
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+
+      console.log("Here")
+
+      // Get the index from the button's name attribute
+      const index = button.getAttribute('name');
+
+      console.log("index: " + index)
+
+      // Find the corresponding scores
+      const input1 = document.getElementById(index);
+      const input2 = document.getElementById(String(Number(index) + 1));
+
+      // Retrieve code value
+      const codeDiv = document.getElementById("code");
+      const code = codeDiv.getAttribute('name');
+
+
+      console.log("Here")
+
+      console.log(input1)
+      // Retrieve scores
+      const score1 = input1.value;
+      const score2 = input2.value;
+
+      // Prepare data to send
+      const data = {
+        "index1": index,
+        "index2": String(Number(index) + 1),
+        "score1": score1,
+        "score2": score2,
+        "code": code
+      };
+
+      // Send a POST request to the specified URL
+      fetch('/editbracket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Handle response data if needed
+        console.log('Response:', data);
+
+        // Reload the page
+        location.reload();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  });
+
+</script>
 </body>
