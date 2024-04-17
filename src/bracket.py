@@ -19,12 +19,23 @@ from bracket_logic import Bracket
 from database import get_bracket_from_code, update_bracket
 
 import random
+import CASClient as CASClient
+import database
 
 
 #-----------------------------------------------------------------------
+secret_key = 'RyansBigOlBalls'
 
 app = flask.Flask(__name__, template_folder='templates')
-DATABASE_URL = 'file:reg.sqlite?mode=ro'
+app.secret_key = secret_key
+# DATABASE_URL = 'file:reg.sqlite?mode=ro'
+_cas = CASClient.CASClient()
+
+# private method that redirects to landing page
+# if user is not logged in with CAS
+# or if user is logged in with CAS, but doesn't have entry in DB
+def redirect_login():
+    return not _cas.is_logged_in() or not database.is_user_created(_cas.authenticate())
 
 #-----------------------------------------------------------------------
 
@@ -38,14 +49,39 @@ DATABASE_URL = 'file:reg.sqlite?mode=ro'
 @app.route('/index', methods=['GET'])
 # loads basic page with course results from query
 def index():
-    html_code = flask.render_template('index.html')
+    if redirect_login():
+        netid = None
+    else:
+        netid = _cas.authenticate()
+        netid = netid.rstrip()
+    html_code = flask.render_template('index.html', user=netid)
     response = flask.make_response(html_code)
     return response
+
+@app.route('/login', methods=['GET'])
+def login():
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+    # if _db.is_blacklisted(netid):
+    #     _db._add_admin_log(
+    #         f'blacklisted user {netid} attempted to access the app')
+    #     return flask.make_response(flask.render_template('blacklisted.html'))
+
+    database.add_system_log('user', netid, f'Login by user {netid}')
+
+    if not database.is_user_created(netid):
+        database.create_user(netid)
+
+    return redirect(url_for('index'))
 
 # displays when url is regdetails, course specific page
 @app.route('/createbracket', methods=['GET'])
 
 def create_bracket():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
     # Take in query
     name = flask.request.args.get('name')
     if name is None:
@@ -61,6 +97,11 @@ def create_bracket():
 
 @app.route('/createbracket/addteams/', methods=['GET'])
 def add_teams():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+
     name = flask.request.args.get('name')
 
     #Lucas - Potential non-integer could be passed - have to account for this
@@ -80,6 +121,11 @@ def add_teams():
 
 @app.route('/createbracket/confirmation/', methods=['GET'])
 def bracket_confirmation():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+
     code = __generate_code__()
     
     # get cookies
@@ -92,7 +138,7 @@ def bracket_confirmation():
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
 
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
 
     response = flask.make_response(html_code)
 
@@ -113,13 +159,11 @@ def store_bracket():
     bracket = Bracket("", players)
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
-    code = flask.request.form.get("code")
+    code = int(flask.request.form.get("code"))
+    owner = str(flask.request.form.get("owner"))
 
     #Lucas - Put the bracket to the database
-    bracket.store(code)
-
-    # return redirect(url_for('run_bracket', code=code))
-    # return redirect(url_for('view_created_bracket', code=code))
+    bracket.store(code, owner)
 
     return redirect(url_for('view_bracket_with_code', code=code))
 

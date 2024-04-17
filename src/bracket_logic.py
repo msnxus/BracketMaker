@@ -188,10 +188,10 @@ class Bracket():
         self.name = deser[0]
         self._bracket_list = deser[1]
 
-    #Stores this bracket in the database
-    def store(self, code):
+    #Stores this bracket in the data base
+    def store(self, code, netid):
         ser = self.serialize()
-        database.create_bracket(code, ser)
+        database.create_bracket(code, ser, netid)
 
     #Retrieves bracket with said code from database
     def load(self, code):

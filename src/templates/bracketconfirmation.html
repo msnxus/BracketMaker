@@ -18,7 +18,8 @@
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
     <form action="/storebracket/"  method="post">
-        <input type="text" name="code" value= "{{ code }}" />
+        Code: <input type="text" name="code" value= "{{ code }}" />
+        Owner: <input type="text" name="owner" value="{{ netid }}" readonly/>
         <input type="submit" value="Create Bracket"/>
     </form>
     <br>
