@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>View a Bracket</title>
-  </head>
-  <body>
-    {% include 'header.html' %}
-    <h1 align="center">View a Bracket</h1>
-    <hr>
 
-    <form action="/viewbracket/?" method="get">
-        <table>
-          <tr>
-            <td align="right">Code:</td>
-            <th><input type="text" name="code" value="{{code}}" /></th>
-          </tr>
-          <tr>
-          <td></td>
-          <td><input type="submit" /></td>
-        </tr>
-        </table>
+<head>
+  <title>View a Bracket</title>
+</head>
+
+<body>
+  {% include 'header.html' %}
+  <h1 align="center">View a Bracket</h1>
+  <hr>
+
+
+  <form action="/viewbracket/?" method="get">
+    <table>
+      <tr>
+        <td align="right">Code:</td>
+        <th><input type="text" name="code" value="{{code}}" /></th>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type="submit" /></td>
+      </tr>
+    </table>
+    {% if error_message != 'None' %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
 
 
 
     <br>
     {% include 'footer.html' %}
-    </body>
+</body>
+
 </html>

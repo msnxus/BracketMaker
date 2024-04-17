@@ -9,7 +9,8 @@ import sys
 import contextlib
 import sqlite3
 import flask
-from flask import redirect, url_for
+from flask import redirect, url_for, Flask, request, jsonify
+
 
 # -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
 # from src.bracket_logic import Bracket
@@ -91,6 +92,7 @@ def bracket_confirmation():
 
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
+        
 
     html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code)
 
@@ -103,6 +105,8 @@ def bracket_confirmation():
     ser_bracket = bracket.serialize()
 
     response.set_cookie("bracket", ser_bracket)
+    # response.set_cookie("team_names", team_names)
+
 
     return response
 
@@ -127,9 +131,28 @@ def store_bracket():
     #Lucas - Put the bracket to the database
     code_exists = bracket.store(code)
     if code_exists:
-        html_code = flask.render_template(
-                        'error.html',
-                        message = 'A bracket with this code already exists. Please create a new code.')
+        error_message =  'A bracket with this code already exists. Please create a new code.'
+        team_names = []
+        # team_names = (flask.request.cookies.get("team_names"))
+
+        teams = int(flask.request.cookies.get("teams"))
+        print("TEAMSSSSSSSSS", teams)
+        name = flask.request.cookies.get("name")
+        for team in range(1, teams+1):
+            team_names.append(flask.request.args.get("team%s" % (team)))
+        print("TEAMSSSSSSSSS", team_names)
+
+
+        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message)
+        response = flask.make_response(html_code)
+        bracket = Bracket(name, team_names)
+        ser_bracket = bracket.serialize()
+
+        response.set_cookie("bracket", ser_bracket)
+        return response
+        # html_code = flask.render_template(
+        #                 'error.html',
+        #                 message = 'A bracket with this code already exists. Please create a new code.')
         
         # MAKE THIS JUST APPEAR ON SCREEN, NOT MAKE A NEW SCREEN, ADD BUTTON
         response = flask.make_response(html_code)
@@ -145,9 +168,19 @@ def store_bracket():
 def view_bracket_with_code():
     players = []
     bracket = Bracket("", players)
-
     code = flask.request.args.get("code")
+
+    code_exists = get_bracket_from_code(code)
+    if not code_exists:
+        error_message =  'A bracket with this code does not exist. Please enter a valid code.'
+
+        html_code = flask.render_template('viewbracket.html', code=code, error_message = error_message)
+        response = flask.make_response(html_code)
+        return response
+
+
     #NEXT: ENTERING A CODE TO A BRACKET THAT DOESN'T APPEAR CAUSES ERROR
+
     bracket.load(code)
 
     rounds = int(bracket.max_round()) + 1
@@ -192,8 +225,12 @@ def view_bracket():
     code = flask.request.args.get('code')
     if code is None:
         code = ''
+    error_message = 'None'
+    code_exists = get_bracket_from_code(code)
+    if not code_exists:
+         error_message =  'A bracket with this code does not exist. Please enter a valid code.'
 
-    html_code = flask.render_template('viewbracket.html', code=code)
+    html_code = flask.render_template('viewbracket.html', code=code, error_message = error_message)
     response = flask.make_response(html_code)
     return response
 
@@ -207,6 +244,7 @@ def __generate_code__():
      
 # Takes in the bracket Code and outputs the name of the bracket
 def __code_to_name__(code):
+
     # insert code
     return "Smash Bros"
 

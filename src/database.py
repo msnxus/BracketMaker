@@ -68,6 +68,7 @@ def get_bracket_from_code(code):
                 else:
                     print("No bracket found with the given code.")
                     return False
+                
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)

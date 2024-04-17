@@ -22,6 +22,10 @@
         <input type="submit" value="Create Bracket"/>
     </form>
     <br>
+    {% if error_message != 'None' %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
     {% include 'footer.html' %}
   </body>
 </html>
