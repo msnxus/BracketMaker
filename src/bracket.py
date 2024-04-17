@@ -58,14 +58,15 @@ def index():
     response = flask.make_response(html_code)
     return response
 
+@app.route('/logout', methods=['GET'])
+def logout():
+    _cas.logout()
+    return redirect(url_for('index'))
+
 @app.route('/login', methods=['GET'])
 def login():
     netid = _cas.authenticate()
     netid = netid.rstrip()
-    # if _db.is_blacklisted(netid):
-    #     _db._add_admin_log(
-    #         f'blacklisted user {netid} attempted to access the app')
-    #     return flask.make_response(flask.render_template('blacklisted.html'))
 
     database.add_system_log('user', netid, f'Login by user {netid}')
 
@@ -96,10 +97,18 @@ def create_bracket():
 
 @app.route('/viewbracket/', methods=['GET'])
 def temp_bracket():
+    code = flask.request.args.get("code")
+    if redirect_login():
+        netid = None
+    else:
+        netid = _cas.authenticate()
+        netid = netid.rstrip()
+    if database.is_owner(code, netid):
+        return redirect(url_for('view_bracket_with_code', code=code))
+    
     players = []
     bracket = Bracket("", players)
 
-    code = flask.request.args.get("code")
     bracket.load(code)
 
 
@@ -191,12 +200,20 @@ def store_bracket():
  # FROM CREATE BRACKET
 @app.route('/editbracket/', methods=['GET'])
 def view_bracket_with_code():
+    code = flask.request.args.get("code")
+
+    if redirect_login():
+        netid = None
+    else:
+        netid = _cas.authenticate()
+        netid = netid.rstrip()
+    if not database.is_owner(code, netid):
+        return redirect(url_for('temp_bracket', code=code))
+    
     players = []
     bracket = Bracket("", players)
 
-    code = flask.request.args.get("code")
     bracket.load(code)
-
 
     rounds = int(bracket.max_round()) + 1
     bracket_list = bracket.bracket_list()

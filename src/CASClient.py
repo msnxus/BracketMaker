@@ -84,8 +84,6 @@ class CASClient:
             # Delete the user's username from the session.
             session.pop('username')
 
-        # Redirect the browser to the landing page.
-        abort(redirect('landing'))
 
 # -----------------------------------------------------------------------
 

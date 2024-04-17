@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # You will need to set up 
 
-DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
+DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password='cos333'"
 # DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
 # DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
 
@@ -107,6 +107,17 @@ def is_user_created(netid):
                 with connection.cursor() as cursor:
                     cursor.execute("SELECT netid FROM users WHERE netid = %s", (netid.rstrip(),))
                     return cursor.fetchone() is not None
+    except psycopg2.Error as e:
+        print(e, file=sys.stderr)
+        return False
+
+def is_owner(code, netid):
+    try:
+        with psycopg2.connect(DATABASE_URL) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT owner FROM bracket WHERE code = %s", (code,))
+                    if cursor.fetchone()[0] == netid: return True
+                    return False
     except psycopg2.Error as e:
         print(e, file=sys.stderr)
         return False
