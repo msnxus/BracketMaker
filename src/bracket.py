@@ -228,7 +228,6 @@ def view_bracket_with_code():
 
 @app.route('/editbracket/', methods = ['POST'])
 def update_scores():
-    print("POST-----------------")
     code = flask.request.args.get('code')
     data = get_bracket_from_code(code)
     bracket = data[0][1]
