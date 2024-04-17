@@ -40,21 +40,77 @@ class Bracket():
         self.name = name
         self.init_bracket(players)
         return
+    
+    # Get ordering of indices
+    def __seed__(bracketsize):
+        print('bracketsize', bracketsize)
+
+        nbr_bits_required = len(bin(bracketsize)) - 3
+        binary_seeds = [[0] * nbr_bits_required for _ in range(bracketsize)]
+
+        for i in range(nbr_bits_required):
+            binary_seeds[0][i] = 0
+
+        for col in range(nbr_bits_required):
+            for row in range(1, bracketsize):
+                if row % (2 ** (col + 1)) == 0:
+                    binary_seeds[row][col] = binary_seeds[row - 1][col]
+                else:
+                    binary_seeds[row][col] = 1 if binary_seeds[row - 1][col] == 0 else 0
+
+        result = []
+        for i in range(bracketsize):
+            binary_string = ''.join(map(str, binary_seeds[i]))
+            if binary_string is '':
+                binary_string = '0'
+            decimal_value = int(binary_string, 2) + 1
+            result.append(decimal_value)
+        return result
+
+    
+    def __create_matchups__(temp_teams, bracket_size):
+        ordering = Bracket.__seed__(bracket_size)
+        print('ordering:', ordering)
+        final = []
+        for i in range(bracket_size):
+            final.append([temp_teams[ordering[i]-1], 0])
+        print("---------------",final)
+
+
+        # print(Bracket.__seed__(temp_teams))
+        return final
+
   
     def init_bracket(self, players):
         teams = len(players)
         bracket_size = closest_power_of_two(teams)
         self._bracket_list.append(teams)
         i = 0
+
+        # Add the plaers and byes in order. Should be power of two's
+        temp_teams = []
         for player in players:
-            self._bracket_list.append([player, 0])
+            temp_teams.append(player)
             i += 1
         # Append None for missing teams of all games
         for j in range(bracket_size-i):
-            self._bracket_list.append(["Bye", 0])
-        # Append None for the winners of all games
+            temp_teams.append("Bye")
+        # print(temp_teams)
+        # Enter players into real bracket based on matchup (1-16, 2-15, ...)
+        # NEXT STEP: Want it to be (1-16, 8-9 ... 7-10, 2-15)
+        
+
+        output = Bracket.__create_matchups__(temp_teams, bracket_size)
+        print(output)
+        
+        print(self._bracket_list)
+        print("TEST!!!!")
+        self._bracket_list += output
+        print(self._bracket_list)
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
+        print(self._bracket_list)
+        # return self._bracket_list NO NEED TO RETURN 
 
     # Given player and round return index in underlying bracketlist
     # If nonreal round or nonexistent player return None
@@ -221,10 +277,11 @@ class Bracket():
                 round = self.get_round(i)
                 player1 = self._bracket_list[i][0]
                 player2 = self._bracket_list[i+1][0]
-                if self.has_bye(player1, round):
+                bye = self.has_bye(player1, round)
+                if bye == 1:
                     winner = player1
-                # elif self.has_bye(player2, round):
-                #     winner = player2
+                elif bye == 0:
+                    winner = player2
                 else:
                     winner = self.determine_winner(player1, player2, round)
                 if winner != "tie":
@@ -284,8 +341,10 @@ class Bracket():
 
         #checks if subsequent index is None to see if the player has a bye
         if self._bracket_list[index+1][0] == "Bye":
-            return True
-        return False
+            return 1 # Player against is BYE
+        elif player == "Bye":
+            return 0 # Player is BYE
+        return 2 # No BYEs
         
 
 #-----------------------------------------------------------------------

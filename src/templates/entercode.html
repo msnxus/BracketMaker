@@ -7,21 +7,18 @@
     {% include 'header.html' %}
     <h1 align="center">View a Bracket</h1>
     <hr>
-
     <form action="/viewbracket/?" method="get">
-        <table>
-          <tr>
-            <td align="right">Code:</td>
-            <th><input type="text" name="code" value="{{code}}" /></th>
-          </tr>
-          <tr>
+      <table>
+        <tr>
+          <td align="right">Code:</td>
+          <th><input type="text" name="code" value="{{code}}" /></th>
+        </tr>
+        <tr>
           <td></td>
           <td><input type="submit" /></td>
         </tr>
-        </table>
-
-
-
+      </table>
+    </form>
     <br>
     {% include 'footer.html' %}
     </body>
