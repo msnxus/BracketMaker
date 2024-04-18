@@ -7,10 +7,12 @@
     <h1 align="center">Welcome to BracketMaker</h1>
     {% if user != None %}
       <h1 align="center">Welcome, {{user}}!</h1>
-      <form align='center' action="/logout" method="get"><input type="submit" value="Logout"></form>
+      <form align='right' action="/logout" method="get"><input type="submit" value="Logout"></form>
     {% else %}
-    <form align='center' action="/login" method="get"><input type="submit" value="Login"></form>
+    <form align='right' action="/login" method="get"><input type="submit" value="Login"></form>
     {% endif %}
+    {% include 'index_directions.html'%}
+
     <hr>
     <form align='center' action="/createbracket" method="get">
         <input type="submit" value="Create a Bracket">
