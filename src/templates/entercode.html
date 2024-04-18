@@ -6,17 +6,20 @@
   <body>
     {% include 'header.html' %}
     <h1 align="center">View a Bracket</h1>
+    {% include 'entercode_directions.html'%}
+
     <hr>
 
     <form action="/entercode/?" method="get">
         <table>
           <tr>
             <td align="right">Code:</td>
-            <th><input type="text" name="code" value="{{code}}" /></th>
+            <th><input type="text" name="code" value="{{code}}" />
+            </th>
           </tr>
           <tr>
           <td></td>
-          <td><input type="submit" /></td>
+          <td> <input type="submit" value="Search"/></td>
         </tr>
         </table>
         {% if error_message != 'None' %}
