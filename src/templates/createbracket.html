@@ -6,6 +6,8 @@
   <body>
     {% include 'header.html' %}
     <h1 align="center">Create a Bracket</h1>
+    {% include 'createbracket_directions.html'%}
+
     <hr>
 
     <form action="/createbracket/addteams/?" method="get">
@@ -20,7 +22,7 @@
           </tr>
           <tr>
             <td></td>
-            <td><input type="submit" /></td>
+            <td><input type="submit" value="Continue"/></td>
           </tr>
         </table>
     <br>

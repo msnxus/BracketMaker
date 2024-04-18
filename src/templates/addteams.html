@@ -7,6 +7,8 @@
     {% include 'header.html' %}
     <h1 align='center'> Welcome to {{name}} Bracket</h1>
     <h1 align='center'> There are {{teams}} teams</h1>
+    {% include 'addteams_directions.html'%}
+
     <hr>
     <form action="/createbracket/confirmation/?" method="get">
       <table>
