@@ -14,7 +14,7 @@
 
     {% endfor %}
 
-    <h3> Below is your bracket code. Click this button to create you bracket</h3>
+    <h3> Below is your bracket code. Click this button to create your bracket</h3>
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
     <form action="/storebracket/"  method="post">
@@ -23,6 +23,10 @@
         <input type="submit" value="Create Bracket"/>
     </form>
     <br>
+    {% if error_message != 'None' %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
     {% include 'footer.html' %}
   </body>
 </html>

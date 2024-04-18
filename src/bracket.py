@@ -9,7 +9,8 @@ import sys
 import contextlib
 import sqlite3
 import flask
-from flask import redirect, url_for
+from flask import redirect, url_for, Flask, request, jsonify
+
 
 # -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
 # from src.bracket_logic import Bracket
@@ -95,7 +96,7 @@ def create_bracket():
     response = flask.make_response(html_code)
     return response
 
-@app.route('/viewbracket/', methods=['GET'])
+@app.route('/viewbracketpage/', methods=['GET'])
 def temp_bracket():
     code = flask.request.args.get("code")
     if redirect_login():
@@ -108,6 +109,7 @@ def temp_bracket():
     
     players = []
     bracket = Bracket("", players)
+    
 
     bracket.load(code)
 
@@ -178,6 +180,8 @@ def bracket_confirmation():
     ser_bracket = bracket.serialize()
 
     response.set_cookie("bracket", ser_bracket)
+    # response.set_cookie("team_names", team_names)
+
 
     return response
 
@@ -187,13 +191,43 @@ def store_bracket():
     #Here we need to actually grab the bracket and put it in the database
     players = []
     bracket = Bracket("", players) # ADD TEAM NAME
+    # try:
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
     code = int(flask.request.form.get("code"))
     owner = str(flask.request.form.get("owner"))
 
-    #Lucas - Put the bracket to the database
-    bracket.store(code, owner)
+    code_exists = bracket.store(code, owner)
+    if code_exists:
+        error_message =  'A bracket with this code already exists. Please create a new code.'
+        team_names = []
+        # team_names = (flask.request.cookies.get("team_names"))
+
+        teams = int(flask.request.cookies.get("teams"))
+        print("TEAMSSSSSSSSS", teams)
+        name = flask.request.cookies.get("name")
+        for team in range(1, teams+1):
+            team_names.append(flask.request.args.get("team%s" % (team)))
+        print("TEAMSSSSSSSSS", team_names)
+
+
+        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message)
+        response = flask.make_response(html_code)
+        bracket = Bracket(name, team_names)
+        ser_bracket = bracket.serialize()
+
+        response.set_cookie("bracket", ser_bracket)
+        return response
+        # html_code = flask.render_template(
+        #                 'error.html',
+        #                 message = 'A bracket with this code already exists. Please create a new code.')
+        
+        # MAKE THIS JUST APPEAR ON SCREEN, NOT MAKE A NEW SCREEN, ADD BUTTON
+        response = flask.make_response(html_code)
+        return response
+
+    # return redirect(url_for('run_bracket', code=code))
+    # return redirect(url_for('view_created_bracket', code=code))
 
     return redirect(url_for('view_bracket_with_code', code=code))
 
@@ -212,6 +246,18 @@ def view_bracket_with_code():
     
     players = []
     bracket = Bracket("", players)
+    code = flask.request.args.get("code")
+
+    code_exists = get_bracket_from_code(code)
+    if not code_exists:
+        error_message =  'A bracket with this code does not exist. Please enter a valid code.'
+
+        html_code = flask.render_template('entercode.html', code=code, error_message = error_message)
+        response = flask.make_response(html_code)
+        return response
+
+
+    #NEXT: ENTERING A CODE TO A BRACKET THAT DOESN'T APPEAR CAUSES ERROR
 
     bracket.load(code)
 
@@ -250,16 +296,27 @@ def update_scores():
     return flask.redirect(f"/editbracket/?code={code}")
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
-@app.route('/entercode', methods=['GET'])
+@app.route('/entercode/', methods=['GET'])
 def view_bracket():
     # Take in query
     code = flask.request.args.get('code')
     if code is None:
         code = ''
+    error_message = 'None'
+    code_exists = get_bracket_from_code(code)
+    if code == '':
+        html_code = flask.render_template('entercode.html', code=code, error_message = error_message)
+        response = flask.make_response(html_code)
+        return response
+    
+    if code_exists == False and code != '':
+        error_message = 'A bracket with this code does not exist. Please enter a valid code.'
 
-    html_code = flask.render_template('entercode.html', code=code)
-    response = flask.make_response(html_code)
-    return response
+        html_code = flask.render_template('entercode.html', code=code, error_message = error_message)
+        response = flask.make_response(html_code)
+        return response
+    
+    return redirect(url_for('temp_bracket', code=code))
 
 def __generate_code__():
     # generate random 4 digit code
@@ -271,6 +328,7 @@ def __generate_code__():
 
 # Takes in the bracket Code and outputs the name of the bracket
 def __code_to_name__(code):
+
     # insert code
     return "Smash Bros"
 

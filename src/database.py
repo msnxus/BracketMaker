@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 
 # You will need to set up 
 
-DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password='cos333'"
+# DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password='cos333'"
+DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
 # DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
 # DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
 
@@ -43,8 +44,13 @@ def initialize():
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+    
 
 def create_bracket(code, ser_bracket, netid):
+    if get_bracket_from_code(code) != False:
+        print("A bracket with code", code, "already exists. Please create a new code.")
+        return True
+
     stmt_str = "INSERT INTO bracket (code, ser_bracket, owner) VALUES (%s, %s, %s)"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
@@ -55,6 +61,7 @@ def create_bracket(code, ser_bracket, netid):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+    return False
         
 # Return the bracket corresponding to the code
 def get_bracket_from_code(code):
@@ -62,7 +69,7 @@ def get_bracket_from_code(code):
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(stmt_str, (code,))
+                cursor.execute(stmt_str, (str(code),))
                 row = cursor.fetchone()
                 if row:
                     # print("Bracket:", row)
@@ -70,6 +77,7 @@ def get_bracket_from_code(code):
                 else:
                     print("No bracket found with the given code.")
                     return False
+                
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
@@ -85,7 +93,6 @@ def update_bracket(code, bracket):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
-
 # Adds a system log into the database
 def add_system_log(type, netid=None, description=''):
     try:
@@ -116,7 +123,9 @@ def is_owner(code, netid):
         with psycopg2.connect(DATABASE_URL) as connection:
                 with connection.cursor() as cursor:
                     cursor.execute("SELECT owner FROM bracket WHERE code = %s", (code,))
-                    if cursor.fetchone()[0] == netid: return True
+                    id = cursor.fetchone()
+                    if id != None:
+                        if id[0] == netid: return True
                     return False
     except psycopg2.Error as e:
         print(e, file=sys.stderr)
