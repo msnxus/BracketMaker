@@ -4,7 +4,7 @@
     <title>BracketMaker Homepage</title>
   </head>
   <body>
-    <h1 align="center">Welcome to BracketMaker</h1>
+    {% include 'header.html'%}
     {% if user != None %}
       <h1 align="center">Welcome, {{user}}!</h1>
       <form align='right' action="/logout" method="get"><input type="submit" value="Logout"></form>
