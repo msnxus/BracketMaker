@@ -169,7 +169,7 @@ def bracket_confirmation():
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
 
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, name=name)
 
     response = flask.make_response(html_code)
 
@@ -211,7 +211,7 @@ def store_bracket():
         print("TEAMSSSSSSSSS", team_names)
 
 
-        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message)
+        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message, name=name)
         response = flask.make_response(html_code)
         bracket = Bracket(name, team_names)
         ser_bracket = bracket.serialize()

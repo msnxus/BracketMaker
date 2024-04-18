@@ -5,16 +5,11 @@
   </head>
   <body>
     {% include 'header.html' %}
+    <h1 align='center'> Welcome to {{name}} Bracket</h1>
 
-    <h1> Here are your teams</h1>
 
-    {% for team in team_names%}
-
-    <h2> {{team}} </h2>
-
-    {% endfor %}
-
-    <h3> Below is your bracket code. Click this button to create your bracket</h3>
+    
+    {% include 'bracketconfirmation_directions.html' %}
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
     <form action="/storebracket/"  method="post">
@@ -26,6 +21,15 @@
     {% if error_message != 'None' %}
     <p style="color: red;">{{ error_message }}</p>
     {% endif %}
+
+
+    <h3> Here are your teams</h3>
+
+    {% for team in team_names%}
+
+    <h2> {{team}} </h2>
+
+    {% endfor %}
 
     {% include 'footer.html' %}
   </body>
