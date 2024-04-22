@@ -14,7 +14,11 @@
         {% for team in range(1, teams + 1) %}
           <tr>
             <td align="right">Team {{team}}:</td>
-            <td><input type="text" name={{"team%s" % (team)}} /></td>
+            {% if team_names is defined %}
+              <td><input type="text" value="{{team_names[team-1]}}" name={{"team%s" % (team)}} /></td>
+            {% else %}
+              <td><input type="text" name={{"team%s" % (team)}} /></td>
+            {% endif %}
           </tr>
         {% endfor %}
 
@@ -25,6 +29,9 @@
         </tr>
       </table>
     </form>
+    {% if error_message != 'None' %}
+      <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
     <script>
       function setFormAction(action) {
         document.getElementById("confirmationForm").action = action;

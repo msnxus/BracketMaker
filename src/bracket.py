@@ -169,6 +169,13 @@ def bracket_seeding_confirmation():
 
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
+    team_set = set(team_names)
+    duplicates = len(team_set) != len(team_names)
+    if duplicates:
+        error_message = "Please do not enter teams with duplicate names!"
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
+        response = flask.make_response(html_code)
+        return response
 
     html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
 
@@ -204,8 +211,15 @@ def bracket_random_confirmation():
 
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
-    random.shuffle(team_names)
+    team_set = set(team_names)
+    duplicates = len(team_set) != len(team_names)
+    if duplicates:
+        error_message = "Please do not enter teams with duplicate names!"
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
+        response = flask.make_response(html_code)
+        return response
     
+    random.shuffle(team_names)
     html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
 
     response = flask.make_response(html_code)
@@ -282,8 +296,6 @@ def view_bracket_with_code():
     
     players = []
     bracket = Bracket("", players)
-    code = flask.request.args.get("code")
-
     code_exists = get_bracket_from_code(code)
     if not code_exists:
         error_message =  'A bracket with this code does not exist. Please enter a valid code.'
