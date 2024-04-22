@@ -10,6 +10,7 @@ import contextlib
 import sqlite3
 import flask
 from flask import redirect, url_for, Flask, request, jsonify
+import random
 
 
 # -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
@@ -150,8 +151,8 @@ def add_teams():
 
     return response
 
-@app.route('/createbracket/confirmation/', methods=['GET'])
-def bracket_confirmation():
+@app.route('/createbracket/seeding_confirmation/', methods=['GET'])
+def bracket_seeding_confirmation():
     if redirect_login():
         return redirect(url_for('login'))
     netid = _cas.authenticate()
@@ -176,6 +177,41 @@ def bracket_confirmation():
     # Lucas - Make the bracket object
     bracket = Bracket(name, team_names)
 
+
+    ser_bracket = bracket.serialize()
+
+    response.set_cookie("bracket", ser_bracket)
+    # response.set_cookie("team_names", team_names)
+
+
+    return response
+
+@app.route('/createbracket/random_confirmation/', methods=['GET'])
+def bracket_random_confirmation():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+
+    code = __generate_code__()
+
+    # get cookies
+    team_names = []
+    teams = int(flask.request.cookies.get("teams"))
+
+    name = flask.request.cookies.get("name")
+
+
+    for team in range(1, teams+1):
+        team_names.append(flask.request.args.get("team%s" % (team)))
+    random.shuffle(team_names)
+    
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
+
+    response = flask.make_response(html_code)
+
+    # Lucas - Make the bracket object
+    bracket = Bracket(name, team_names)
 
     ser_bracket = bracket.serialize()
 
