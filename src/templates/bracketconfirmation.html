@@ -14,7 +14,7 @@
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
     <form action="/storebracket/"  method="post">
         Code: <input type="text" name="code" value= "{{ code }}" />
-        Owner: <input type="text" name="owner" value="{{ netid }}" readonly/>
+        Owner: {{ netid }} &nbsp &nbsp
         <input type="submit" value="Create Bracket"/>
     </form>
     <br>
