@@ -171,6 +171,13 @@ def bracket_seeding_confirmation():
         team_names.append(flask.request.args.get("team%s" % (team)))
     team_set = set(team_names)
     duplicates = len(team_set) != len(team_names)
+    
+    if '' in team_names:
+        error_message = "Please make sure that all names are entered!"
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
+        response = flask.make_response(html_code)
+        return response
+    
     if duplicates:
         error_message = "Please do not enter teams with duplicate names!"
         html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
@@ -213,6 +220,13 @@ def bracket_random_confirmation():
         team_names.append(flask.request.args.get("team%s" % (team)))
     team_set = set(team_names)
     duplicates = len(team_set) != len(team_names)
+    
+    if '' in team_names:
+        error_message = "Please make sure that all names are entered!"
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
+        response = flask.make_response(html_code)
+        return response
+    
     if duplicates:
         error_message = "Please do not enter teams with duplicate names!"
         html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
