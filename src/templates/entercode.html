@@ -14,19 +14,79 @@
         <table>
           <tr>
             <td align="right">Code:</td>
-            <th><input type="text" name="code" value="{{code}}" />
-            </th>
+            <th><input type="text" name="code" id="code" value="{{code}}" /></th>
           </tr>
           <tr>
           <td></td>
           <td> <input type="submit" value="Search"/></td>
         </tr>
         </table>
+      </form>
         {% if error_message != 'None' %}
         <p style = "color: red;">{{ error_message }}</p>
         {% endif %}
 
     <br>
+    <!--generate the codes table--> 
+    <div id="resultsDiv"></div>
+    <br>
     {% include 'footer.html' %}
+
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+    </script>
+
+ <script>
+
+ "use strict";
+
+
+ function handleResponse(data) {
+    $("#resultsDiv").html(data);
+ }
+
+ function handleError(request) {
+    if (request.statusText !== "abort")
+    alert("Error: Failed to fetch data from server");
+ }
+
+ let request = null;
+
+ function getResults() {
+    let code = $("#code").val();
+    console.log(code)
+    let encodedCode = encodeURIComponent(code);
+    
+    let url = "/coderesults?code=" + encodedCode;
+
+    if (request !== null)
+        request.abort();
+
+
+    let requestData = {
+        type: "GET",
+        url: url,
+        success: handleResponse,
+        error: handleError
+    };
+    request = $.ajax(requestData);
+ }
+
+ let timer = null;
+
+ function debouncedGetResults() {
+    console.log("HERE")
+    clearTimeout(timer);
+    timer = setTimeout(getResults, 500);
+ }
+
+ function setup() {
+    $("#code").on("input", debouncedGetResults);
+    debouncedGetResults();
+ }
+
+ $("document").ready(setup);
+
+ </script>
     </body>
 </html>

@@ -10,13 +10,17 @@
     {% include 'addteams_directions.html'%}
 
     <hr>
-    <form action="/createbracket/confirmation/?" method="get">
+    <form id="confirmationForm" method="get">
       <table>
   
         {% for team in range(1, teams + 1) %}
           <tr>
             <td align="right">Team {{team}}:</td>
-            <td><input type="text" name={{"team%s" % (team)}} /></td>
+            {% if team_names is defined %}
+              <td><input type="text" value="{{team_names[team-1]}}" name={{"team%s" % (team)}} /></td>
+            {% else %}
+              <td><input type="text" name={{"team%s" % (team)}} /></td>
+            {% endif %}
           </tr>
         {% endfor %}
         {% if error_message != 'None' %}
@@ -30,10 +34,21 @@
         {% endif %}
         <tr>
           <td></td>
-          <td><input type="submit" /></td>
+          <td><input type="submit" value="Create with random order" , onclick="setFormAction('/createbracket/random_confirmation/?')" /></td>
+          <td><input type="submit" value="Create with seeding", onclick="setFormAction('/createbracket/seeding_confirmation/?')"/></td>
         </tr>
       </table>
     </form>
+    {% if error_message != 'None' %}
+      <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+    <script>
+      function setFormAction(action) {
+        document.getElementById("confirmationForm").action = action;
+        document.getElementById("confirmationForm").submit();
+      }
+    </script>
+
     <br>
     {% include 'footer.html' %}
     </body>

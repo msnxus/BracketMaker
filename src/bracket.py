@@ -11,6 +11,7 @@ import sqlite3
 import ast
 import flask
 from flask import redirect, url_for, Flask, request, jsonify
+import random
 
 
 # -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
@@ -18,7 +19,7 @@ from flask import redirect, url_for, Flask, request, jsonify
 # from src.database import get_bracket_from_code, update_bracket
 # -------------- UNCOMMENT THESE TO RUN LOCALLY --------------
 from bracket_logic import Bracket
-from database import get_bracket_from_code, update_bracket
+from database import get_bracket_from_code, update_bracket, get_potential_brackets
 
 import random
 import CASClient as CASClient
@@ -166,8 +167,8 @@ def add_teams():
 
     return response
 
-@app.route('/createbracket/confirmation/', methods=['GET'])
-def bracket_confirmation():
+@app.route('/createbracket/seeding_confirmation/', methods=['GET'])
+def bracket_seeding_confirmation():
     if redirect_login():
         return redirect(url_for('login'))
     netid = _cas.authenticate()
@@ -181,19 +182,20 @@ def bracket_confirmation():
 
     name = flask.request.cookies.get("name")
 
-    error = False
-
     for team in range(1, teams+1):
-        if flask.request.args.get("team%s" % (team)) == '':
-            error = True  
         team_names.append(flask.request.args.get("team%s" % (team)))
-    # print("new test", team_names)
-
-    if error:
+    team_set = set(team_names)
+    duplicates = len(team_set) != len(team_names)
+    
+    if '' in team_names:
         error_message = "Please enter a name for each team."
-            # entering in a space for a name works... need to fix 
-        # attempting to save user previous entry
-        html_code = flask.render_template('addteams.html',name=name, teams=teams, team_names = team_names, error_message=error_message)
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
+        response = flask.make_response(html_code)
+        return response
+    
+    if duplicates:
+        error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
         response = flask.make_response(html_code)
         return response
 
@@ -211,6 +213,67 @@ def bracket_confirmation():
     response.set_cookie("team_names", str(team_names))
 
     print("Confirm TEAMSSSSSSSSS", team_names)
+
+    return response
+
+@app.route('/createbracket/random_confirmation/', methods=['GET'])
+def bracket_random_confirmation():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+
+    code = __generate_code__()
+
+    # get cookies
+    team_names = []
+    teams = int(flask.request.cookies.get("teams"))
+
+    name = flask.request.cookies.get("name")
+
+
+    for team in range(1, teams+1):
+        team_names.append(flask.request.args.get("team%s" % (team)))
+    team_set = set(team_names)
+    duplicates = len(team_set) != len(team_names)
+    
+    if '' in team_names:
+        error_message = "Please enter a name for each team."
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
+        response = flask.make_response(html_code)
+        return response
+    
+    if duplicates:
+        error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
+        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
+        response = flask.make_response(html_code)
+        return response
+    
+    # if '' in team_names:
+    #     error_message = "Please make sure that all names are entered!"
+    #     html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
+    #     response = flask.make_response(html_code)
+    #     return response
+    
+    # if duplicates:
+    #     error_message = "Please do not enter teams with duplicate names!"
+    #     html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
+    #     response = flask.make_response(html_code)
+    #     return response
+    
+    random.shuffle(team_names)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, name=name)
+
+    response = flask.make_response(html_code)
+
+    # Lucas - Make the bracket object
+    bracket = Bracket(name, team_names)
+
+    ser_bracket = bracket.serialize()
+
+    response.set_cookie("bracket", ser_bracket)
+    # response.set_cookie("team_names", team_names)
+
 
     return response
 
@@ -279,8 +342,6 @@ def view_bracket_with_code():
     
     players = []
     bracket = Bracket("", players)
-    code = flask.request.args.get("code")
-
     code_exists = get_bracket_from_code(code)
     if not code_exists:
         error_message =  'A bracket with this code does not exist. Please enter a valid code.'
@@ -350,6 +411,20 @@ def view_bracket():
         return response
     
     return redirect(url_for('temp_bracket', code=code))
+
+@app.route('/coderesults')
+def get_results():
+    #Get input
+    code = flask.request.args.get("code")
+
+    print(code)
+
+    table = get_potential_brackets(code)
+
+    #Make html code and response
+    html_code = flask.render_template("results.html", table=table)
+    response = flask.make_response(html_code)
+    return response
 
 def __generate_code__():
     # generate random 4 digit code
