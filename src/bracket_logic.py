@@ -242,9 +242,10 @@ class Bracket():
     
     def load(self, code):
         data = src.database.get_bracket_from_code(code)
-        data = data[0]
-        self.name = data[0]
-        self._bracket_list = data[1]
+        if data != False:
+            data = data[0]
+            self.name = data[0]
+            self._bracket_list = data[1]
 
         
     def get_round(self, index):
