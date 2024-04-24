@@ -12,9 +12,9 @@ import sys
 import os
 import json
 # -------------- COMMENT THIS OUT TO RUN LOCALLY --------------
-import src.database
+# import src.database
 # -------------- UNCOMMENT THIS TO RUN LOCALLY --------------
-# import database
+import database
 
 # Add the parent directory to the Python path
 utilsdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
@@ -230,11 +230,24 @@ class Bracket():
     #Stores this bracket in the data base
     def store(self, code, name, teams, netid):
         ser = self.serialize()
+<<<<<<< HEAD
         return database.create_bracket(code, name, teams, ser, netid)
 
+=======
+        # src.database.create_bracket(code, ser)
+        database.create_bracket(code, ser)
+>>>>>>> 8d44324b0bd5139ec0ea500272425f907d48ac14
     #Retrieves bracket with said code from database
+
+    def update(self, code):
+        ser = self.serialize()
+        # src.database.update_bracket(code, ser)
+        database.update_bracket(code, ser)
+
+    
     def load(self, code):
-        data = src.database.get_bracket_from_code(code)
+        # data = src.database.get_bracket_from_code(code)
+        data = database.get_bracket_from_code(code)
         data = data[0]
         self.name = data[0]
         self._bracket_list = data[1]

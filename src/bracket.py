@@ -15,11 +15,11 @@ import random
 
 
 # -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
-from src.bracket_logic import Bracket
-from src.database import get_bracket_from_code, update_bracket
+# from src.bracket_logic import Bracket
+# from src.database import get_bracket_from_code, update_bracket
 # -------------- UNCOMMENT THESE TO RUN LOCALLY --------------
-# from bracket_logic import Bracket
-# from database import get_bracket_from_code, update_bracket
+from bracket_logic import Bracket
+from database import get_bracket_from_code, update_bracket
 
 import random
 import CASClient as CASClient
@@ -398,7 +398,7 @@ def update_scores():
     print("using this bracket to set winners:", my_bracket.to_string())
     my_bracket.set_winners()
     update_bracket(code, my_bracket.serialize())
-    return flask.redirect(f"/editbracket/?code={code}")
+    return flask.redirect(f"/viewbracket/?code={code}")
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
 @app.route('/entercode/', methods=['GET'])
@@ -452,6 +452,8 @@ def get_results():
     html_code = flask.render_template("results.html", table=table)
     response = flask.make_response(html_code)
     return response
+
+@app.route('/viewbracket', methods=['GET'])
 
 def __generate_code__():
     # generate random 4 digit code

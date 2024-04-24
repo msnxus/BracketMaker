@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 
 # DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
 # DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
-DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
+# DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
+DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='Majorcheck112233!'"
 _initialized = False
 
 def initialize():
@@ -73,6 +74,8 @@ def get_bracket_from_code(code):
     if not _initialized: 
         initialize()
         _initialized = True
+
+    print(code)
     stmt_str = "SELECT ser_bracket FROM bracket WHERE code = %s"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
