@@ -15,11 +15,11 @@ import random
 
 
 # -------------- COMMENT THESE OUT TO RUN LOCALLY --------------
-# from src.bracket_logic import Bracket
-# from src.database import get_bracket_from_code, update_bracket
+from src.bracket_logic import Bracket
+from src.database import get_bracket_from_code, update_bracket
 # -------------- UNCOMMENT THESE TO RUN LOCALLY --------------
-from bracket_logic import Bracket
-from database import get_bracket_from_code, update_bracket
+# from bracket_logic import Bracket
+# from database import get_bracket_from_code, update_bracket
 
 import random
 import CASClient as CASClient
