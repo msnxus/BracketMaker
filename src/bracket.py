@@ -162,6 +162,7 @@ def add_teams():
     #Lucas - There might be problems setting this as a cookie
     response.set_cookie("teams", str(teams))
     response.set_cookie("name", name)
+    # response.set_cookie("team_names", str(team_names))
 
     return response
 
@@ -173,16 +174,28 @@ def bracket_confirmation():
     netid = netid.rstrip()
 
     code = __generate_code__()
-    
-    # get cookies
     team_names = []
+
+    # get cookies
     teams = int(flask.request.cookies.get("teams"))
 
     name = flask.request.cookies.get("name")
 
+    error = False
 
     for team in range(1, teams+1):
+        if flask.request.args.get("team%s" % (team)) == '':
+            error = True  
         team_names.append(flask.request.args.get("team%s" % (team)))
+    # print("new test", team_names)
+
+    if error:
+        error_message = "Please enter a name for each team teams have team name."
+            # entering in a space for a name works... need to fix 
+        # attempting to save user previous entry
+        html_code = flask.render_template('addteams.html',name=name, teams=teams, team_names = team_names, error_message=error_message)
+        response = flask.make_response(html_code)
+        return response
 
     html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, name=name)
 

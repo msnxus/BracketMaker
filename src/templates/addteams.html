@@ -19,7 +19,15 @@
             <td><input type="text" name={{"team%s" % (team)}} /></td>
           </tr>
         {% endfor %}
-
+        {% if error_message != 'None' %}
+        <table>
+          
+          <tr>
+            <td align="left" style="color: red;">{{ error_message }}</td>
+          </tr>
+        </table>
+    
+        {% endif %}
         <tr>
           <td></td>
           <td><input type="submit" /></td>
