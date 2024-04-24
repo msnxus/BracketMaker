@@ -1,31 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Create a Bracket</title>
-  </head>
-  <body>
-    {% include 'header.html' %}
-    <h1 align="center">Create a Bracket</h1>
-    {% include 'createbracket_directions.html'%}
 
-    <hr>
+<head>
+  <title>Create a Bracket</title>
+</head>
 
-    <form action="/createbracket/addteams/?" method="get">
-        <table>
-          <tr>
-            <td align="right">Bracket Name:</td>
-            <th><input type="text" name="name" value="{{name}}" /></th>
-          </tr>
-          <tr>
-            <td align="right">Total Number of Teams:</td>
-            <th><input type="text" name="teams" value="{{teams}}" /></th>
-          </tr>
-          <tr>
-            <td></td>
-            <td><input type="submit" value="Continue"/></td>
-          </tr>
-        </table>
+<body>
+  {% include 'header.html' %}
+  <h1 align="center">Create a Bracket</h1>
+  {% include 'createbracket_directions.html'%}
+
+  <hr>
+
+  <form action="/createbracket/addteams/?" method="get">
+    <table>
+      <tr>
+        <td align="right">Bracket Name:</td>
+        <th><input type="text" name="name" value="{{name}}" /></th>
+      </tr>
+      <tr>
+        <td align="right">Total Number of Teams:</td>
+        <th><input type="text" name="teams" value="{{teams}}" /></th>
+      </tr>
+
+    </table>
+    <table>
+
+      <tr> {% if error_message != 'None' %}
+        <td align="left" style="color: red;">{{ error_message }}</td>
+        {% endif %}
+      </tr>
+    </table>
+    <table>
+
+      <tr>
+        <td></td>
+        <td><input type="submit" value="Continue" /></td>
+      </tr>
+    </table>
     <br>
     {% include 'footer.html' %}
-    </body>
+</body>
+
 </html>
