@@ -190,7 +190,7 @@ def bracket_confirmation():
     # print("new test", team_names)
 
     if error:
-        error_message = "Please enter a name for each team teams have team name."
+        error_message = "Please enter a name for each team."
             # entering in a space for a name works... need to fix 
         # attempting to save user previous entry
         html_code = flask.render_template('addteams.html',name=name, teams=teams, team_names = team_names, error_message=error_message)
