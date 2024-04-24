@@ -52,6 +52,10 @@ def initialize():
     
 
 def create_bracket(code, name, num_players, ser_bracket, netid):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     if get_bracket_from_code(code) != False:
         print("A bracket with code", code, "already exists. Please create a new code.")
         return True
@@ -94,24 +98,10 @@ def get_bracket_from_code(code):
         sys.exit(1)
 
 def get_potential_brackets(code):
-    stmt_str = "SELECT code, ser_bracket FROM bracket WHERE code LIKE %s ESCAPE '/'"
-    try:
-        with psycopg2.connect(DATABASE_URL) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(stmt_str, ('%' + str(code),))
-                table = cursor.fetchall()
-                if table:
-                    # print("Bracket:", row)
-                    return table
-                else:
-                    print("No bracket found with the given code.")
-                    return False
-                
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
-
-def get_potential_brackets(code):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     stmt_str = "SELECT code, ser_bracket FROM bracket WHERE code LIKE %s ESCAPE '/'"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
@@ -131,6 +121,10 @@ def get_potential_brackets(code):
 
 # add all provided players to the players table assoc with the given code
 def store_players_with_code(code, players):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
                 with connection.cursor() as cursor:
@@ -162,6 +156,10 @@ def update_bracket(code, bracket):
         sys.exit(1)
 # Adds a system log into the database
 def add_system_log(type, netid=None, description=''):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
@@ -176,6 +174,10 @@ def add_system_log(type, netid=None, description=''):
 
 # Returns all the info for brackets a player is a part of
 def get_participating_brackets(netid):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
@@ -196,6 +198,10 @@ def get_participating_brackets(netid):
 
 # Returns all the owned brackets in a list
 def get_owned_brackets(netid):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
@@ -210,6 +216,10 @@ def get_owned_brackets(netid):
 
 # Checks if netid exists in users table
 def is_user_created(netid):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
                 with connection.cursor() as cursor:
@@ -220,6 +230,10 @@ def is_user_created(netid):
         return False
 
 def is_owner(code, netid):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
                 with connection.cursor() as cursor:
@@ -234,6 +248,10 @@ def is_owner(code, netid):
 
 # Creates user if it doesn't already exist
 def create_user(netid):
+    global _initialized
+    if not _initialized: 
+        initialize()
+        _initialized = True
     if is_user_created(netid):
         print(f'user {netid} already exists', file=sys.stderr)
         return
