@@ -18,7 +18,7 @@ import random
 # from src.database import get_bracket_from_code, update_bracket
 # -------------- UNCOMMENT THESE TO RUN LOCALLY --------------
 from bracket_logic import Bracket
-from database import get_bracket_from_code, update_bracket
+from database import get_bracket_from_code, update_bracket, get_potential_brackets
 
 import random
 import CASClient as CASClient
@@ -379,6 +379,20 @@ def view_bracket():
         return response
     
     return redirect(url_for('temp_bracket', code=code))
+
+@app.route('/coderesults')
+def get_results():
+    #Get input
+    code = flask.request.args.get("code")
+
+    print(code)
+
+    table = get_potential_brackets(code)
+
+    #Make html code and response
+    html_code = flask.render_template("results.html", table=table)
+    response = flask.make_response(html_code)
+    return response
 
 def __generate_code__():
     # generate random 4 digit code
