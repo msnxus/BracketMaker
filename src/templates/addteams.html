@@ -19,6 +19,8 @@
             {% else %}
               <td><input type="text" name={{"team%s" % (team)}} /></td>
             {% endif %}
+              <td align="right">Netid {{team}}:</td>
+              <td><input type="text" name={{"player%s" % (team)}} placeholder="guest"/></td>
           </tr>
         {% endfor %}
 
