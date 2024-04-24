@@ -23,7 +23,7 @@ from src.database import get_bracket_from_code, update_bracket
 
 import random
 import src.CASClient as CASClient
-import database
+import src.database as database
 
 
 #-----------------------------------------------------------------------
