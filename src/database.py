@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 
 # You will need to set up 
 
-# DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password='cos333'"
-DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
+DATABASE_URL = "dbname='bracket' user='bracket_maker' host='localhost' password='cos333'"
+# DATABASE_URL = "dbname='bracket' user='nn3965' host='localhost' password='4234'"
 # DATABASE_URL = "dbname='bracket' user='postgres' host='localhost' password='cos333'"
 # DATABASE_URL = 'postgres://bracket_sa3u_user:zIWzQ9iIrc21F0EVdRTheCpNZ23nX6Fi@dpg-cobap5779t8c73br7rig-a/bracket_sa3u'
 
@@ -29,7 +29,7 @@ def initialize():
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-    stmt_str = "CREATE TABLE bracket (code CHAR(4) PRIMARY KEY, ser_bracket JSONB, owner TEXT)"
+    stmt_str = "CREATE TABLE bracket (code CHAR(4) PRIMARY KEY, name TEXT, num_players INT, time TIMESTAMP WITHOUT TIME ZONE, ser_bracket JSONB, owner TEXT)"
     stmt_str_syslog = 'CREATE TABLE system_log (id SERIAL PRIMARY KEY,type VARCHAR(255),time TIMESTAMP WITHOUT TIME ZONE,netid VARCHAR(255) NULL,description TEXT NULL)'
     stmt_str_users = 'CREATE TABLE users (netid VARCHAR PRIMARY KEY,email VARCHAR,phone VARCHAR);'
 
@@ -46,16 +46,16 @@ def initialize():
         sys.exit(1)
     
 
-def create_bracket(code, ser_bracket, netid):
+def create_bracket(code, name, num_players, ser_bracket, netid):
     if get_bracket_from_code(code) != False:
         print("A bracket with code", code, "already exists. Please create a new code.")
         return True
-
-    stmt_str = "INSERT INTO bracket (code, ser_bracket, owner) VALUES (%s, %s, %s)"
+    time = datetime.now()
+    stmt_str = "INSERT INTO bracket (code, name, num_players, time, ser_bracket, owner) VALUES (%s, %s, %s, %s, %s, %s)"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(stmt_str, (code, ser_bracket, netid))
+                cursor.execute(stmt_str, (code, name, num_players, time, ser_bracket, netid))
                 connection.commit()
                 print("New Bracket Successfully Created")
     except Exception as ex:
@@ -103,6 +103,20 @@ def add_system_log(type, netid=None, description=''):
                 cursor.execute(stmt_str, (type, time, netid, description))
                 connection.commit()
                 print("syslog logged an event")
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+# Returns all the owned brackets in a list
+def get_owned_brackets(netid):
+    try:
+        with psycopg2.connect(DATABASE_URL) as connection:
+            with connection.cursor() as cursor:
+                time = datetime.now()
+                stmt_str = "SELECT * FROM bracket WHERE owner = %s"
+                cursor.execute(stmt_str, (netid,))
+                connection.commit()
+                return cursor.fetchall()
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)

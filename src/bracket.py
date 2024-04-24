@@ -184,7 +184,7 @@ def bracket_seeding_confirmation():
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_players=teams, bracket_name=name)
 
     response = flask.make_response(html_code)
 
@@ -234,7 +234,7 @@ def bracket_random_confirmation():
         return response
     
     random.shuffle(team_names)
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_players=teams, bracket_name=name)
 
     response = flask.make_response(html_code)
 
@@ -260,8 +260,10 @@ def store_bracket():
 
     code = int(flask.request.form.get("code"))
     owner = str(flask.request.form.get("owner"))
+    name = str(flask.request.form.get("name"))
+    num_players = int(flask.request.form.get("num_players"))
 
-    code_exists = bracket.store(code, owner)
+    code_exists = bracket.store(code, name, num_players, owner)
     if code_exists:
         error_message =  'A bracket with this code already exists. Please create a new code.'
         team_names = []
@@ -379,6 +381,21 @@ def view_bracket():
         return response
     
     return redirect(url_for('temp_bracket', code=code))
+
+# Profile page for user profiles
+@app.route('/profile', methods=['GET'])
+def profile():
+    if redirect_login():
+        return redirect(url_for('login'))
+    
+    netid = _cas.authenticate()
+    user = netid.rstrip()
+
+    hb = database.get_owned_brackets(user)
+
+    html_code = flask.render_template('profile.html', user=user, hosted_brackets=hb)
+    response = flask.make_response(html_code)
+    return response
 
 def __generate_code__():
     # generate random 4 digit code
