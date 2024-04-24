@@ -249,18 +249,6 @@ def bracket_random_confirmation():
         response = flask.make_response(html_code)
         return response
     
-    # if '' in team_names:
-    #     error_message = "Please make sure that all names are entered!"
-    #     html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
-    #     response = flask.make_response(html_code)
-    #     return response
-    
-    # if duplicates:
-    #     error_message = "Please do not enter teams with duplicate names!"
-    #     html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names)
-    #     response = flask.make_response(html_code)
-    #     return response
-    
     random.shuffle(team_names)
     html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, name=name)
 
