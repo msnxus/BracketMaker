@@ -27,7 +27,7 @@ import database
 
 
 #-----------------------------------------------------------------------
-secret_key = 'RyansBigOlBalls'
+secret_key = 'sauce'
 
 app = flask.Flask(__name__, template_folder='templates')
 app.secret_key = secret_key
