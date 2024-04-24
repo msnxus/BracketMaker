@@ -398,7 +398,7 @@ def update_scores():
     print("using this bracket to set winners:", my_bracket.to_string())
     my_bracket.set_winners()
     update_bracket(code, my_bracket.serialize())
-    return flask.redirect(f"/viewbracket/?code={code}")
+    return redirect(url_for(f"/viewbracket/?code={code}"))
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
 @app.route('/entercode/', methods=['GET'])
