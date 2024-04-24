@@ -93,6 +93,7 @@ def create_bracket():
     if teams is None:
         teams = ''
 
+
     html_code = flask.render_template('createbracket.html', name=name, teams=teams)
     response = flask.make_response(html_code)
     return response
@@ -133,14 +134,27 @@ def add_teams():
         return redirect(url_for('login'))
     netid = _cas.authenticate()
     netid = netid.rstrip()
+    
+    teams = flask.request.args.get('teams')
 
     name = flask.request.args.get('name')
+    if name == '':
+        error_message =  'Please enter a name for this bracket.'
+        html_code = flask.render_template('createbracket.html', name=name, teams=teams, error_message=error_message)
 
-    #Lucas - Potential non-integer could be passed - have to account for this
-    teams = int(flask.request.args.get('teams'))
+
+    else:
+        # Lucas - Potential non-integer could be passed - have to account for this
+        # Billy is handling it
+        try: 
+            teams = int(flask.request.args.get('teams'))
+            html_code = flask.render_template('addteams.html',name=name, teams=teams)
+
+        except: 
+            error_message =  'Please enter an integer value for number of teams.'
+            html_code = flask.render_template('createbracket.html', name=name, teams=teams, error_message=error_message)
 
 
-    html_code = flask.render_template('addteams.html',name=name, teams=teams)
 
 
     response = flask.make_response(html_code)
@@ -229,8 +243,8 @@ def store_bracket():
         #                 message = 'A bracket with this code already exists. Please create a new code.')
         
         # MAKE THIS JUST APPEAR ON SCREEN, NOT MAKE A NEW SCREEN, ADD BUTTON
-        response = flask.make_response(html_code)
-        return response
+        # response = flask.make_response(html_code)
+        # return response
 
     # return redirect(url_for('run_bracket', code=code))
     # return redirect(url_for('view_created_bracket', code=code))
