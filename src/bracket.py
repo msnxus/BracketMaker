@@ -303,9 +303,9 @@ def store_bracket():
 
     code_exists = bracket.store(code, name, num_players, owner)
     # team_names = []
-    team_names = (flask.request.cookies.get("team_names"))
+    team_names = (flask.request.cookies.getlist("team_names"))
     # print("please", team_names)
-    team_names = ast.literal_eval(team_names)
+    # team_names = ast.literal_eval(team_names)
 
     name = flask.request.cookies.get("name")
 

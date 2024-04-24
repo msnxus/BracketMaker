@@ -10,18 +10,8 @@
   </head>
   <body>
     {% include 'header.html' %}
-    <h1 align='center'> Welcome to {{name}} Bracket</h1>
+    <h1 align='center'> Welcome to {{ bracket_name }} Bracket</h1>
     {% include 'bracketconfirmation_directions.html' %}
-    <h1> Here are your teams</h1>
-    <table>
-        {% for team, player in zip(team_names, players) %}
-          <tr>
-            <td><h3>{{ team }}</h3></td>
-            <td><h3>{{ player }}</h3></td>
-          </tr>
-        {% endfor %}
-    </table>
-    <h3> Below is your bracket code. Click this button to create your bracket</h3>
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
     <form action="/storebracket/"  method="post">
@@ -39,20 +29,15 @@
     {% if error_message != 'None' %}
     <p style="color: red;">{{ error_message }}</p>
     {% endif %}
-
-
-    <h3> Here are your teams</h3>
-
-    {% for team in team_names%}
-    {% if team == '' %}
-    <h2> [Empty] </h2>
-    {% else %}
-
-    <h2> {{team}} </h2>
-
-    {% endif %}
-    {% endfor %}
-
+    <h1> Here are your teams</h1>
+    <table>
+        {% for team, player in zip(team_names, players) %}
+          <tr>
+            <td><h3>{{ team }}</h3></td>
+            <td><h3>{{ player }}</h3></td>
+          </tr>
+        {% endfor %}
+    </table>
     {% include 'footer.html' %}
   </body>
 </html>
