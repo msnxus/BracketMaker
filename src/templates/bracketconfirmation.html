@@ -26,9 +26,13 @@
     <h3> Here are your teams</h3>
 
     {% for team in team_names%}
+    {% if team == '' %}
+    <h2> [Empty] </h2>
+    {% else %}
 
     <h2> {{team}} </h2>
 
+    {% endif %}
     {% endfor %}
 
     {% include 'footer.html' %}
