@@ -40,21 +40,63 @@ class Bracket():
         self.name = name
         self.init_bracket(players)
         return
+    
+    # Get ordering of indices
+    def __seed__(bracketsize):
+        nbr_bits_required = len(bin(bracketsize)) - 3
+        binary_seeds = [[0] * nbr_bits_required for _ in range(bracketsize)]
+
+        for i in range(nbr_bits_required):
+            binary_seeds[0][i] = 0
+
+        for col in range(nbr_bits_required):
+            for row in range(1, bracketsize):
+                if row % (2 ** (col + 1)) == 0:
+                    binary_seeds[row][col] = binary_seeds[row - 1][col]
+                else:
+                    binary_seeds[row][col] = 1 if binary_seeds[row - 1][col] == 0 else 0
+
+        result = []
+        for i in range(bracketsize):
+            binary_string = ''.join(map(str, binary_seeds[i]))
+            if binary_string == '':
+                binary_string = '0'
+            decimal_value = int(binary_string, 2) + 1
+            result.append(decimal_value)
+        return result
+
+    
+    def __create_matchups__(temp_teams, bracket_size):
+        ordering = Bracket.__seed__(bracket_size)
+        final = []
+        for i in range(bracket_size):
+            final.append([temp_teams[ordering[i]-1], 0])
+        return final
+
   
     def init_bracket(self, players):
         teams = len(players)
         bracket_size = closest_power_of_two(teams)
         self._bracket_list.append(teams)
         i = 0
+
+        # Add the plaers and byes in order. Should be power of two's
+        temp_teams = []
         for player in players:
-            self._bracket_list.append([player, 0])
+            temp_teams.append(player)
             i += 1
         # Append None for missing teams of all games
         for j in range(bracket_size-i):
-            self._bracket_list.append(["Bye", 0])
-        # Append None for the winners of all games
+            temp_teams.append("Bye")
+        # Enter players into real bracket based on matchup (1-16, 2-15, ...)
+        # NEXT STEP: Want it to be (1-16, 8-9 ... 7-10, 2-15)
+        
+
+        output = Bracket.__create_matchups__(temp_teams, bracket_size)
+        self._bracket_list += output
         for i in range(bracket_size-1):
             self._bracket_list.append(None)
+        # return self._bracket_list NO NEED TO RETURN 
 
     # Given player and round return index in underlying bracketlist
     # If nonreal round or nonexistent player return None
@@ -99,7 +141,6 @@ class Bracket():
     
     # Return bracket list
     def bracket_list(self):
-        print(self._bracket_list)
         return self._bracket_list
     
     # Return a list specifying the beggining and ending indicies of a round
@@ -110,7 +151,6 @@ class Bracket():
             round_indicies.append([self.first_index_of_round(round), self.first_index_of_round(round + 1) -1])
 
         round_indicies.append([self.first_index_of_round(self.max_round() - 1), self.first_index_of_round(self.max_round() - 1) + 1])
-        print(round_indicies)
         return round_indicies
     # Return max round
     def max_round(self):
@@ -122,8 +162,6 @@ class Bracket():
         if round >= self.max_round() or round < 0: return None # invalid round
 
         index = self.player_index_by_round(player, round)
-        print("player and round:", player, round)
-        print("player index:", index)
         self._bracket_list[index][1] = score
         
         
@@ -135,39 +173,40 @@ class Bracket():
         if self._bracket_list[new_index] == None:
             self._bracket_list[new_index] = [player, 0]
         elif self._bracket_list[new_index][0] != player:
+            old_player = self._bracket_list[new_index][0]
             self._bracket_list[new_index] = [player, 0]
-            
+            # set the opposing players score to 0
+            if new_index % 2 == 1:
+                self._bracket_list[new_index + 1][1] = 0
+            else:
+                self._bracket_list[new_index - 1][1] = 0
+            opps = self.get_all_opposing_players(old_player, round+1)
+            for opp in opps:
+                self._bracket_list[opp[1]] = None
 
-    #Format the names of the bracket in a friendly way to be displayed in
-    # a grid.  The players will be ordered by 
-    # (player 1, round 1) (player 1, round 2) ... (player 2, round 1) (player 2 round 2) ....
-    def grid_friendly_players(self):
-        grid_friendly_players = []
-
-        print("Players: ", self.num_players())
-        print("Rounds: ", self.max_round())
-
-        ignored_rounds = -1
-        for player_index in range(self.num_players()):
-            if player_index == 1:
-                ignored_rounds += 1
-            if (player_index) % 2 == 0:
-                ignored_rounds += 1
-
-            for round in range(self.max_round() + 1):
-                if (round < (self.max_round() +1) - ignored_rounds):
-                    index = self.first_index_of_round(round) + player_index
-                    grid_friendly_players.append(self._bracket_list[index])
-                    print("normal", index)
-
-                else:
-                    grid_friendly_players.append(["blank", 0])
-                    print("blank")
-
-        print (grid_friendly_players)
-        return grid_friendly_players
-
-
+    def get_all_opposing_players(self, start_player, start_round):
+        all_players = [[start_player, start_round]]
+        start_round += 1
+        for player in all_players:
+            new_index = self.player_index_by_round(player[0], start_round)
+            if new_index != None:
+                if self._bracket_list[new_index] != None:
+                    if start_round == self.max_round():
+                        all_players.append([self._bracket_list[new_index][0], new_index])
+                        break
+                    print([self._bracket_list[new_index][0], new_index])
+                    all_players.append([self._bracket_list[new_index][0], new_index])
+                    if new_index % 2 == 1:
+                        if self._bracket_list[new_index + 1] != None:
+                            all_players.append([self._bracket_list[new_index + 1][0], new_index + 1])
+                    else:
+                        if self._bracket_list[new_index - 1] != None:
+                            all_players.append([self._bracket_list[new_index - 1][0], new_index - 1])
+            start_round += 1
+            # if start_round == self.max_round():
+            #     break
+         
+        return all_players[1:]
 
     #Formatting and storage functions
     # Return bracketlist state as string
@@ -188,10 +227,10 @@ class Bracket():
         self.name = deser[0]
         self._bracket_list = deser[1]
 
-    #Stores this bracket in the database
-    def store(self, code):
+    #Stores this bracket in the data base
+    def store(self, code, name, teams, netid):
         ser = self.serialize()
-        src.database.create_bracket(code, ser)
+        return database.create_bracket(code, name, teams, ser, netid)
 
     #Retrieves bracket with said code from database
     def load(self, code):
@@ -221,18 +260,15 @@ class Bracket():
                 round = self.get_round(i)
                 player1 = self._bracket_list[i][0]
                 player2 = self._bracket_list[i+1][0]
-                if self.has_bye(player1, round):
+                bye = self.has_bye(player1, round)
+                if bye == 1:
                     winner = player1
-                # elif self.has_bye(player2, round):
-                #     winner = player2
+                elif bye == 0:
+                    winner = player2
                 else:
                     winner = self.determine_winner(player1, player2, round)
                 if winner != "tie":
                     self.update_winner(winner, round)
-                else: print("TIE!")
-            print('')
-        print("set winners",self.to_string())
-        # print("hopefully dif", ret_bracket.to_string())
         return
 
         
@@ -246,10 +282,8 @@ class Bracket():
         # checks if valid players are entered
         if round >= self.max_round() or round < 0: return None # invalid round
         if player1 != self._bracket_list[self.player_index_by_round(player1, round)][0]:
-            print("AHHHHHH1")
             return None
         if player2 != self._bracket_list[self.player_index_by_round(player2, round)][0]:
-            print("AHHHHHH2")
             return None
 
         # need to check if the players actually play against one another
@@ -284,82 +318,7 @@ class Bracket():
 
         #checks if subsequent index is None to see if the player has a bye
         if self._bracket_list[index+1][0] == "Bye":
-            return True
-        return False
-        
-
-#-----------------------------------------------------------------------
-
-def main():
-    players = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
-    bracket = Bracket("hi", players)
-
-    print("Num players: %d" % (bracket.num_players()))
-    print('')
-    print("Players: ", end='')
-    print(bracket.players())
-    print('')
-    print("To string: " + bracket.to_string())
-    print('')
-    print("First index of round 0: " + str(bracket.first_index_of_round(0)))
-    print("First index of round 1: " + str(bracket.first_index_of_round(1)))
-    print("First index of round 2: " + str(bracket.first_index_of_round(2)))
-    print("First index of round 3: " + str(bracket.first_index_of_round(3)))
-    print("First index of round 4: " + str(bracket.first_index_of_round(4)))
-    print("First index of round 5: " + str(bracket.first_index_of_round(5)))
-    print('')
-    print("P3 index of round 0: " + str(bracket.player_index_by_round("P3", 0)))
-    print("P3 index of round 1: " + str(bracket.player_index_by_round("P3", 1)))
-    print("P3 index of round 2: " + str(bracket.player_index_by_round("P3", 2)))
-    print("P3 index of round 3: " + str(bracket.player_index_by_round("P3", 3)))
-    print("P3 index of round 4: " + str(bracket.player_index_by_round("P3", 4)))
-    print("P3 index of round 5: " + str(bracket.player_index_by_round("P3", 5)))
-    print('')
-    print('Testing Bracket Flow')
-    bracket.update_score("P3", 0, 75)
-    bracket.update_score("P4", 0, 50)
-    print("P3 score in round 0:", bracket.get_score("P3", 0))
-    print("P4 score in round 0:", bracket.get_score("P4", 0))
-    print("The winner of this matchup is:", bracket.determine_winner("P3","P4", 0))
-    bracket.update_winner(bracket.determine_winner("P3","P4", 0), 0)
-
-    print("Updated Bracket:")
-    print("To string: " + bracket.to_string())
-
-    bracket.update_score("P1", 0, 15)
-    bracket.update_score("P2", 0, 100)
-    print("P1 score in round 0:", bracket.get_score("P1", 0))
-    print("P2 score in round 0:", bracket.get_score("P2", 0))
-    print("The winner of this matchup is:", bracket.determine_winner("P1","P2", 0))
-    bracket.update_winner(bracket.determine_winner("P1","P2", 0), 0)
-    
-    print("Updated Bracket:")
-    print("To string: " + bracket.to_string())
-
-    bracket.update_score("P2", 1, 275)
-    bracket.update_score("P3", 1, 305)
-    print("P2 score in round 0:", bracket.get_score("P2", 1))
-    print("P3 score in round 0:", bracket.get_score("P3", 1))
-    print("The winner of this matchup is:", bracket.determine_winner("P2","P3", 1))
-    bracket.update_winner(bracket.determine_winner("P2","P3", 1), 1)
-
-
-    print("Updated Bracket:")
-    print("To string: " + bracket.to_string())
-    print('')
-
-
-
-    # TEST FOR BYE - should automatically put P7 into next round because
-    # P7 has no 0 round opponent
-    # bracket.update_score("P7", 0, 100)
-    # print("P7 score in round 0:", bracket.get_score("P7", 0))
-    # print("The winner of this matchup is:", bracket.determine_winner("P7","P4", 0))
-    # bracket.update_winner(bracket.determine_winner("P3","P4", 0), 0)
-
-    print("Bracket complete?", bracket.is_complete())
-    return
-
-#-----------------------------------------------------------------------
-if __name__ == '__main__':
-    main()
+            return 1 # Player against is BYE
+        elif player == "Bye":
+            return 0 # Player is BYE
+        return 2 # No BYEs

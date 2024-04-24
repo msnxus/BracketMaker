@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>BracketMaker Homepage</title>
+  </head>
+  <body>
+    {% include 'header.html'%}
+    {% if user != None %}
+      <h1 align="center">Welcome, {{user}}!</h1>
+      <form align='center' action="/profile" method="get"><input type="submit" value="Profile"></form><br>
+      <form align='right' action="/logout" method="get"><input type="submit" value="Logout"></form>
+    {% else %}
+    <form align='right' action="/login" method="get"><input type="submit" value="Login"></form>
+    {% endif %}
+    {% include 'index_directions.html'%}
 
-<head>
-  <title>BracketMaker Homepage</title>
-</head>
-
-<body>
-  {% include 'header.html' %}
-  <br>
-  <form align='center' action="/createbracket" method="get">
-    <input type="submit" value="Create a Bracket">
-  </form>
-  <br>
-  <form align='center' action="/viewbracket" method="get">
-    <input type="submit" value="View a Bracket">
-  </form>
-  <br>
-  {% include 'footer.html' %}
-</body>
-
+    <hr>
+    <form align='center' action="/createbracket" method="get">
+        <input type="submit" value="Create a Bracket">
+    </form>
+    <br>
+    <form align='center' action="/entercode" method="get">
+        <input type="submit" value="View a Bracket">
+    </form>
+    <hr />
+    <br>
+    {% include 'footer.html' %}
+  </body>
 </html>

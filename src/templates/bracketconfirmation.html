@@ -2,26 +2,42 @@
 <html>
   <head>
     <title>Bracket</title>
+    <style>
+      td {
+          padding: 0 20px; /* Adds 20px padding on the left and right of each cell */
+      }
+  </style>
   </head>
   <body>
     {% include 'header.html' %}
-
-    <h1> Here are your teams</h1>
-
-    {% for team in team_names%}
-
-    <h2> {{team}} </h2>
-
-    {% endfor %}
-
-    <h3> Below is your bracket code. Click this button to create you bracket</h3>
+    <h1 align='center'> Welcome to {{ bracket_name }} Bracket</h1>
+    {% include 'bracketconfirmation_directions.html' %}
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
     <form action="/storebracket/"  method="post">
-        <input type="text" name="code" value= "{{ code }}" />
+        <!-- Players having same name is intentional, flask sees as a list -->
+        {% for player in players %}
+            <input type="hidden" name="players" value="{{ player }}">
+        {% endfor %}
+        Code: <input type="text" name="code" value= "{{ code }}" />
+        Name: <input type="text" name="name" value="{{ bracket_name }}" readonly/>
+        Number of Teams: <input type="text" name="num_players" value="{{ num_players }}" readonly/>
+        Owner: <input type="text" name="owner" value="{{ netid }}" readonly/>
         <input type="submit" value="Create Bracket"/>
     </form>
     <br>
+    {% if error_message != 'None' %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+    <h1> Here are your teams</h1>
+    <table>
+        {% for team, player in zip(team_names, players) %}
+          <tr>
+            <td><h3>{{ team }}</h3></td>
+            <td><h3>{{ player }}</h3></td>
+          </tr>
+        {% endfor %}
+    </table>
     {% include 'footer.html' %}
   </body>
 </html>
