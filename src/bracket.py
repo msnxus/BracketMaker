@@ -8,6 +8,7 @@
 import sys
 import contextlib
 import sqlite3
+import ast
 import flask
 from flask import redirect, url_for, Flask, request, jsonify
 
@@ -180,13 +181,19 @@ def bracket_confirmation():
     ser_bracket = bracket.serialize()
 
     response.set_cookie("bracket", ser_bracket)
-    # response.set_cookie("team_names", team_names)
+    response.set_cookie("team_names", str(team_names))
 
+    print("Confirm TEAMSSSSSSSSS", team_names)
 
     return response
 
 @app.route('/storebracket/', methods=['POST'])
 def store_bracket():
+    if redirect_login():
+        return redirect(url_for('login'))
+    netid = _cas.authenticate()
+    netid = netid.rstrip()
+
 
     #Here we need to actually grab the bracket and put it in the database
     players = []
@@ -194,24 +201,23 @@ def store_bracket():
     # try:
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
-    code = int(flask.request.form.get("code"))
+    code = flask.request.form.get("code")
     owner = str(flask.request.form.get("owner"))
 
     code_exists = bracket.store(code, owner)
+    # team_names = []
+    team_names = (flask.request.cookies.get("team_names"))
+    # print("please", team_names)
+    team_names = ast.literal_eval(team_names)
+
+    name = flask.request.cookies.get("name")
+
+
+
     if code_exists:
         error_message =  'A bracket with this code already exists. Please create a new code.'
-        team_names = []
-        # team_names = (flask.request.cookies.get("team_names"))
-
-        teams = int(flask.request.cookies.get("teams"))
-        print("TEAMSSSSSSSSS", teams)
-        name = flask.request.cookies.get("name")
-        for team in range(1, teams+1):
-            team_names.append(flask.request.args.get("team%s" % (team)))
-        print("TEAMSSSSSSSSS", team_names)
-
-
-        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message, name=name)
+        
+        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message, name=name, netid=netid)
         response = flask.make_response(html_code)
         bracket = Bracket(name, team_names)
         ser_bracket = bracket.serialize()
