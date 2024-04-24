@@ -42,6 +42,10 @@ def redirect_login():
 
 #-----------------------------------------------------------------------
 
+@app.context_processor
+def utility_processor():
+    return dict(zip=zip)
+
 # default path, displays the results of course query
 @app.route('/', methods=['GET'])
 
@@ -182,8 +186,15 @@ def bracket_seeding_confirmation():
 
     name = flask.request.cookies.get("name")
 
+    player_names = []
+
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
+        player_name = (flask.request.args.get("player%s" % (team)))
+        if not database.is_user_created(player_name):
+            player_names.append('guest')
+        else: player_names.append(player_name)
+
     team_set = set(team_names)
     duplicates = len(team_set) != len(team_names)
     
@@ -199,7 +210,7 @@ def bracket_seeding_confirmation():
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, name=name)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_players=teams, bracket_name=name, players=player_names)
 
     response = flask.make_response(html_code)
 
@@ -231,9 +242,15 @@ def bracket_random_confirmation():
 
     name = flask.request.cookies.get("name")
 
+    player_names = []
 
     for team in range(1, teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
+        player_name = (flask.request.args.get("player%s" % (team)))
+        if not database.is_user_created(player_name):
+            player_names.append('guest')
+        else: player_names.append(player_name)
+        
     team_set = set(team_names)
     duplicates = len(team_set) != len(team_names)
     
@@ -250,7 +267,7 @@ def bracket_random_confirmation():
         return response
     
     random.shuffle(team_names)
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, name=name)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_players=teams, bracket_name=name, players=player_names)
 
     response = flask.make_response(html_code)
 
@@ -281,8 +298,10 @@ def store_bracket():
 
     code = flask.request.form.get("code")
     owner = str(flask.request.form.get("owner"))
+    name = str(flask.request.form.get("name"))
+    num_players = int(flask.request.form.get("num_players"))
 
-    code_exists = bracket.store(code, owner)
+    code_exists = bracket.store(code, name, num_players, owner)
     # team_names = []
     team_names = (flask.request.cookies.get("team_names"))
     # print("please", team_names)
@@ -312,6 +331,10 @@ def store_bracket():
 
     # return redirect(url_for('run_bracket', code=code))
     # return redirect(url_for('view_created_bracket', code=code))
+
+    players = flask.request.form.getlist('players')
+    database.store_players_with_code(code, players)
+
 
     return redirect(url_for('view_bracket_with_code', code=code))
 
@@ -399,6 +422,22 @@ def view_bracket():
         return response
     
     return redirect(url_for('temp_bracket', code=code))
+
+# Profile page for user profiles
+@app.route('/profile', methods=['GET'])
+def profile():
+    if redirect_login():
+        return redirect(url_for('login'))
+    
+    netid = _cas.authenticate()
+    user = netid.rstrip()
+
+    hb = database.get_owned_brackets(user)
+    pb = database.get_participating_brackets(user)
+
+    html_code = flask.render_template('profile.html', user=user, hosted_brackets=hb, participating_brackets=pb)
+    response = flask.make_response(html_code)
+    return response
 
 @app.route('/coderesults')
 def get_results():

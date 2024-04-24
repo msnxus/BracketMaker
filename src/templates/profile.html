@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <style>
+        table {
+            width: 50%; 
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;           
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1 align="center">Profile: {{ user }}</h1>
+    <hr>
+    <h3>Brackets You Own:</h3>
+    <table>
+        <!-- Table Headers -->
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Number of Teams</th>
+            <th>Time Created</th>
+            <th>Host</th>
+        </tr>
+        <!-- Table Data Rows -->
+        {% for bracket in hosted_brackets %}
+        <tr>
+            <td><a href="/viewbracketpage/?code={{ bracket[0] }}">{{ bracket[0] }}</a></td>
+            <td>{{ bracket[1] }}</td>
+            <td>{{ bracket[2] }}</td>
+            <td>{{ bracket[3] }}</td>
+            <td>{{ bracket[5] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h3>Brackets You're In:</h3>
+    <table>
+      <!-- Table Headers -->
+      <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Number of Teams</th>
+          <th>Time Created</th>
+          <th>Host</th>
+      </tr>
+      <!-- Table Data Rows -->
+      {% for bracket in participating_brackets %}
+      <tr>
+          <td><a href="/viewbracketpage/?code={{ bracket[0] }}">{{ bracket[0] }}</a></td>
+          <td>{{ bracket[1] }}</td>
+          <td>{{ bracket[2] }}</td>
+          <td>{{ bracket[3] }}</td>
+          <td>{{ bracket[5] }}</td>
+      </tr>
+      {% endfor %}
+  </table>
+    {% include 'footer.html' %}
+</body>
+</html>
