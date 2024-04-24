@@ -446,7 +446,7 @@ def get_results():
 
     print(code)
 
-    table = get_potential_brackets(code)
+    table = database.get_potential_brackets(code)
 
     #Make html code and response
     html_code = flask.render_template("results.html", table=table)
