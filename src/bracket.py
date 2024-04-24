@@ -266,7 +266,12 @@ def bracket_random_confirmation():
         response = flask.make_response(html_code)
         return response
     
-    random.shuffle(team_names)
+    z = list(zip(team_names, player_names))
+    random.shuffle(z)
+    team_names, player_names = zip(*z)
+    team_names = list(team_names)
+    player_names = list(player_names)
+
     html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_players=teams, bracket_name=name, players=player_names)
 
     response = flask.make_response(html_code)
