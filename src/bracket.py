@@ -222,6 +222,8 @@ def bracket_seeding_confirmation():
 
     response.set_cookie("bracket", ser_bracket)
     response.set_cookie("team_names", str(team_names))
+    response.set_cookie("num_players", str(teams))
+    response.set_cookie("player_names", str(player_names))
 
     print("Confirm TEAMSSSSSSSSS", team_names)
 
@@ -277,7 +279,7 @@ def bracket_random_confirmation():
     ser_bracket = bracket.serialize()
 
     response.set_cookie("bracket", ser_bracket)
-    # response.set_cookie("team_names", team_names)
+    response.set_cookie("team_names", team_names)
 
 
     return response
@@ -303,18 +305,23 @@ def store_bracket():
 
     code_exists = bracket.store(code, name, num_players, owner)
     # team_names = []
-    team_names = (flask.request.cookies.getlist("team_names"))
-    # print("please", team_names)
-    # team_names = ast.literal_eval(team_names)
+    # team_names = (flask.request.cookies.getlist("team_names"))
+    team_names = (flask.request.cookies.get("team_names"))
+    print("please", team_names)
+    team_names = ast.literal_eval(team_names)
+    # print("please2", team_names)
 
     name = flask.request.cookies.get("name")
+
+    player_names = (flask.request.cookies.get("player_names"))
+    player_names = ast.literal_eval(player_names)
 
 
 
     if code_exists:
         error_message =  'A bracket with this code already exists. Please create a new code.'
-        
-        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message, name=name, netid=netid)
+        print("pretty please", team_names)
+        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message, name=name, netid=netid, players=player_names)
         response = flask.make_response(html_code)
         bracket = Bracket(name, team_names)
         ser_bracket = bracket.serialize()
