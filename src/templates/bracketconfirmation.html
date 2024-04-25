@@ -20,8 +20,8 @@
             <input type="hidden" name="players" value="{{ player }}">
         {% endfor %}
         Code: <input type="text" name="code" value= "{{ code }}" />
-        Name: <input type="text" name="name" value="{{ bracket_name }}" readonly/>
-        Number of Teams: <input type="text" name="num_players" value="{{ num_players }}" readonly/>
+        Name: <input type="text" name="name" value="{{ name }}" readonly/>
+        Number of Teams: <input type="text" name="num_teams" value="{{ num_teams }}" readonly/>
         Owner: <input type="text" name="owner" value="{{ netid }}" readonly/>
         <input type="submit" value="Create Bracket"/>
     </form>
@@ -31,7 +31,7 @@
     {% endif %}
     <h1> Here are your teams</h1>
     <table>
-        {% for team, player in zip(team_names, players) %}
+        {% for team, player in zip(team_names, player_names) %}
           <tr>
             <td><h3>{{ team }}</h3></td>
             <td><h3>{{ player }}</h3></td>
@@ -51,6 +51,6 @@
   <body>
     {% include 'header.html' %}
     <h1 align='center'> Welcome to {{name}} Bracket</h1>
-    <h1 align='center'> There are {{teams}} teams</h1>
+    <h1 align='center'> There are {{num_teams}} teams</h1>
 
     <hr> -->

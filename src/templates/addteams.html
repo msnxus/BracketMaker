@@ -6,14 +6,14 @@
   <body>
     {% include 'header.html' %}
     <h1 align='center'> Welcome to {{name}} Bracket</h1>
-    <!-- <h1 align='center'> There are {{teams}} teams</h1> -->
+    <!-- <h1 align='center'> There are {{num_teams}} teams</h1> -->
     {% include 'addteams_directions.html'%}
 
     <hr>
     <form id="confirmationForm" method="get">
       <table>
   
-        {% for team in range(1, teams + 1) %}
+        {% for team in range(1, num_teams + 1) %}
           <tr>
             <td align="right">Team {{team}}:</td>
             {% if team_names is defined %}
