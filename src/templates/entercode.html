@@ -16,9 +16,19 @@
             <td align="right">Code:</td>
             <th><input type="text" name="code" id="code" value="{{code}}" /></th>
           </tr>
+
+          <tr>
+            <td align="right">Bracket Name:</td>
+            <th><input type="text" name="name" id="name" value="{{name}}" /></th>
+          </tr>
+
+          <tr>
+            <td align="right">Owner NetId:</td>
+            <th><input type="text" name="owner" id="owner" value="{{owner}}" /></th>
+          </tr>
+
           <tr>
           <td></td>
-          <td> <input type="submit" value="Search"/></td>
         </tr>
         </table>
       </form>
@@ -42,10 +52,12 @@
 
 
  function handleResponse(data) {
+   console.log("Data: " + data)
     $("#resultsDiv").html(data);
  }
 
  function handleError(request) {
+   console.log("ERror")
     if (request.statusText !== "abort")
     alert("Error: Failed to fetch data from server");
  }
@@ -54,10 +66,16 @@
 
  function getResults() {
     let code = $("#code").val();
-    console.log(code)
+    let name = $("#name").val();
+    let owner = $("#owner").val();
+
     let encodedCode = encodeURIComponent(code);
+    let encodedName = encodeURIComponent(name);
+    let encodedOwner = encodeURIComponent(owner);
     
     let url = "/coderesults?code=" + encodedCode;
+    url += "&name=" + encodedName
+    url += "&owner=" + encodedOwner
 
     if (request !== null)
         request.abort();
@@ -82,6 +100,8 @@
 
  function setup() {
     $("#code").on("input", debouncedGetResults);
+    $("#name").on("input", debouncedGetResults);
+    $("#owner").on("input", debouncedGetResults);
     debouncedGetResults();
  }
 

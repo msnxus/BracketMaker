@@ -476,11 +476,18 @@ def profile():
 def get_results():
     #Get input
     code = flask.request.args.get("code")
+    name = flask.request.args.get("name")
+    owner = flask.request.args.get("owner")
 
     print(code)
 
-    table = get_potential_brackets(code)
+    table = get_potential_brackets(code, name, owner)
 
+    if table is None:
+        html_code = flask.render_template("no_results.html")
+        response = flask.make_response(html_code)
+        return response
+    
     #Make html code and response
     html_code = flask.render_template("results.html", table=table)
     response = flask.make_response(html_code)

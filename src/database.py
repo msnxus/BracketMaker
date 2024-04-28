@@ -88,12 +88,34 @@ def get_bracket_from_code(code):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-def get_potential_brackets(code):
-    stmt_str = "SELECT code, ser_bracket FROM bracket WHERE code LIKE %s ESCAPE '/'"
+def get_potential_brackets(code, name, owner):
+    values = []
+    code = str(code)
+    code = "%" + code
+    code = code + "%"
+    values.append(code)
+    stmt_str = "SELECT code, name, num_players, owner FROM bracket WHERE code LIKE %s ESCAPE '/'"
+
+    #Add on any qualifiers
+    if name is not None:
+        stmt_str += " AND name LIKE %s ESCAPE '/'"
+        name = str(name)
+        name = "%" + name
+        name = name + "%"
+        values.append(name)
+
+    if owner is not None:
+        stmt_str += " AND owner LIKE %s ESCAPE '/'"
+        owner = str(owner)
+        owner = "%" + owner
+        owner = owner + "%"
+        values.append(owner)
+
+
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(stmt_str, (str(code) + '%',))
+                cursor.execute(stmt_str, values)
                 table = cursor.fetchall()
                 if table:
                     # print("Bracket:", row)
