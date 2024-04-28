@@ -155,7 +155,13 @@ def add_teams():
         # Billy is handling it
         try: 
             num_teams = int(flask.request.args.get('num_teams'))
-            html_code = flask.render_template('addteams.html',name=name, num_teams=num_teams)
+
+            #Handling 0 or 1 teams
+            if num_teams == 0 or num_teams == 1:
+                error_message =  'You need at least 2 teams in your bracket!'
+                html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
+            else:
+                html_code = flask.render_template('addteams.html',name=name, num_teams=num_teams)
 
         except: 
             error_message =  'Please enter an integer value for number of teams.'
