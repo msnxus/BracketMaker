@@ -25,15 +25,6 @@
               <td><input type="text" name={{"player%s" % (team)}} placeholder="guest"/></td>
           </tr>
         {% endfor %}
-        {% if error_message != 'None' %}
-        <table>
-          
-          <tr>
-            <td align="left" style="color: red;">{{ error_message }}</td>
-          </tr>
-        </table>
-    
-        {% endif %}
         <tr>
           <td></td>
           <td><input type="submit" value="Create with random order" , onclick="setFormAction('/createbracket/random_confirmation/?')" /></td>
