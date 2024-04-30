@@ -6,6 +6,9 @@
     <title>{{name}} Bracket</title>
     <style>
       /* Black and white theme with gray accents */
+      html {
+        height: 100%;
+      }
       body {
         background-color: #f0f0f0;
         /* Light gray background */
@@ -15,6 +18,8 @@
         /* Overall padding */
         font-family: Arial, sans-serif;
         /* Modern font */
+        font-size: 20px;  
+        height: 100%;
       }
     
       .header {
@@ -50,17 +55,36 @@
       .spacer {
         height: 1rem; /* Adjust the height to create space */
       }
+      .page-wrap {
+        min-height: 100%;
+        /* equal to footer height */
+        margin-bottom: -100px; 
+      }
+      .page-wrap:after {
+        content: "";
+        display: block;
+      }
+      .site-footer, .page-wrap:after {
+        height: 100px; 
+      }
+      .site-footer {
+        width: 80%;
+        margin: auto;
+      }
     </style>
   </head>
   <body>
+    <div class="page-wrap">
     <div class="header">
       <h1>BracketMaker</h1>
     </div>
     <hr><br>
     <h1 align='center'> Welcome to {{name}} Bracket</h1>
-    <p>To continue creating your bracket, please enter a name for each team.</p>
-    <p>The order in which you enter the names is important. Please enter the teams in order of skill, with the best teams at
-      the top.</p>
+    <p>To continue creating your bracket, please enter a name for each team. If a team is associated with a netID, please
+      enter the netID too.</p>
+    <p>Once all the teams and netIDs have been entered, you will have the option to create the bracket based on this
+      ordering (seeding) or a random generation.</p>
+    <p>Please click on your desired setting to continue.</p>
     <form id="confirmationForm" method="get">
       <table>
   
@@ -99,13 +123,11 @@
         document.getElementById("confirmationForm").submit();
       }
     </script>
-
-    <br>
-    <div class="container">
-      <div class="footer">
-        {% include 'footer.html' %}
-      </div>
     </div>
+    
+    <footer class="site-footer">
+        {% include 'footer.html' %}
+    </footer>
     
     </body>
 </html>

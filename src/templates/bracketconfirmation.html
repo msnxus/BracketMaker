@@ -43,10 +43,8 @@
         text-align: center;
       }
     
-      .footer {
+      .footer { 
         width: 67%;
-        position: fixed;
-        bottom: 0px;
       }
       td {
           padding: 0 20px;
@@ -63,7 +61,7 @@
     <hr><br>
     <h1 align='center'> Welcome to {{ bracket_name }} Bracket</h1><br>
     <p> Below is your bracket code. Make sure to save it.</p>
-    <p> Click the 'Create Bracket' button to create your bracket</p>
+    <p> Click "Create Bracket" to finalize.</p>
 
     <!-- Here, we can allow users to create their own code, or let them use one we generate -->
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
@@ -97,10 +95,20 @@
           </tr>
         {% endfor %}
     </table>
+    
+    <p>Something wrong? Edit names here!</p>
+    <div>
+      <button class="btn-custom" onclick="goBack()">Edit Bracket</button>
+    </div>
+    
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+    
     <div class="container">
-      <div class="footer">
         {% include 'footer.html' %}
-      </div>
     </div>
     
   </body>

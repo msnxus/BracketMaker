@@ -7,6 +7,9 @@
   <title>BracketMaker Homepage</title>
   <style>
     /* Black and white theme with gray accents */
+    html {
+      height: 100%;
+    }
     body {
       background-color: #f0f0f0;
       /* Light gray background */
@@ -16,6 +19,8 @@
       /* Overall padding */
       font-family: Arial, sans-serif;
       /* Modern font */
+      font-size: 20px;  
+      height: 100%;
     }
     .header {
       display: flex; /* Use flexbox */
@@ -63,23 +68,37 @@
       /* Darker gray on hover */
     }
 
-    .footer{
-      width: 67%;
-      position: fixed;
-      bottom: 0px;
-    }
+    .page-wrap {
+        min-height: 100%;
+        /* equal to footer height */
+        margin-bottom: -100px; 
+      }
+      .page-wrap:after {
+        content: "";
+        display: block;
+      }
+      .site-footer, .page-wrap:after {
+        height: 100px; 
+      }
+      .site-footer {
+        width: 80%;
+        margin: auto;
+      }
+
   </style>
 </head>
 
 <body>
+  <div class="page-wrap">
   <div class="header">
+    
     <h1>BracketMaker</h1> <!-- Centered header text -->
   </div>
   <hr>
-  <div class="container">
   {% if user %}
-  <div style ="display: flex; justify-content: flex-end;" class="center-text spaced"> <!-- Put `class` for test -->
-    <h1>Welcome back, {{user}}!</h1> <!-- Put here for test -->
+  <div class="container">
+
+  <div style ="display: flex; justify-content: flex-end;">
     <div class="button-group">
       <form action="/profile" method="get">
         <button class="btn-custom">Profile</button>
@@ -89,7 +108,10 @@
       </form>
     </div>
   </div>
+  </div>
   {% else %}
+  <div class="container">
+
   <div style="display: flex; justify-content: flex-end;">
     <div class="button-group">
       <form action="/login" method="get">
@@ -97,12 +119,13 @@
       </form>
     </div>
   </div>
+  </div>
   <br>
   {% endif %}
     {% if user %} 
     <!-- Welcome Section -->
     <div class="center-text spaced">
-      <h1>Welcome back, {{user}}!</h1>
+      <h1>Welcome, {{user}}!</h1>
     </div>
     
 
@@ -139,12 +162,19 @@
         <button class="btn-custom">View a Bracket</button>
       </form>
       
-    </div>
-    {% endif %}
-    <div class="footer">
-    {% include 'footer.html' %}
-    </div>
+    
+
   </div>
+    {% endif %}
+    
+    
+  </div>
+  
+  
+  <footer class="site-footer">
+    {% include 'footer.html' %}
+  </footer>
 </body>
+
 
 </html>
