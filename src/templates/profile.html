@@ -1,8 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <title>Profile</title>
     <style>
+        /* Black and white theme with gray accents */
+        body {
+        background-color: #f0f0f0;
+        /* Light gray background */
+        color: #333;
+        /* Dark gray text */
+        padding: 2rem;
+        /* Overall padding */
+        font-family: Arial, sans-serif;
+        /* Modern font */
+        }
+        .header {
+        display: flex; /* Use flexbox */
+        align-items: center; /* Vertically center content */
+        padding: 1rem; /* Padding for spacing */
+        background-color: #f0f0f0; /* Light gray background */
+        }
+        .header h1 {
+        flex-grow: 1;
+        margin: 0; /* No margin to keep content aligned */
+        font-size: 2.5rem; /* Smaller font for compact header */
+        text-align: center; /* Centered text */
+        }
+        .center-text {
+        text-align: center;
+        }
         table {
             width: 50%; 
             margin: 0 auto;
@@ -16,6 +44,11 @@
 
         th {
             background-color: #f2f2f2;
+        }
+        .footer{
+        width: 67%;
+        position: fixed;
+        bottom: 0px;
         }
     </style>
 </head>
@@ -43,6 +76,7 @@
         </tr>
         {% endfor %}
     </table>
+    <br><br>
     <h3>Brackets You're In:</h3>
     <table>
       <!-- Table Headers -->
@@ -64,6 +98,10 @@
       </tr>
       {% endfor %}
   </table>
-    {% include 'footer.html' %}
+  <div class="container">
+    <div class="footer">
+        {% include 'footer.html' %}
+    </div>
+  </div>
 </body>
 </html>
