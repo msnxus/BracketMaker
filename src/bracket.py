@@ -368,6 +368,15 @@ def store_bracket():
         response = flask.make_response(html_code)
         return response
     
+    if int(code) < 0:
+        error_message =  'Please ensure the code is a positive number.'
+
+        html_code = flask.render_template('bracketconfirmation.html', 
+            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            name=name, player_names=player_names, error_message=error_message)
+        response = flask.make_response(html_code)
+        return response
+    
     if(len(str(code)) != 4):
         error_message =  'Please ensure the code is a 4 digit number.'
 
