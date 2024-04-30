@@ -76,7 +76,9 @@
     <h1>BracketMaker</h1> <!-- Centered header text -->
   </div>
   <hr>
+  <div class="container">
   {% if user %}
+  
   <div style ="display: flex; justify-content: flex-end;">
     <div class="button-group">
       <form action="/profile" method="get">
@@ -97,8 +99,6 @@
   </div>
   <br>
   {% endif %}
-
-  <div class="container">
     {% if user %} 
     <!-- Welcome Section -->
     <div class="center-text spaced">
@@ -124,7 +124,7 @@
 
     {% else %}
     <!-- Login Section -->
-    <p align="center">To create a bracket, please click the 'login' button on the right, and enter your CAS
+    <p align="center">To create a bracket, please click the 'login' button on the right and enter your CAS
       information.<br>Alternatively, view the existing brackets!</p>
     
     

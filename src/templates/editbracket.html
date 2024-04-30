@@ -3,11 +3,42 @@
 <head>
   <title>Bracket</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}">
-  {% include 'header.html' %}
-  <h1 align='center'> Here is the {{name}} Bracket</h1>
-
-
   <style>
+    body {
+        background-color: #f0f0f0;
+        /* Light gray background */
+        color: #333;
+        /* Dark gray text */
+        padding: 2rem;
+        /* Overall padding */
+        font-family: Arial, sans-serif;
+        /* Modern font */
+      }
+    
+      .header {
+        display: flex;
+        /* Use flexbox */
+        align-items: center;
+        /* Vertically center content */
+        padding: 1rem;
+        /* Padding for spacing */
+        background-color: #f0f0f0;
+        /* Light gray background */
+      }
+    
+      .header h1 {
+        flex-grow: 1;
+        margin: 0;
+        /* No margin to keep content aligned */
+        font-size: 2.5rem;
+        /* Smaller font for compact header */
+        text-align: center;
+        /* Centered text */
+      }
+    
+      .center-text {
+        text-align: center;
+      }
     input[type="number"] {
       background-color: transparent;
       width: auto;
@@ -36,6 +67,12 @@
 </head>
 
 <body>
+  <div class="header">
+    <h1>BracketMaker</h1>
+  </div>
+  <hr><br>
+  <h1 align='center'> Here is the {{name}} Bracket</h1>
+
   <div class="container">
     Welcome to the {{name}} bracket!<br>Your code to view this bracket is {{code}}.
     <form action="/editbracket/?code={{ code }}" method="post">
