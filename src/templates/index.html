@@ -78,8 +78,8 @@
   <hr>
   <div class="container">
   {% if user %}
-  
-  <div style ="display: flex; justify-content: flex-end;">
+  <div style ="display: flex; justify-content: flex-end;" class="center-text spaced"> <!-- Put `class` for test -->
+    <h1>Welcome back, {{user}}!</h1> <!-- Put here for test -->
     <div class="button-group">
       <form action="/profile" method="get">
         <button class="btn-custom">Profile</button>
@@ -102,7 +102,7 @@
     {% if user %} 
     <!-- Welcome Section -->
     <div class="center-text spaced">
-      <h1>Welcome, {{user}}!</h1>
+      <h1>Welcome back, {{user}}!</h1>
     </div>
     
 
@@ -111,22 +111,27 @@
       <p align="center">Please select one of the options below:</p>
     </div>
 
-    <!-- Bracket Actions -->
+    <!-- Bracket Actions (now put side by side) -->
     <div class="center-text spaced">
-      <form action="/createbracket" method="get">
+      <form action="/createbracket" method="get" style="display: inline-block;">
         <button class="btn-custom">Create a Bracket</button>
       </form>
-      <br>
-      <form action="/entercode" method="get">
+      <form action="/entercode" method="get" style="display: inline-block;">
         <button class="btn-custom">View a Bracket</button>
       </form>
     </div>
 
     {% else %}
     <!-- Login Section -->
-    <p align="center">To create a bracket, please click the 'login' button on the right and enter your CAS
-      information.<br>Alternatively, view the existing brackets!</p>
+    <!-- <p align="center">To create a bracket, please click the 'login' button on the right, and enter your CAS
+      information.<br>Alternatively, view the existing brackets!</p> -->
+      <p align="center">BracketMaker allows users to create, view, and edit brackets.<br><br>
+      In order to <b>create</b> or <b>edit</b> a bracket, you must login.<br>
+      To login, please click the "login" button on the right, 
+      and you will be prompted to enter in your CAS information.</p>
     
+      <p align="center"> Alternatively, Guests can <b>view</b> existing brackets 
+        by selecting the "View a Bracket" button below.</p>
     
     <!-- Index Directions -->
     <div class="spaced center-text">
