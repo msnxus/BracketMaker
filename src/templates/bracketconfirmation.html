@@ -16,7 +16,7 @@
     <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
     <form action="/storebracket/"  method="post">
         <!-- Players having same name is intentional, flask sees as a list -->
-        {% for player in players %}
+        {% for player in player_names %}
             <input type="hidden" name="players" value="{{ player }}">
         {% endfor %}
         Code: <input type="text" name="code" value= "{{ code }}" />

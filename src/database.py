@@ -174,6 +174,7 @@ def add_system_log(type, netid=None, description=''):
 
 # Returns all the info for brackets a player is a part of
 def get_participating_brackets(netid):
+    print("NETID: " + str(netid))
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
@@ -182,6 +183,8 @@ def get_participating_brackets(netid):
                 connection.commit()
                 participating_bracket_codes = cursor.fetchall()
                 ret = []
+
+                print("CODES: " + str(participating_bracket_codes))
                 for code in participating_bracket_codes:
                     stmt_str = "SELECT * FROM bracket WHERE code = %s"
                     cursor.execute(stmt_str, (code,))

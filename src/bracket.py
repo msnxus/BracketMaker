@@ -344,6 +344,8 @@ def store_bracket():
     owner = str(flask.request.form.get("owner"))
     name = str(flask.request.form.get("name"))
     num_teams = int(flask.request.form.get("num_teams"))
+    players = flask.request.form.getlist("players")
+    print("Players: " + str(players))
 
     #LUCAS - IN CASE OF ERROR
     team_names = flask.request.cookies.get("team_names")
@@ -358,7 +360,7 @@ def store_bracket():
 
     #We need to ensure the code is a 4 digit number or else display an error message
     try:
-        code = int(code)
+        dud = int(code)
     except:
         error_message =  'Please ensure the code is a 4 digit number.'
 
@@ -423,7 +425,9 @@ def store_bracket():
     # return redirect(url_for('run_bracket', code=code))
     # return redirect(url_for('view_created_bracket', code=code))
 
-    players = flask.request.form.getlist('players')
+    # players = flask.request.form.getlist('players')
+
+    print("STORING: " + str(players))
     database.store_players_with_code(code, players)
 
 
