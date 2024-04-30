@@ -1,29 +1,47 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>BracketMaker Homepage</title>
-  </head>
-  <body>
-    {% include 'header.html'%}
-    {% if user != None %}
-      <h1 align="center">Welcome, {{user}}!</h1>
-      <form align='center' action="/profile" method="get"><input type="submit" value="Profile"></form><br>
-      <form align='right' action="/logout" method="get"><input type="submit" value="Logout"></form>
-    {% else %}
-    <form align='right' action="/login" method="get"><input type="submit" value="Login"></form>
-    {% endif %}
-    {% include 'index_directions.html'%}
 
-    <hr>
-    <form align='center' action="/createbracket" method="get">
-        <input type="submit" value="Create a Bracket">
-    </form>
-    <br>
-    <form align='center' action="/entercode" method="get">
-        <input type="submit" value="View a Bracket">
-    </form>
-    <hr />
-    <br>
-    {% include 'footer.html' %}
-  </body>
+<head>
+  <title>BracketMaker Homepage</title>
+</head>
+
+<body>
+  {% include 'header.html'%}
+  {% if user != None %}
+  <h1 align="center">Welcome back, {{user}}!</h1>
+  <form align='center' action="/profile" method="get"><input type="submit" value="Profile"></form><br>
+  <form align='right' action="/logout" method="get"><input type="submit" value="Logout"></form>
+  {% else %}
+  <h1 align="center">Welcome!</h1>
+  <form align='right' action="/login" method="get"><input type="submit" value="Login"></form>
+  {% endif %}
+
+  <!-- {% include 'index_directions.html'%} -->
+  <!-- DIRECTIONS -->
+
+  {% if user == None %}
+  <p align="center">BracketMaker allows users to create, view, and edit brackets.</p>
+  <p align="center"> In order to create and edit a bracket, you must login.</p>
+  <p align="center"> To login, please click the 'login' button on the right, 
+    and you will be prompted to enter in your CAS information</p>
+
+  <p align="center"> Alternatively, Guests can view existing brackets 
+    by selecting the "View a Bracket" button below.</p>
+  {% else %}
+  <p>Please select one of the options below:</p>
+  {% endif %}
+
+  <hr>
+  <form align='center' action="/createbracket" method="get">
+    <input type="submit" value="Create a Bracket">
+  </form>
+  <br>
+  <form align='center' action="/entercode" method="get">
+    <input type="submit" value="View a Bracket">
+  </form>
+  <hr />
+  <br>
+  {% include 'footer.html' %}
+</body>
+
 </html>
