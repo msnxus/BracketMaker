@@ -1,56 +1,159 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Bracket</title>
-    <style>
-      td {
-          padding: 0 20px; /* Adds 20px padding on the left and right of each cell */
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <title>View a Bracket</title>
+  <style>
+    html {
+      height: 100%;
+    }
+    /* Black and white theme with gray accents */
+    body {
+      background-color: #f0f0f0;
+      /* background-color: #d7ffd4; */
+      /* Light gray background */
+      color: #333;
+      /* Dark gray text */
+      padding: 2rem;
+      /* Overall padding */
+      font-family: Arial, sans-serif;
+      /* Modern font */
+      font-size: 20px;
+      height: 100%;
+    }
+
+    .header {
+      display: flex;
+      /* Use flexbox */
+      align-items: center;
+      /* Vertically center content */
+      padding: 1rem;
+      /* Padding for spacing */
+      background-color: #f0f0f0;
+      /* Light gray background */
+    }
+
+    .header h1 {
+      flex-grow: 1;
+      margin: 0;
+      /* No margin to keep content aligned */
+      font-size: 2.5rem;
+      /* Smaller font for compact header */
+      text-align: center;
+      /* Centered text */
+    }
+
+    .center-text {
+      text-align: center;
+    }
+
+    td {
+      padding: 0 20px;
+    }
+
+    .non-clickable {
+      pointer-events: none;
+    }
+
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      /* Adjust the padding to increase or decrease spacing */
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .page-wrap {
+        min-height: 100%;
+        /* equal to footer height */
+        margin-bottom: -100px; 
+      }
+      .page-wrap:after {
+        content: "";
+        display: block;
+      }
+      .site-footer, .page-wrap:after {
+        height: 100px; 
+      }
+      .site-footer {
+        width: 80%;
+        margin: auto;
       }
   </style>
-  </head>
-  <body>
-    {% include 'header.html' %}
-    <h1 align='center'> Welcome to {{ bracket_name }} Bracket</h1>
-    {% include 'bracketconfirmation_directions.html' %}
-    <!-- Here, we can allow users to create their own code, or let them use one we generate -->
-    <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
-    <form action="/storebracket/"  method="post">
-        <!-- Players having same name is intentional, flask sees as a list -->
-        {% for player in player_names %}
-            <input type="hidden" name="players" value="{{ player }}">
-        {% endfor %}
-        Code: <input type="text" name="code" value= "{{ code }}" />
-        Name: <input type="text" name="name" value="{{ name }}" readonly/>
-        Number of Teams: <input type="text" name="num_teams" value="{{ num_teams }}" readonly/>
-        Owner: <input type="text" name="owner" value="{{ netid }}" readonly/>
-        <input type="submit" value="Create Bracket"/>
-    </form>
-    <br>
-    {% if error_message != 'None' %}
-    <p style="color: red;">{{ error_message }}</p>
-    {% endif %}
-    <h1> Here are your teams</h1>
-    <table>
-        {% for team, player in zip(team_names, player_names) %}
-          <tr>
-            <td><h3>{{ team }}</h3></td>
-            <td><h3>{{ player }}</h3></td>
-          </tr>
-        {% endfor %}
-    </table>
+</head>
+
+<body>
+  <div class="page-wrap">
+  <div class="header">
+    <h1>BracketMaker</h1>
+  </div>
+  <hr><br>
+  <h1 align='center'> Welcome to {{ bracket_name }} Bracket</h1><br>
+  <p> Below is your <b>bracket code.</b> Make sure to <b>save it.</b></p>
+  <p> Click <b>Create Bracket</b> to finalize.</p>
+
+  <!-- Here, we can allow users to create their own code, or let them use one we generate -->
+  <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
+  <form action="/storebracket/" method="post">
+    <!-- Players having same name is intentional, flask sees as a list -->
+    <div class="input-container">
+      {% for player in player_names %}
+      <input type="hidden" name="players" value="{{ player }}">
+      {% endfor %}
+      Name: <input type="text" name="name" value="{{ name }}" readonly
+        style="color: gray; border: none; background: none;" class="non-clickable" />
+      <br>
+      Number of Teams: <input type="text" name="num_teams" value="{{ num_teams }}" readonly
+        style="color: gray; border: none; background: none;" class="non-clickable" />
+      <br>
+      Owner: <input type="text" name="owner" value="{{ netid }}" readonly
+        style="color: gray; border: none; background: none;" class="non-clickable" />
+      <br>
+      Code: <input type="text" name="code" value="{{ code }}" />
+      <input type="submit" value="Create Bracket" />
+    </div>
+
+  </form>
+  <br>
+  {% if error_message != 'None' %}
+  <p style="color: red;">{{ error_message }}</p>
+  {% endif %}
+  <h4> Here are your teams and netIDs</h4>
+  <table>
+    <tr>
+      <th>Team name</th>
+      <th>NetID name</th>
+    </tr>
+    {% for team, player in zip(team_names, player_names) %}
+    <tr>
+      <td>{{ team }}</td>
+      <td>{{ player }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <br>
+  <p>Something wrong?</p>
+  <div>
+    <button class="btn-custom" onclick="goBack()">Edit Bracket</button>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+  </div>
+  <footer class="site-footer">
     {% include 'footer.html' %}
-  </body>
+  </footer>
+
+</body>
+
 </html>
-
-
-<!-- <!DOCTYPE html>
-<html>
-  <head>
-    <title>{{name}} Bracket</title>
-  </head>
-  <body>
-    {% include 'header.html' %}
-    <h1 align='center'> Welcome to {{name}} Bracket</h1>
-    <h1 align='center'> There are {{num_teams}} teams</h1>
-
-    <hr> -->

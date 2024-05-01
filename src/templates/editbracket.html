@@ -2,12 +2,51 @@
 <html lang="en">
 <head>
   <title>Bracket</title>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}">
-  {% include 'header.html' %}
-  <h1 align='center'> Here is the {{name}} Bracket</h1>
-
-
+  
   <style>
+    html {
+      height: 100%;
+    }
+    body {
+        background-color: #f0f0f0;
+        /* Light gray background */
+        color: #333;
+        /* Dark gray text */
+        padding: 2rem;
+        /* Overall padding */
+        font-family: Arial, sans-serif;
+        /* Modern font */
+        font-size: 20px;
+        height: 100%;
+      }
+    
+      .header {
+        display: flex;
+        /* Use flexbox */
+        align-items: center;
+        /* Vertically center content */
+        padding: 1rem;
+        /* Padding for spacing */
+        background-color: #f0f0f0;
+        /* Light gray background */
+      }
+    
+      .header h1 {
+        flex-grow: 1;
+        margin: 0;
+        /* No margin to keep content aligned */
+        font-size: 2.5rem;
+        /* Smaller font for compact header */
+        text-align: center;
+        /* Centered text */
+      }
+    
+      .center-text {
+        text-align: center;
+      }
     input[type="number"] {
       background-color: transparent;
       width: auto;
@@ -32,12 +71,37 @@
       transform: scale(1.5);
       transform-origin: top left;
     }
+    .page-wrap {
+        min-height: 100%;
+        /* equal to footer height */
+        margin-bottom: -100px; 
+      }
+      .page-wrap:after {
+        content: "";
+        display: block;
+      }
+      .site-footer, .page-wrap:after {
+        height: 100px; 
+      }
+      .site-footer {
+        width: 80%;
+        margin: auto;
+      }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    Welcome to the {{name}} bracket!<br>Your code to view this bracket is {{code}}.
+  <div class="page-wrap">
+  <div class="header">
+    <h1>BracketMaker</h1>
+  </div>
+  <hr><br>
+  <h1 align='center'> {{name}}</h1>
+
+  
+    Welcome to the <b>{{name}}</b> bracket!<br>
+    Your code to view this bracket is <b>{{code}}</b><br>
+    <b>Add scores</b> to the spaces below and update the bracket with the <b>Update Scores</b> button at the bottom.
     <form action="/editbracket/?code={{ code }}" method="post">
       <main id="tournament">
         {% for round in range(rounds - 1)%}
@@ -79,7 +143,10 @@
       
     </form>
     <br><br>
-    {% include 'footer.html' %}
-  </div>
+    </div>
+    <footer class="site-footer" style="display: flex; flex-direction: column;" >
+      {% include 'footer.html' %}
+    </footer>
+  
 </body>
 </html>
