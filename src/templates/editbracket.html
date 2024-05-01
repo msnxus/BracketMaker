@@ -99,7 +99,7 @@
 
     Welcome to the <b>{{name}}</b> bracket!<br>
     Your code to view this bracket is <b>{{code}}</b><br>
-    <b>Add scores</b> to the spaces below and update the bracket with the <b>Update Scores</b> button at the bottom.
+    <b>Add scores</b> to the spaces below and update the bracket with the <b>Update Bracket</b> button at the bottom.
     <form action="/editbracket/?code={{ code }}" method="post">
       <main id="tournament">
         {% for round in range(rounds - 1)%}
@@ -137,7 +137,7 @@
         {% endif %}
 
       </main>
-        <input type="submit" value="Update Scores" , class="submit-btn">
+        <input type="submit" value="Update Bracket" , class="submit-btn">
       
     </form>
     <br><br>
