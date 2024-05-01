@@ -91,14 +91,12 @@
 </head>
 
 <body>
-  <div class="page-wrap">
-  <div class="header">
-    <h1>BracketMaker</h1>
-  </div>
-  <hr><br>
+  {% include 'header.html' %}
+
+  <!-- <div class="page-wrap"> -->
+
   <h1 align='center'> {{name}}</h1>
 
-  
     Welcome to the <b>{{name}}</b> bracket!<br>
     Your code to view this bracket is <b>{{code}}</b><br>
     <b>Add scores</b> to the spaces below and update the bracket with the <b>Update Scores</b> button at the bottom.
@@ -143,7 +141,7 @@
       
     </form>
     <br><br>
-    </div>
+    <!-- </div> -->
     <footer class="site-footer" style="display: flex; flex-direction: column;" >
       {% include 'footer.html' %}
     </footer>
