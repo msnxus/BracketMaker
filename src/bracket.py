@@ -603,7 +603,7 @@ def get_results():
 
     print(code)
 
-    table = get_potential_brackets(code, name, owner)
+    table = database.get_potential_brackets(code, name, owner)
 
     if table is None:
         html_code = flask.render_template("no_results.html")
