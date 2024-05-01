@@ -71,10 +71,12 @@
     <h1>BracketMaker</h1>
   </div>
   <hr><br>
-  <h1 align='center'> Here is the {{name}} Bracket</h1>
+  <h1 align='center'> {{name}}</h1>
 
   <div class="container">
-    Welcome to the {{name}} bracket!<br>Your code to view this bracket is {{code}}.
+    Welcome to the <b>{{name}}</b> bracket!<br>
+    Your code to view this bracket is <b>{{code}}</b><br>
+    <b>Add scores</b> to the spaces below and update the bracket with the <b>Update Scores</b> button at the bottom.
     <form action="/editbracket/?code={{ code }}" method="post">
       <main id="tournament">
         {% for round in range(rounds - 1)%}
@@ -117,6 +119,7 @@
     </form>
     <br><br>
     {% include 'footer.html' %}
+    <br>
   </div>
 </body>
 </html>
