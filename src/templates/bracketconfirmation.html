@@ -20,6 +20,7 @@
             <input type="hidden" name="players" value="{{ player }}">
         {% endfor %}
         Code: <input type="text" name="code" value= "{{ code }}" />
+        Players Can Update Scores? <input type="checkbox" id="player_updates" name="player_updates" unchecked />
         Name: <input type="text" name="name" value="{{ name }}" readonly/>
         Number of Teams: <input type="text" name="num_teams" value="{{ num_teams }}" readonly/>
         Owner: <input type="text" name="owner" value="{{ netid }}" readonly/>

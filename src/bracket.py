@@ -41,6 +41,14 @@ _cas = CASClient.CASClient()
 def redirect_login():
     return not _cas.is_logged_in() or not database.is_user_created(_cas.authenticate())
 
+def player_in_bracket(netid, code):
+    for b in database.get_participating_brackets(netid):
+        if b[0] == code: return True
+    return False
+
+def players_can_edit(code):
+    return database.can_players_edit(code)
+
 #-----------------------------------------------------------------------
 
 @app.context_processor
@@ -105,6 +113,49 @@ def create_bracket():
     response = flask.make_response(html_code)
     return response
 
+@app.route('/viewbracketasplayer/', methods=['GET'])
+def viewbracketasplayer():
+    code = flask.request.args.get("code")
+
+    if redirect_login():
+        netid = None
+    else:
+        netid = _cas.authenticate()
+        netid = netid.rstrip()
+
+    # if database.is_owner(code, netid):
+    #     return redirect(url_for('view_bracket_with_code', code=code)) ###################################
+    if not player_in_bracket(netid, code) or not players_can_edit(code):
+        return redirect(url_for('temp_bracket', code=code))
+    
+    players = []
+    bracket = Bracket("", players)
+    code_exists = get_bracket_from_code(code)
+    if not code_exists:
+        error_message =  'A bracket with this code does not exist. Please enter a valid code.'
+
+        html_code = flask.render_template('entercode.html', code=code, error_message = error_message)
+        response = flask.make_response(html_code)
+        return response
+
+
+    #NEXT: ENTERING A CODE TO A BRACKET THAT DOESN'T APPEAR CAUSES ERROR
+
+    bracket.load(code)
+
+    rounds = int(bracket.max_round()) + 1
+    bracket_list = bracket.bracket_list()
+    round_indicies = bracket.round_indicies()
+    name = bracket.name
+
+    display_name = database.get_display_name_from_code(code, netid)
+
+    html_code = flask.render_template('viewbracketasplayer.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
+                                      bracket_list=bracket_list,display_name=display_name)
+    
+    response = flask.make_response(html_code)
+    return response
+
 @app.route('/viewbracketpage/', methods=['GET'])
 def temp_bracket():
     code = flask.request.args.get("code")
@@ -113,8 +164,10 @@ def temp_bracket():
     else:
         netid = _cas.authenticate()
         netid = netid.rstrip()
-    if database.is_owner(code, netid):
-        return redirect(url_for('view_bracket_with_code', code=code))
+    # if database.is_owner(code, netid):
+    #     return redirect(url_for('view_bracket_with_code', code=code)) #####################################################
+    if player_in_bracket(netid, code) and players_can_edit(code):
+        return redirect(url_for('viewbracketasplayer', code=code))
     
     players = []
     bracket = Bracket("", players)
@@ -306,7 +359,12 @@ def bracket_random_confirmation():
         return response
 
     
-    random.shuffle(team_names)
+    z = list(zip(team_names, player_names))
+    random.shuffle(z)
+    team_names, player_names = zip(*z)
+    team_names = list(team_names)
+    player_names = list(player_names)
+
     html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_teams=num_teams, name=name, player_names=player_names)
 
     response = flask.make_response(html_code)
@@ -345,6 +403,7 @@ def store_bracket():
     name = str(flask.request.form.get("name"))
     num_teams = int(flask.request.form.get("num_teams"))
     players = flask.request.form.getlist("players")
+    player_updates = False if flask.request.form.get("player_updates") == None else True
     print("Players: " + str(players))
 
     #LUCAS - IN CASE OF ERROR
@@ -389,7 +448,7 @@ def store_bracket():
         return response
 
 
-    code_exists = bracket.store(code, name, num_teams, owner)
+    code_exists = bracket.store(code, name, num_teams, owner, player_updates)
     # team_names = []
     # team_names = (flask.request.cookies.getlist("team_names"))
     team_names = (flask.request.cookies.get("team_names"))
@@ -428,7 +487,7 @@ def store_bracket():
     # players = flask.request.form.getlist('players')
 
     print("STORING: " + str(players))
-    database.store_players_with_code(code, players)
+    database.store_players_with_code(code, players, team_names)
 
 
     return redirect(url_for('view_bracket_with_code', code=code))
@@ -493,7 +552,7 @@ def update_scores():
     print("using this bracket to set winners:", my_bracket.to_string())
     my_bracket.set_winners()
     update_bracket(code, my_bracket.serialize())
-    return flask.redirect(f"/editbracket/?code={code}")
+    return flask.redirect(f"/viewbracketasplayer/?code={code}") ##############################################
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
 @app.route('/entercode/', methods=['GET'])
