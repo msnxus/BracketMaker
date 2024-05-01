@@ -210,7 +210,7 @@ def add_teams():
 
             #Handling 0 or 1 teams
             if num_teams <= 1:
-                error_message =  'You need at least 2 teams in your bracket!'
+                error_message =  'You need at least 2 teams in your bracket.'
                 html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
             elif num_teams > 1024:
