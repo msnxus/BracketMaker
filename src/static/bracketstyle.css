@@ -20,6 +20,26 @@ main{
     .round .game-spacer{
       flex-grow:1;
     }
+
+    /* Styling for the second round */
+.round:nth-child(2) .game-spacer {
+  flex-grow: 2.8;
+}
+
+/* Styling for the third round */
+.round:nth-child(3) .game-spacer {
+  flex-grow: 1.4;
+}
+
+/* Styling for the fourth round */
+.round:nth-child(4) .game-spacer {
+  flex-grow: 1.1;
+}
+
+/* Styling for the fifth round */
+.round:nth-child(5) .game-spacer {
+  flex-grow: 1;
+}
   
   /*
    *  General Styles
