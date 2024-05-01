@@ -123,8 +123,8 @@ def viewbracketasplayer():
         netid = _cas.authenticate()
         netid = netid.rstrip()
 
-    # if database.is_owner(code, netid):
-    #     return redirect(url_for('view_bracket_with_code', code=code)) ###################################
+    if database.is_owner(code, netid):
+        return redirect(url_for('view_bracket_with_code', code=code)) 
     if not player_in_bracket(netid, code) or not players_can_edit(code):
         return redirect(url_for('temp_bracket', code=code))
     
@@ -164,8 +164,8 @@ def temp_bracket():
     else:
         netid = _cas.authenticate()
         netid = netid.rstrip()
-    # if database.is_owner(code, netid):
-    #     return redirect(url_for('view_bracket_with_code', code=code)) #####################################################
+    if database.is_owner(code, netid):
+        return redirect(url_for('view_bracket_with_code', code=code))
     if player_in_bracket(netid, code) and players_can_edit(code):
         return redirect(url_for('viewbracketasplayer', code=code))
     
@@ -493,6 +493,7 @@ def store_bracket():
     return redirect(url_for('view_bracket_with_code', code=code))
 
  # FROM CREATE BRACKET
+
 @app.route('/editbracket/', methods=['GET'])
 def view_bracket_with_code():
     code = flask.request.args.get("code")
@@ -552,7 +553,7 @@ def update_scores():
     print("using this bracket to set winners:", my_bracket.to_string())
     my_bracket.set_winners()
     update_bracket(code, my_bracket.serialize())
-    return flask.redirect(f"/viewbracketasplayer/?code={code}") ##############################################
+    return flask.redirect(f"/editbracket/?code={code}")
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
 @app.route('/entercode/', methods=['GET'])
