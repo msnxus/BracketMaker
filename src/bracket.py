@@ -187,7 +187,6 @@ def temp_bracket():
     response = flask.make_response(html_code)
     return response
     
-
 @app.route('/createbracket/addteams/', methods=['GET'])
 def add_teams():
     if redirect_login():
@@ -497,7 +496,7 @@ def store_bracket():
 @app.route('/editbracket/', methods=['GET'])
 def view_bracket_with_code():
     code = flask.request.args.get("code")
-
+    
     if redirect_login():
         netid = None
     else:
