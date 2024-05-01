@@ -32,10 +32,10 @@ def initialize():
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-    stmt_str = "CREATE TABLE bracket (code CHAR(4) PRIMARY KEY, name TEXT, num_players INT, time TIMESTAMP WITHOUT TIME ZONE, ser_bracket JSONB, owner TEXT);"
+    stmt_str = "CREATE TABLE bracket (code CHAR(4) PRIMARY KEY, name TEXT, num_players INT, time TIMESTAMP WITHOUT TIME ZONE, ser_bracket JSONB, owner TEXT, player_updates BOOLEAN);"
     stmt_str_syslog = 'CREATE TABLE system_log (id SERIAL PRIMARY KEY,type VARCHAR(255),time TIMESTAMP WITHOUT TIME ZONE,netid VARCHAR(255) NULL,description TEXT NULL);'
     stmt_str_users = 'CREATE TABLE users (netid VARCHAR PRIMARY KEY,email VARCHAR,phone VARCHAR);'
-    stmt_str_players = 'CREATE TABLE players (code CHAR(4), netid VARCHAR(255), PRIMARY KEY (code, netid));'
+    stmt_str_players = 'CREATE TABLE players (code CHAR(4), netid VARCHAR(255), display_name TEXT, PRIMARY KEY (code, netid));'
 
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
@@ -51,7 +51,7 @@ def initialize():
         sys.exit(1)
     
 
-def create_bracket(code, name, num_players, ser_bracket, netid):
+def create_bracket(code, name, num_players, ser_bracket, netid, player_updates):
     global _initialized
     if not _initialized: 
         initialize()
@@ -60,11 +60,11 @@ def create_bracket(code, name, num_players, ser_bracket, netid):
         print("A bracket with code", code, "already exists. Please create a new code.")
         return True
     time = datetime.now()
-    stmt_str = "INSERT INTO bracket (code, name, num_players, time, ser_bracket, owner) VALUES (%s, %s, %s, %s, %s, %s)"
+    stmt_str = "INSERT INTO bracket (code, name, num_players, time, ser_bracket, owner, player_updates) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(stmt_str, (code, name, num_players, time, ser_bracket, netid))
+                cursor.execute(stmt_str, (code, name, num_players, time, ser_bracket, netid, player_updates))
                 connection.commit()
                 print("New Bracket Successfully Created")
     except Exception as ex:
@@ -97,43 +97,70 @@ def get_bracket_from_code(code):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-def get_potential_brackets(code):
+def get_potential_brackets(code, name, owner):
     global _initialized
     if not _initialized: 
         initialize()
         _initialized = True
-    stmt_str = "SELECT code, ser_bracket FROM bracket WHERE code LIKE %s ESCAPE '/'"
+    
+    values = []
+    code = str(code)
+    code = "%" + code
+    code = code + "%"
+    values.append(code)
+    stmt_str = "SELECT code, name, num_players, owner FROM bracket WHERE code LIKE %s ESCAPE '/'"
+
+    #Add on any qualifiers
+    if name is not None:
+        stmt_str += " AND name LIKE %s ESCAPE '/'"
+        name = str(name)
+        name = "%" + name
+        name = name + "%"
+        values.append(name)
+
+    if owner is not None:
+        stmt_str += " AND owner LIKE %s ESCAPE '/'"
+        owner = str(owner)
+        owner = "%" + owner
+        owner = owner + "%"
+        values.append(owner)
+
+
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(stmt_str, ('%' + str(code),))
+                cursor.execute(stmt_str, values)
                 table = cursor.fetchall()
                 if table:
                     # print("Bracket:", row)
                     return table
                 else:
                     print("No bracket found with the given code.")
-                    return False
+                    print(code)
+                    print(str(code))
+                    return None
                 
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
 
 # add all provided players to the players table assoc with the given code
-def store_players_with_code(code, players):
+def store_players_with_code(code, players, display_names):
     global _initialized
     if not _initialized: 
         initialize()
         _initialized = True
+
     try:
         with psycopg2.connect(DATABASE_URL) as connection:
                 with connection.cursor() as cursor:
                     # Insert into users table
-                    for player in players:
+                    for i, player in enumerate(players):
                         if player != 'guest':
+                            name = display_names[i]
                             cursor.execute(
-                                "INSERT INTO players (code, netid) VALUES (%s, %s)",
-                                (code, player))
+                                "INSERT INTO players (code, netid, display_name) VALUES (%s, %s, %s)",
+                                (code, player, name))
                             connection.commit()  # Commit the transaction
     except psycopg2.Error as e:
         print(e, file=sys.stderr)
@@ -172,8 +199,33 @@ def add_system_log(type, netid=None, description=''):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def get_display_name_from_code(code, netid):
+    try:
+        with psycopg2.connect(DATABASE_URL) as connection:
+            with connection.cursor() as cursor:
+                stmt_str = "SELECT display_name FROM players WHERE netid = %s AND code = %s"
+                cursor.execute(stmt_str, (netid,code))
+                connection.commit()
+                return cursor.fetchone()[0]
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+def can_players_edit(code):
+    try:
+        with psycopg2.connect(DATABASE_URL) as connection:
+            with connection.cursor() as cursor:
+                stmt_str = "SELECT player_updates FROM bracket WHERE code = %s"
+                cursor.execute(stmt_str, (code,))
+                connection.commit()
+                return cursor.fetchone()[0]
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
 # Returns all the info for brackets a player is a part of
 def get_participating_brackets(netid):
+    print("NETID: " + str(netid))
     global _initialized
     if not _initialized: 
         initialize()
@@ -186,6 +238,8 @@ def get_participating_brackets(netid):
                 connection.commit()
                 participating_bracket_codes = cursor.fetchall()
                 ret = []
+
+                print("CODES: " + str(participating_bracket_codes))
                 for code in participating_bracket_codes:
                     stmt_str = "SELECT * FROM bracket WHERE code = %s"
                     cursor.execute(stmt_str, (code,))

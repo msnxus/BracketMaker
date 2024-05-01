@@ -8,6 +8,7 @@
 import sys
 import contextlib
 import sqlite3
+import json
 import ast
 import flask
 from flask import redirect, url_for, Flask, request, jsonify
@@ -28,6 +29,7 @@ import src.database as database
 
 #-----------------------------------------------------------------------
 secret_key = 'sauce'
+secret_key = 'sauce'
 
 app = flask.Flask(__name__, template_folder='templates')
 app.secret_key = secret_key
@@ -39,6 +41,14 @@ _cas = CASClient.CASClient()
 # or if user is logged in with CAS, but doesn't have entry in DB
 def redirect_login():
     return not _cas.is_logged_in() or not database.is_user_created(_cas.authenticate())
+
+def player_in_bracket(netid, code):
+    for b in database.get_participating_brackets(netid):
+        if b[0] == code: return True
+    return False
+
+def players_can_edit(code):
+    return database.can_players_edit(code)
 
 #-----------------------------------------------------------------------
 
@@ -94,12 +104,56 @@ def create_bracket():
     if name is None:
         name = ''
 
-    teams = flask.request.args.get('teams')
-    if teams is None:
-        teams = ''
+    num_teams = flask.request.args.get('num_teams')
+    print(num_teams)
+    if num_teams is None:
+        num_teams = ''
 
 
-    html_code = flask.render_template('createbracket.html', name=name, teams=teams)
+    html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/viewbracketasplayer/', methods=['GET'])
+def viewbracketasplayer():
+    code = flask.request.args.get("code")
+
+    if redirect_login():
+        netid = None
+    else:
+        netid = _cas.authenticate()
+        netid = netid.rstrip()
+
+    if database.is_owner(code, netid):
+        return redirect(url_for('view_bracket_with_code', code=code)) 
+    if not player_in_bracket(netid, code) or not players_can_edit(code):
+        return redirect(url_for('temp_bracket', code=code))
+    
+    players = []
+    bracket = Bracket("", players)
+    code_exists = get_bracket_from_code(code)
+    if not code_exists:
+        error_message =  'A bracket with this code does not exist. Please enter a valid code.'
+
+        html_code = flask.render_template('entercode.html', code=code, error_message = error_message)
+        response = flask.make_response(html_code)
+        return response
+
+
+    #NEXT: ENTERING A CODE TO A BRACKET THAT DOESN'T APPEAR CAUSES ERROR
+
+    bracket.load(code)
+
+    rounds = int(bracket.max_round()) + 1
+    bracket_list = bracket.bracket_list()
+    round_indicies = bracket.round_indicies()
+    name = bracket.name
+
+    display_name = database.get_display_name_from_code(code, netid)
+
+    html_code = flask.render_template('viewbracketasplayer.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
+                                      bracket_list=bracket_list,display_name=display_name)
+    
     response = flask.make_response(html_code)
     return response
 
@@ -113,6 +167,8 @@ def temp_bracket():
         netid = netid.rstrip()
     if database.is_owner(code, netid):
         return redirect(url_for('view_bracket_with_code', code=code))
+    if player_in_bracket(netid, code) and players_can_edit(code):
+        return redirect(url_for('viewbracketasplayer', code=code))
     
     players = []
     bracket = Bracket("", players)
@@ -132,7 +188,6 @@ def temp_bracket():
     response = flask.make_response(html_code)
     return response
     
-
 @app.route('/createbracket/addteams/', methods=['GET'])
 def add_teams():
     if redirect_login():
@@ -140,24 +195,36 @@ def add_teams():
     netid = _cas.authenticate()
     netid = netid.rstrip()
     
-    teams = flask.request.args.get('teams')
+    num_teams = flask.request.args.get('num_teams')
 
     name = flask.request.args.get('name')
     if name == '':
         error_message =  'Please enter a name for this bracket.'
-        html_code = flask.render_template('createbracket.html', name=name, teams=teams, error_message=error_message)
+        html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
 
     else:
         # Lucas - Potential non-integer could be passed - have to account for this
         # Billy is handling it
         try: 
-            teams = int(flask.request.args.get('teams'))
-            html_code = flask.render_template('addteams.html',name=name, teams=teams)
+            num_teams = int(flask.request.args.get('num_teams'))
+
+            #Handling 0 or 1 teams
+            if num_teams <= 1:
+                error_message =  'You need at least 2 teams in your bracket.'
+                html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
+
+            elif num_teams > 1024:
+                error_message =  'The maximum number of teams is 1024.'
+                html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
+
+
+            else:
+                html_code = flask.render_template('addteams.html',name=name, num_teams=num_teams)
 
         except: 
             error_message =  'Please enter an integer value for number of teams.'
-            html_code = flask.render_template('createbracket.html', name=name, teams=teams, error_message=error_message)
+            html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
 
 
@@ -165,7 +232,7 @@ def add_teams():
     response = flask.make_response(html_code)
 
     #Lucas - There might be problems setting this as a cookie
-    response.set_cookie("teams", str(teams))
+    response.set_cookie("num_teams", str(num_teams))
     response.set_cookie("name", name)
     # response.set_cookie("team_names", str(team_names))
 
@@ -182,13 +249,13 @@ def bracket_seeding_confirmation():
     team_names = []
 
     # get cookies
-    teams = int(flask.request.cookies.get("teams"))
+    num_teams = int(flask.request.cookies.get("num_teams"))
 
     name = flask.request.cookies.get("name")
 
     player_names = []
 
-    for team in range(1, teams+1):
+    for team in range(1, num_teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
         player_name = (flask.request.args.get("player%s" % (team)))
         if not database.is_user_created(player_name):
@@ -196,21 +263,33 @@ def bracket_seeding_confirmation():
         else: player_names.append(player_name)
 
     team_set = set(team_names)
-    duplicates = len(team_set) != len(team_names)
+    team_duplicates = len(team_set) != len(team_names)
+
+    player_set = set(player_names)
+    count_guest = sum(1 for item in player_names if item == "guest")
+    netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
+
+
     
     if '' in team_names:
         error_message = "Please enter a name for each team."
-        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
         response = flask.make_response(html_code)
         return response
     
-    if duplicates:
+    if team_duplicates:
         error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
-        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        response = flask.make_response(html_code)
+        return response
+    
+    if netid_duplicates:
+        error_message = "Two or more teams have the same netID. Please do not enter teams with duplicate netIDs."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_players=teams, bracket_name=name, players=player_names)
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_teams=num_teams, name=name, player_names=player_names)
 
     response = flask.make_response(html_code)
 
@@ -222,6 +301,9 @@ def bracket_seeding_confirmation():
 
     response.set_cookie("bracket", ser_bracket)
     response.set_cookie("team_names", str(team_names))
+    response.set_cookie("num_teams", str(num_teams))
+    response.set_cookie("player_names", str(player_names))
+    response.set_cookie("mode", "seeded")
 
     print("Confirm TEAMSSSSSSSSS", team_names)
 
@@ -238,13 +320,13 @@ def bracket_random_confirmation():
 
     # get cookies
     team_names = []
-    teams = int(flask.request.cookies.get("teams"))
+    num_teams = int(flask.request.cookies.get("num_teams"))
 
     name = flask.request.cookies.get("name")
 
     player_names = []
 
-    for team in range(1, teams+1):
+    for team in range(1, num_teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
         player_name = (flask.request.args.get("player%s" % (team)))
         if not database.is_user_created(player_name):
@@ -252,27 +334,38 @@ def bracket_random_confirmation():
         else: player_names.append(player_name)
         
     team_set = set(team_names)
-    duplicates = len(team_set) != len(team_names)
+    team_duplicates = len(team_set) != len(team_names)
+
+    player_set = set(player_names)
+    count_guest = sum(1 for item in player_names if item == "guest")
+    netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)    
     
     if '' in team_names:
         error_message = "Please enter a name for each team."
-        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
         response = flask.make_response(html_code)
         return response
     
-    if duplicates:
+    if team_duplicates:
         error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
-        html_code = flask.render_template('addteams.html', code=code, teams = teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
         response = flask.make_response(html_code)
         return response
+    
+    if netid_duplicates:
+        error_message = "Two or more teams have the same netID. Please do not enter teams with duplicate netIDs."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        response = flask.make_response(html_code)
+        return response
+
     
     z = list(zip(team_names, player_names))
     random.shuffle(z)
     team_names, player_names = zip(*z)
     team_names = list(team_names)
     player_names = list(player_names)
-    
-    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_players=teams, bracket_name=name, players=player_names)
+
+    html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, netid=netid, num_teams=num_teams, name=name, player_names=player_names)
 
     response = flask.make_response(html_code)
 
@@ -282,7 +375,11 @@ def bracket_random_confirmation():
     ser_bracket = bracket.serialize()
 
     response.set_cookie("bracket", ser_bracket)
-    # response.set_cookie("team_names", team_names)
+    response.set_cookie("team_names", str(team_names))
+    response.set_cookie("num_teams", str(num_teams))
+    response.set_cookie("player_names", str(player_names))
+    response.set_cookie("netid", netid)
+    response.set_cookie("mode", "random")
 
 
     return response
@@ -304,22 +401,72 @@ def store_bracket():
     code = flask.request.form.get("code")
     owner = str(flask.request.form.get("owner"))
     name = str(flask.request.form.get("name"))
-    num_players = int(flask.request.form.get("num_players"))
+    num_teams = int(flask.request.form.get("num_teams"))
+    players = flask.request.form.getlist("players")
+    player_updates = False if flask.request.form.get("player_updates") == None else True
+    print("Players: " + str(players))
 
-    code_exists = bracket.store(code, name, num_players, owner)
+    #LUCAS - IN CASE OF ERROR
+    team_names = flask.request.cookies.get("team_names")
+    team_names = ast.literal_eval(team_names)
+    team_names = [str(x) for x in team_names] 
+
+    netid = flask.request.cookies.get("netid")
+    player_names = flask.request.cookies.get("player_names")
+    player_names = ast.literal_eval(player_names)
+    player_names = [str(x) for x in player_names] 
+
+
+    #We need to ensure the code is a 4 digit number or else display an error message
+    try:
+        dud = int(code)
+    except:
+        error_message =  'Please ensure the code is a 4 digit number.'
+
+        html_code = flask.render_template('bracketconfirmation.html', 
+            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            name=name, player_names=player_names, error_message=error_message)
+        response = flask.make_response(html_code)
+        return response
+    
+    if int(code) < 0:
+        error_message =  'Please ensure the code is a positive number.'
+
+        html_code = flask.render_template('bracketconfirmation.html', 
+            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            name=name, player_names=player_names, error_message=error_message)
+        response = flask.make_response(html_code)
+        return response
+    
+    if(len(str(code)) != 4):
+        error_message =  'Please ensure the code is a 4 digit number.'
+
+        html_code = flask.render_template('bracketconfirmation.html', 
+            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            name=name, player_names=player_names, error_message=error_message)
+        response = flask.make_response(html_code)
+        return response
+
+
+    code_exists = bracket.store(code, name, num_teams, owner, player_updates)
     # team_names = []
-    team_names = (flask.request.cookies.getlist("team_names"))
-    # print("please", team_names)
-    # team_names = ast.literal_eval(team_names)
+    # team_names = (flask.request.cookies.getlist("team_names"))
+    team_names = (flask.request.cookies.get("team_names"))
+    print("please", team_names)
+    team_names = ast.literal_eval(team_names)
+    # print("please2", team_names)
 
     name = flask.request.cookies.get("name")
+
+    player_names = (flask.request.cookies.get("player_names"))
+    player_names = ast.literal_eval(player_names)
 
 
 
     if code_exists:
         error_message =  'A bracket with this code already exists. Please create a new code.'
-        
-        html_code = flask.render_template('bracketconfirmation.html', team_names=team_names, code=code, error_message=error_message, name=name, netid=netid)
+        print("pretty please", team_names)
+        html_code = flask.render_template('bracketconfirmation.html', num_teams = num_teams, team_names=team_names, code=code, error_message=error_message, name=name, netid=netid, player_names=player_names)
         response = flask.make_response(html_code)
         bracket = Bracket(name, team_names)
         ser_bracket = bracket.serialize()
@@ -337,17 +484,20 @@ def store_bracket():
     # return redirect(url_for('run_bracket', code=code))
     # return redirect(url_for('view_created_bracket', code=code))
 
-    players = flask.request.form.getlist('players')
-    database.store_players_with_code(code, players)
+    # players = flask.request.form.getlist('players')
+
+    print("STORING: " + str(players))
+    database.store_players_with_code(code, players, team_names)
 
 
     return redirect(url_for('view_bracket_with_code', code=code))
 
  # FROM CREATE BRACKET
+
 @app.route('/editbracket/', methods=['GET'])
 def view_bracket_with_code():
     code = flask.request.args.get("code")
-
+    
     if redirect_login():
         netid = None
     else:
@@ -448,11 +598,18 @@ def profile():
 def get_results():
     #Get input
     code = flask.request.args.get("code")
+    name = flask.request.args.get("name")
+    owner = flask.request.args.get("owner")
 
     print(code)
 
-    table = database.get_potential_brackets(code)
+    table = get_potential_brackets(code, name, owner)
 
+    if table is None:
+        html_code = flask.render_template("no_results.html")
+        response = flask.make_response(html_code)
+        return response
+    
     #Make html code and response
     html_code = flask.render_template("results.html", table=table)
     response = flask.make_response(html_code)

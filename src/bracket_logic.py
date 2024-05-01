@@ -177,7 +177,8 @@ class Bracket():
             self._bracket_list[new_index] = [player, 0]
             # set the opposing players score to 0
             if new_index % 2 == 1:
-                self._bracket_list[new_index + 1][1] = 0
+                if(new_index + 1 < len(self._bracket_list)):
+                    self._bracket_list[new_index + 1][1] = 0
             else:
                 self._bracket_list[new_index - 1][1] = 0
             opps = self.get_all_opposing_players(old_player, round+1)
@@ -228,9 +229,9 @@ class Bracket():
         self._bracket_list = deser[1]
 
     #Stores this bracket in the data base
-    def store(self, code, name, teams, netid):
+    def store(self, code, name, teams, netid, player_updates):
         ser = self.serialize()
-        return src.database.create_bracket(code, name, teams, ser, netid)
+        return src.database.create_bracket(code, name, teams, ser, netid, player_updates)
 
     #Retrieves bracket with said code from database
 
