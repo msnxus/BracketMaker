@@ -47,11 +47,6 @@
         text-align: center;
       }
     
-      .footer {
-        width: 67%;
-        position: fixed;
-        bottom: 0px;
-      }
       .spacer {
         height: 1rem; /* Adjust the height to create space */
       }
@@ -88,25 +83,23 @@
           <tr>
             <td align="right">Team {{team}}:</td>
             {% if team_names is defined %}
-              <td><input type="text" value="{{team_names[team-1]}}" name={{"team%s" % (team)}} /></td>
+              <td style="padding-right: 15px;"><input type="text" value="{{team_names[team-1]}}" name={{"team%s" % (team)}} /></td>
             {% else %}
-              <td><input type="text" name={{"team%s" % (team)}} /></td>
+              <td style="padding-right: 15px;"><input type="text" name={{"team%s" % (team)}} /></td>
             {% endif %}
               <td align="right"> Netid {{team}}: </td>
-              <td><input type="text" name={{"player%s" % (team)}} placeholder="guest"/></td>
+              <td ><input type="text" name={{"player%s" % (team)}} placeholder="guest"/></td>
           </tr>
         {% endfor %}
-        <!-- <tr class="spacer"></tr> -->
-      </table>
-      <br>
-<table>
+        <tr class="spacer"></tr>
         <tr>
-          <td>Please click on your desired setting to continue.</td>
+          <td colspan="4" style="text-align: center;">Please click on your desired setting to continue.</td>
         </tr>
         <tr>
-          <td><input type="submit" value="Create with this order" ,
+          <td colspan="2" align="center" style="padding-right: 15px;"><input type="submit" value="Create with this order" ,
             onclick="setFormAction('/createbracket/seeding_confirmation/?')" /></td>
-          <td><input type="submit" value="Create with random order" ,
+            
+          <td colspan="2" align="center"><input type="submit" value="Create with random order" ,
             onclick="setFormAction('/createbracket/random_confirmation/?')" /></td>
 
         </tr>

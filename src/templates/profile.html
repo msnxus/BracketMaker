@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <title>Profile</title>
     <style>
+        html {
+            height: 100%;
+        }
         /* Black and white theme with gray accents */
         body {
         background-color: #f0f0f0;
@@ -15,6 +18,8 @@
         /* Overall padding */
         font-family: Arial, sans-serif;
         /* Modern font */
+        font-size: 20px;  
+        height: 100%;
         }
         .header {
         display: flex; /* Use flexbox */
@@ -45,14 +50,26 @@
         th {
             background-color: #f2f2f2;
         }
-        .footer{
-        width: 67%;
-        position: fixed;
-        bottom: 0px;
-        }
+        .page-wrap {
+        min-height: 100%;
+        /* equal to footer height */
+        margin-bottom: -100px; 
+      }
+      .page-wrap:after {
+        content: "";
+        display: block;
+      }
+      .site-footer, .page-wrap:after {
+        height: 100px; 
+      }
+      .site-footer {
+        width: 80%;
+        margin: auto;
+      }
     </style>
 </head>
 <body>
+    <div class="page-wrap">
     <h1 align="center">Profile: {{ user }}</h1>
     <hr>
     <h3>Brackets You Own:</h3>
@@ -98,10 +115,9 @@
       </tr>
       {% endfor %}
   </table>
-  <div class="container">
-    <div class="footer">
-        {% include 'footer.html' %}
     </div>
-  </div>
+  <footer class="site-footer">
+        {% include 'footer.html' %}
+  </footer>
 </body>
 </html>
