@@ -2,74 +2,108 @@
  *  Flex Layout Specifics
 */
 main{
-    display:flex;
-    flex-direction:row;
-  }
-  .round{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    width:200px;
-    list-style:none;
-    padding:0;
-  }
-    .round .spacer{ flex-grow:1; }
-    .round .spacer:first-child,
-    .round .spacer:last-child{ flex-grow:.5; }
-  
-    .round .game-spacer{
-      flex-grow:1;
-    }
-
-    /* Styling for the second round */
-.round:nth-child(2) .game-spacer {
-  flex-grow: 2.8;
+  display:flex;
+  flex-direction:row;
 }
+.round{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  width:200px;
+  list-style:none;
+  padding:0;
+}
+  .round .spacer{ flex-grow:1; }
+
+
+  .round .lastspacer{ flex-grow:.5 }
+
+
+  .round .spacer:first-child,
+  .round .spacer:last-child{ flex-grow:.5; }
+
+  .round .game-spacer{
+    flex-grow:1;
+  }
+
+
+  /* Styling for the second round */
+.round:nth-child(2) .game-spacer {
+flex-grow: 2.8;
+}
+
+
+.round:nth-child(2) .lastspacer {
+flex-grow: 1.25;
+}
+
 
 /* Styling for the third round */
 .round:nth-child(3) .game-spacer {
-  flex-grow: 1.4;
+flex-grow: 1.4;
 }
+
+
+.round:nth-child(3) .lastspacer {
+flex-grow: .7;
+}
+
 
 /* Styling for the fourth round */
 .round:nth-child(4) .game-spacer {
-  flex-grow: 1.1;
+flex-grow: 1.1;
 }
+
+
+.round:nth-child(4) .lastspacer {
+flex-grow: .6;
+}
+
 
 /* Styling for the fifth round */
 .round:nth-child(5) .game-spacer {
-  flex-grow: 1;
+flex-grow: 1;
 }
-  
-  /*
-   *  General Styles
-  */
-  /* body{
-    font-family:sans-serif;
-    font-size:small;
-    padding:10px;
-    line-height:1.4em;
-  } */
-  
-  li.game{
-    padding-left:20px;
+
+
+.round:nth-child() .lastspacer {
+flex-grow: .5;
+}
+
+
+
+
+
+/*
+ *  General Styles
+*/
+/* body{
+  font-family:sans-serif;
+  font-size:small;
+  padding:10px;
+  line-height:1.4em;
+} */
+
+li.game{
+  padding-left:20px;
+}
+
+  li.game.winner{
+    font-weight:bold;
   }
-  
-    li.game.winner{
-      font-weight:bold;
-    }
-    li.game span{
-      float:right;
-      margin-right:5px;
-    }
-  
-    li.game-top{ border-bottom:1px solid #aaa; }
-  
-    li.game-spacer{ 
-      border-right:1px solid #aaa;
-      min-height:40px;
-    }
-  
-    li.game-bottom{ 
-      border-top:1px solid #aaa;
-    }
+  li.game span{
+    float:right;
+    margin-right:5px;
+  }
+
+  li.game-top{ border-bottom:1px solid #aaa; }
+
+  li.game-spacer{
+    border-right:1px solid #aaa;
+    min-height:40px;
+  }
+
+  li.game-bottom{
+    border-top:1px solid #aaa;
+  }
+
