@@ -94,13 +94,12 @@
       <h1>BracketMaker</h1>
     </div>
     <hr>
-    <h1 align='center'> Here is the {{name}} Bracket</h1>
+    <h1 align='center'> {{name}} </h1>
 
     
   
     <p>Welcome to the <b>{{name}}</b> bracket!</p>
     <p>Your code to view this bracket is <b>{{code}}.</b></p>
-    <form action="/editbracket/?code={{ code }}" method="post">
       <main id="tournament">
         {% for round in range(rounds - 1)%}
         <ul class="round round-{{ round + 1}}">
@@ -132,13 +131,26 @@
           {% endfor %}
         </ul>
         {% endfor %}
+
+        {% if bracket_list[bracket_list|length - 1] != None %}
+        <ul class="round round-{{ rounds}}">
+          <li class="spacer">&nbsp;</li>
+
+
+          <li class="game game-top ">{{bracket_list[bracket_list|length - 1][0]}}</li>
+
+
+          <li class="lastspacer">&nbsp;</li>
+        </ul>
+        {% endif %}
+
+
         {% if bracket_list[bracket_list|length - 1] != None %}
         <p style="font-size: 24px; color: darkgreen;">THE WINNER IS {{bracket_list[bracket_list|length - 1][0]}}</p>
         {% endif %}
 
       </main>
       
-    </form>
     <br><br>
     </div>
     <footer class="site-footer" style="display: flex; flex-direction: column;">

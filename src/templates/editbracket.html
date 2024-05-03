@@ -134,6 +134,20 @@
           {% endfor %}
         </ul>
         {% endfor %}
+
+        {% if bracket_list[bracket_list|length - 1] != None %}
+        <ul class="round round-{{ rounds}}">
+          <li class="spacer">&nbsp;</li>
+
+
+          <li class="game game-top ">{{bracket_list[bracket_list|length - 1][0]}}</li>
+
+
+          <li class="lastspacer">&nbsp;</li>
+        </ul>
+        {% endif %}
+
+
         {% if bracket_list[bracket_list|length - 1] != None %}
         <p style="font-size: 24px; color: darkgreen;">THE WINNER IS {{bracket_list[bracket_list|length - 1][0]}}</p>
         {% endif %}
