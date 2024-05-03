@@ -246,12 +246,13 @@ def bracket_seeding_confirmation():
 
     code = __generate_code__()
     team_names = []
-    net_id = []
 
     # get cookies
     num_teams = int(flask.request.cookies.get("num_teams"))
 
     name = flask.request.cookies.get("name")
+    
+    editting = flask.request.args.get("editting")    
 
     player_names = []
     netidError = False
@@ -259,6 +260,7 @@ def bracket_seeding_confirmation():
         team_names.append(flask.request.args.get("team%s" % (team)))
         player_name = (flask.request.args.get("player%s" % (team)))
         if not database.is_user_created(player_name):
+            print(player_name)
             if player_name != "":
                 netidError = True
             player_names.append('guest')
@@ -271,6 +273,12 @@ def bracket_seeding_confirmation():
     count_guest = sum(1 for item in player_names if item == "guest")
     netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
 
+    if editting is not None:
+        error_message = ""
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
+    
     if netidError:
         error_message = "A netid was not found. Make sure that the user associated with the netid has logged in before adding them."
         html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)

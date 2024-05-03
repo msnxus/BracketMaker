@@ -116,7 +116,7 @@
       Owner: <input type="text" name="owner" value="{{ netid }}" readonly
         style="color: gray; border: none; background: none;" class="non-clickable" />
       <br>
-      Code: <input type="text" name="code" value="{{ code }}" />
+      Code: <input type="text" name="code" value="{{ code }}"/>
       <input type="submit" value="Create Bracket" />
       Players Can Update Scores? <input type="checkbox" id="player_updates" name="player_updates" unchecked />
     </div>
@@ -141,15 +141,21 @@
   </table>
   <br>
   <p>Something wrong?</p>
-  <div>
-    <button class="btn-custom" onclick="goBack()">Edit Bracket</button>
-  </div>
-
-  <script>
-    function goBack() {
-      window.history.back();
-    }
-  </script>
+  <form action="/createbracket/seeding_confirmation/" method="get">
+    <input type="hidden" name="num_teams" value="{{ num_teams }}">
+    <input type="hidden" name="name" value="{{ name }}">
+    {% for team in range(1, num_teams + 1) %}
+      <input type="hidden" name={{"team%s" % (team)}} value="{{team_names[team - 1]}}" />
+      {% if player_names[team-1] == "guest" %}
+        <input type="hidden" name={{"player%s" % (team)}} value="" />
+      {% else %}
+        <input type="hidden" name={{"player%s" % (team)}} value="{{player_names[team-1]}}" />
+      {% endif %}
+    {% endfor %}
+    <input type="hidden" name="editting" value="True">
+    <input type="submit" value="Edit Bracket" />
+  </form>
+  
   </div>
   <footer class="site-footer">
     {% include 'footer.html' %}
