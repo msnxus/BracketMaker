@@ -588,7 +588,14 @@ def profile():
 
     hb = database.get_owned_brackets(user)
     pb = database.get_participating_brackets(user)
+    extra_info = []
 
+    for bracket in pb:
+        status = 'In Progress' if bracket[4][-1][-1] == None else 'Finished'
+        disp = database.get_display_name_from_code(bracket[0], user)
+        extra_info.append((status, disp))
+
+    pb = zip(pb, extra_info)
     html_code = flask.render_template('profile.html', user=user, hosted_brackets=hb, participating_brackets=pb)
     response = flask.make_response(html_code)
     return response
