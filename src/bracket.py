@@ -488,7 +488,24 @@ def store_bracket():
 
     print("STORING: " + str(players))
     database.store_players_with_code(code, players, team_names)
-
+    data = get_bracket_from_code(code)
+    bracket = data[0][1]
+    
+    # Update player scores
+    players = []
+    my_bracket = Bracket("", players)
+    my_bracket.load(code)
+    for i in range(1, len(bracket)-1):
+        if bracket[i] is not None:
+            round = my_bracket.get_round(i-1)
+            player_name = bracket[i][0]
+            player_value = flask.request.form.get(str(i))
+            if player_value == None:
+                player_value = 0
+            my_bracket.update_score(player_name, round, player_value)
+    print("using this bracket to set winners:", my_bracket.to_string())
+    my_bracket.set_winners()
+    update_bracket(code, my_bracket.serialize())
 
     return redirect(url_for('view_bracket_with_code', code=code))
 
@@ -589,7 +606,14 @@ def profile():
 
     hb = database.get_owned_brackets(user)
     pb = database.get_participating_brackets(user)
+    extra_info = []
 
+    for bracket in pb:
+        status = 'In Progress' if bracket[4][-1][-1] == None else 'Finished'
+        disp = database.get_display_name_from_code(bracket[0], user)
+        extra_info.append((status, disp))
+
+    pb = zip(pb, extra_info)
     html_code = flask.render_template('profile.html', user=user, hosted_brackets=hb, participating_brackets=pb)
     response = flask.make_response(html_code)
     return response
