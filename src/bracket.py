@@ -272,7 +272,7 @@ def bracket_seeding_confirmation():
     netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
 
     if netidError:
-        error_message = "A netid was not found."
+        error_message = "A netid was not found. Make sure that the user associated with the netid has logged in before adding them."
         html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
@@ -349,7 +349,7 @@ def bracket_random_confirmation():
     netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)    
     
     if netidError:
-        error_message = "A netid was not found."
+        error_message = "A netid was not found. Make sure that the user associated with the netid has logged in before adding them."
         html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
