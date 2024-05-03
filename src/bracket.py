@@ -246,6 +246,7 @@ def bracket_seeding_confirmation():
 
     code = __generate_code__()
     team_names = []
+    net_id = []
 
     # get cookies
     num_teams = int(flask.request.cookies.get("num_teams"))
@@ -253,11 +254,13 @@ def bracket_seeding_confirmation():
     name = flask.request.cookies.get("name")
 
     player_names = []
-
+    netidError = False
     for team in range(1, num_teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
         player_name = (flask.request.args.get("player%s" % (team)))
         if not database.is_user_created(player_name):
+            if player_name != "":
+                netidError = True
             player_names.append('guest')
         else: player_names.append(player_name)
 
@@ -268,23 +271,27 @@ def bracket_seeding_confirmation():
     count_guest = sum(1 for item in player_names if item == "guest")
     netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
 
-
+    if netidError:
+        error_message = "A netid was not found."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
     
     if '' in team_names:
         error_message = "Please enter a name for each team."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if team_duplicates:
-        error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate names."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if netid_duplicates:
-        error_message = "Two or more teams have the same netID. Please do not enter teams with duplicate netIDs."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate netIDs."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
 
@@ -324,11 +331,13 @@ def bracket_random_confirmation():
     name = flask.request.cookies.get("name")
 
     player_names = []
-
+    netidError = False
     for team in range(1, num_teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
         player_name = (flask.request.args.get("player%s" % (team)))
         if not database.is_user_created(player_name):
+            if player_name != "":
+                netidError = True
             player_names.append('guest')
         else: player_names.append(player_name)
         
@@ -339,21 +348,27 @@ def bracket_random_confirmation():
     count_guest = sum(1 for item in player_names if item == "guest")
     netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)    
     
+    if netidError:
+        error_message = "A netid was not found."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
+    
     if '' in team_names:
         error_message = "Please enter a name for each team."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if team_duplicates:
-        error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate names."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if netid_duplicates:
-        error_message = "Two or more teams have the same netID. Please do not enter teams with duplicate netIDs."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate netIDs."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
 
