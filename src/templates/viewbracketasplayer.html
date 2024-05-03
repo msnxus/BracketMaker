@@ -113,13 +113,13 @@
           {% elif bracket_list[i][0] != display_name and bracket_list[i+1][0] != display_name %}
           <li class="game game-top ">{{bracket_list[i][0]}} <span>
             <div>
-              {{bracket_list[i][1]}}
+                <input type="number" name="{{i|string}}" value="{{bracket_list[i][1]}}" id="{{i}}" readonly>
             </div>
           </span></li>
             <li class="game game-spacer">&nbsp;</li>
             <li class="game game-bottom ">{{bracket_list[i + 1][0]}} <span>
             <div>
-              {{bracket_list[index][1]}}
+                <input type="number" name="{{index|string}}" value="{{bracket_list[index][1]}}" id="{{index}}" readonly>
             </div>
           </span></li>
 
