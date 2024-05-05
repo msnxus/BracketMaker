@@ -214,7 +214,7 @@ def add_teams():
                 html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
             elif num_teams > 1024:
-                error_message =  'The maximum number of teams is 1024.'
+                error_message =  'You cannot have more than 1024 teams in your bracket.'
                 html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
 
