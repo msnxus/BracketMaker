@@ -116,9 +116,12 @@
       Owner: <input type="text" name="netid" value="{{ netid }}" readonly
         style="color: gray; border: none; background: none;" class="non-clickable" />
       <br>
-      Code: <input type="number" name="code" value="{{ code }}" maxlength="4" onkeydown="javascript: return event.keyCode == 69 ? false : true" />
+      <b>Code:</b> <input type="number" name="code" value="{{ code }}" readonly 
+        style="border: none; font-weight: bold; background: none; width: 135px;" class="non-clickable" />
+      <br>
+      Players Can Update Scores? <input type="checkbox" id="player_updates" name="player_updates"  unchecked style="transform: scale(1.5); margin-right: 25px;"/>  
       <input type="submit" value="Create Bracket" />
-      Players Can Update Scores? <input type="checkbox" id="player_updates" name="player_updates" unchecked />
+      
     </div>
 
   </form>
