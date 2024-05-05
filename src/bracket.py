@@ -291,6 +291,12 @@ def bracket_seeding_confirmation():
         response = flask.make_response(html_code)
         return response
     
+    if 'Bye' in team_names:
+        error_message = "You cannot enter a team named \"Bye\". Please change this team name."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
+    
     if team_duplicates:
         error_message = "Please do not enter teams with duplicate names."
         html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
