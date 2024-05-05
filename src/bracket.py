@@ -429,7 +429,7 @@ def store_bracket():
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
     code = flask.request.form.get("code")
-    owner = str(flask.request.form.get("owner"))
+    owner = str(flask.request.form.get("netid"))
     name = str(flask.request.form.get("name"))
     num_teams = int(flask.request.form.get("num_teams"))
     players = flask.request.form.getlist("players")
@@ -441,7 +441,6 @@ def store_bracket():
     team_names = ast.literal_eval(team_names)
     team_names = [str(x) for x in team_names] 
 
-    netid = flask.request.cookies.get("netid")
     player_names = flask.request.cookies.get("player_names")
     player_names = ast.literal_eval(player_names)
     player_names = [str(x) for x in player_names] 
@@ -451,10 +450,11 @@ def store_bracket():
     try:
         dud = int(code)
     except:
+        print("netid", owner)
         error_message =  'Please ensure the code is a 4 digit number.'
 
         html_code = flask.render_template('bracketconfirmation.html', 
-            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            team_names=team_names, code=code, netid=owner, num_teams=num_teams, 
             name=name, player_names=player_names, error_message=error_message)
         response = flask.make_response(html_code)
         return response
@@ -463,16 +463,17 @@ def store_bracket():
         error_message =  'Please ensure the code is a positive number.'
 
         html_code = flask.render_template('bracketconfirmation.html', 
-            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            team_names=team_names, code=code, netid=owner, num_teams=num_teams, 
             name=name, player_names=player_names, error_message=error_message)
         response = flask.make_response(html_code)
         return response
     
     if(len(str(code)) != 4):
+        print("netid", owner)
         error_message =  'Please ensure the code is a 4 digit number.'
 
         html_code = flask.render_template('bracketconfirmation.html', 
-            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            team_names=team_names, code=code, netid=owner, num_teams=num_teams, 
             name=name, player_names=player_names, error_message=error_message)
         response = flask.make_response(html_code)
         return response
@@ -496,7 +497,7 @@ def store_bracket():
     if code_exists:
         error_message =  'A bracket with this code already exists. Please create a new code.'
         print("pretty please", team_names)
-        html_code = flask.render_template('bracketconfirmation.html', num_teams = num_teams, team_names=team_names, code=code, error_message=error_message, name=name, netid=netid, player_names=player_names)
+        html_code = flask.render_template('bracketconfirmation.html', num_teams = num_teams, team_names=team_names, code=code, error_message=error_message, name=name, owner=owner, player_names=player_names)
         response = flask.make_response(html_code)
         bracket = Bracket(name, team_names)
         ser_bracket = bracket.serialize()

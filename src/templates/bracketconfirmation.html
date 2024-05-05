@@ -113,10 +113,10 @@
       Number of Teams: <input type="text" name="num_teams" value="{{ num_teams }}" readonly
         style="color: gray; border: none; background: none;" class="non-clickable" />
       <br>
-      Owner: <input type="text" name="owner" value="{{ netid }}" readonly
+      Owner: <input type="text" name="netid" value="{{ netid }}" readonly
         style="color: gray; border: none; background: none;" class="non-clickable" />
       <br>
-      Code: <input type="text" name="code" value="{{ code }}"/>
+      Code: <input type="number" name="code" value="{{ code }}" maxlength="4" onkeydown="javascript: return event.keyCode == 69 ? false : true" />
       <input type="submit" value="Create Bracket" />
       Players Can Update Scores? <input type="checkbox" id="player_updates" name="player_updates" unchecked />
     </div>
