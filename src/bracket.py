@@ -222,7 +222,7 @@ def add_teams():
                 html_code = flask.render_template('addteams.html',name=name, num_teams=num_teams)
 
         except: 
-            error_message =  'Please enter an integer value for number of teams.'
+            error_message =  'Please enter a number between 2 and 1024 for the number of teams.'
             html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
 
