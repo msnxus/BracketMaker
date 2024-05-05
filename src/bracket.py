@@ -271,7 +271,9 @@ def bracket_seeding_confirmation():
 
     player_set = set(player_names)
     count_guest = sum(1 for item in player_names if item == "guest")
-    netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
+    netid_duplicates = False
+    if count_guest != 0:
+        netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
 
     if editting is not None:
         error_message = ""
