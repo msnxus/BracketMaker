@@ -591,7 +591,7 @@ def update_scores():
     players = []
     my_bracket = Bracket("", players)
     my_bracket.load(code)
-    error_message=None
+    error_message="False"
     try:
         for i in range(1, len(bracket)-1):
             if bracket[i] is not None:
@@ -605,9 +605,9 @@ def update_scores():
         my_bracket.set_winners()
         error = update_bracket(code, my_bracket.serialize())
         if error is not None: # internal server error
-            error_message = "Your version of the bracket was conflicting with the current one. Please try again."
+            error_message = "True"
     except Exception as ex:
-         error_message = "Your version of the bracket was conflicting with the current one. Please try again."    
+         error_message = "True" 
     
     
     return flask.redirect(f"/editbracket/?code={code}&error_message={error_message}")
