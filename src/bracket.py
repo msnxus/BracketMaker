@@ -644,7 +644,15 @@ def profile():
         disp = database.get_display_name_from_code(bracket[0], user)
         extra_info.append((status, disp))
 
+    extra_info_2 = []
+
+    for bracket in hb:
+        status = 'In Progress' if bracket[4][-1][-1] == None else 'Finished'
+        disp = database.get_display_name_from_code(bracket[0], user)
+        extra_info_2.append((status, disp))
+
     pb = zip(pb, extra_info)
+    hb = zip(hb, extra_info_2)
     html_code = flask.render_template('profile.html', user=user, hosted_brackets=hb, participating_brackets=pb)
     response = flask.make_response(html_code)
     return response
