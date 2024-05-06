@@ -83,7 +83,7 @@
       <table>
          <tr>
             <td align="right">Code:</td>
-            <th><input type="text" name="code" id="code" value="{{code}}" /></th>
+            <th><input type="number" name="code" id="code" value="{{code}}" onkeydown="javascript: return event.keyCode == 69 ? false : true" /></th>
           </tr>
 
           <tr>

@@ -87,8 +87,16 @@
             {% else %}
               <td style="padding-right: 15px;"><input type="text" name={{"team%s" % (team)}} /></td>
             {% endif %}
-              <td align="right"> NetID {{team}}: </td>
-              <td ><input type="text" name={{"player%s" % (team)}} placeholder="guest"/></td>
+            <td align="right"> NetID {{team}}: </td>
+            {% if player_names is defined %}              
+              {% if player_names[team - 1] != "guest" %}
+                <td ><input type="text" name={{"player%s" % (team)}} value="{{player_names[team-1]}}"/></td>
+              {% else %}
+                <td><input type="text" name={{"player%s" % (team)}} placeholder="guest" /></td>
+              {% endif %}
+            {% else %}
+              <td><input type="text" name={{"player%s" % (team)}} placeholder="guest" /></td>
+            {% endif %}
           </tr>
         {% endfor %}
         <tr class="spacer"></tr>
