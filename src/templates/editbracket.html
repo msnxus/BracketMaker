@@ -121,6 +121,10 @@
                 <div>
                   <input type="number" name="{{i|string}}" value="{{bracket_list[i][1]}}" id="{{i}}" style="min-width: 60px;" onkeydown="javascript: return event.keyCode == 69 ? false : true" >
                 </div>
+
+              {%else%}
+
+              &nbsp;
               {% endif %}
             </span></li>
           <li class="game game-spacer">&nbsp;</li>
@@ -129,7 +133,11 @@
               <div>
                 <input type="number" name="{{index|string}}" value="{{bracket_list[index][1]}}" id="{{index}}" style="min-width: 60px;" onkeydown="javascript: return event.keyCode == 69 ? false : true" >
               </div>
-            {% endif}
+
+            {%else %}
+            &nbsp;
+
+            {% endif %}
             </span></li>
 
             <li class="spacer">&nbsp;</li>
