@@ -169,6 +169,9 @@
         <input type="submit" value="Update Bracket" , class="submit-btn">
       
     </form>
+    {% if error_message != 'None' and error_message != None %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
     <br><br>
     <!-- </div> -->
     <footer class="site-footer" style="display: flex; flex-direction: column;" >

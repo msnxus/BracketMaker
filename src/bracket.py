@@ -545,6 +545,7 @@ def store_bracket():
 @app.route('/editbracket/', methods=['GET'])
 def view_bracket_with_code():
     code = flask.request.args.get("code")
+    error_message = flask.request.args.get("error_message")
     
     if redirect_login():
         netid = None
@@ -573,9 +574,9 @@ def view_bracket_with_code():
     bracket_list = bracket.bracket_list()
     round_indicies = bracket.round_indicies()
     name = bracket.name
-
+    
     html_code = flask.render_template('editbracket.html',round_indicies=round_indicies, name=name, rounds=rounds, code=code,
-                                      bracket_list=bracket_list)
+                                      bracket_list=bracket_list, error_message=error_message)
     
     response = flask.make_response(html_code)
     return response
@@ -590,18 +591,26 @@ def update_scores():
     players = []
     my_bracket = Bracket("", players)
     my_bracket.load(code)
-    for i in range(1, len(bracket)-1):
-        if bracket[i] is not None:
-            round = my_bracket.get_round(i-1)
-            player_name = bracket[i][0]
-            player_value = flask.request.form.get(str(i))
-            if player_value == None:
-                player_value = 0
-            my_bracket.update_score(player_name, round, player_value)
-    print("using this bracket to set winners:", my_bracket.to_string())
-    my_bracket.set_winners()
-    update_bracket(code, my_bracket.serialize())
-    return flask.redirect(f"/editbracket/?code={code}")
+    error_message=None
+    try:
+        for i in range(1, len(bracket)-1):
+            if bracket[i] is not None:
+                round = my_bracket.get_round(i-1)
+                player_name = bracket[i][0]
+                player_value = flask.request.form.get(str(i))
+                if player_value == None:
+                    player_value = 0
+                my_bracket.update_score(player_name, round, player_value)
+        print("using this bracket to set winners:", my_bracket.to_string())
+        my_bracket.set_winners()
+        error = update_bracket(code, my_bracket.serialize())
+        if error is not None: # internal server error
+            error_message = "Your version of the bracket was conflicting with the current one. Please try again."
+    except Exception as ex:
+         error_message = "Your version of the bracket was conflicting with the current one. Please try again."    
+    
+    
+    return flask.redirect(f"/editbracket/?code={code}&error_message={error_message}")
 
 # FROM HOME PAGE, WHEN CODE IS NOT PROVIDED.
 @app.route('/entercode/', methods=['GET'])
