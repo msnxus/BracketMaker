@@ -167,6 +167,7 @@ class Bracket():
         
     # Update Bracket to hold the winner of a match   
     def update_winner(self, player, round):
+        print(self.to_string())
         if round >= self.max_round() or round < 0: return None # invalid round
 
         new_index = self.player_index_by_round(player, round+1)
@@ -175,10 +176,12 @@ class Bracket():
         elif self._bracket_list[new_index][0] != player:
             old_player = self._bracket_list[new_index][0]
             self._bracket_list[new_index] = [player, 0]
-            # set the opposing players score to 0
+            # set the opposing players score to 0   
             if new_index % 2 == 1:
                 if(new_index + 1 < len(self._bracket_list)):
-                    self._bracket_list[new_index + 1][1] = 0
+                    print("nex_index:", new_index)
+                    if self._bracket_list[new_index + 1] != None:
+                        self._bracket_list[new_index + 1][1] = 0
             else:
                 self._bracket_list[new_index - 1][1] = 0
             opps = self.get_all_opposing_players(old_player, round+1)
@@ -300,7 +303,10 @@ class Bracket():
         if round >= self.max_round() or round < 0: return None # invalid round
 
         index = self.player_index_by_round(player, round)
-        return int(self._bracket_list[index][1])
+        try:
+            return int(self._bracket_list[index][1])
+        except:
+            return 0
 
     # Determines if bracket is complete based on if there is a champion
     def is_complete(self):

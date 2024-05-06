@@ -214,7 +214,7 @@ def add_teams():
                 html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
             elif num_teams > 1024:
-                error_message =  'The maximum number of teams is 1024.'
+                error_message =  'You cannot have more than 1024 teams in your bracket.'
                 html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
 
@@ -222,7 +222,7 @@ def add_teams():
                 html_code = flask.render_template('addteams.html',name=name, num_teams=num_teams)
 
         except: 
-            error_message =  'Please enter an integer value for number of teams.'
+            error_message =  'Please enter a number between 2 and 1024 for the number of teams.'
             html_code = flask.render_template('createbracket.html', name=name, num_teams=num_teams, error_message=error_message)
 
 
@@ -251,13 +251,18 @@ def bracket_seeding_confirmation():
     num_teams = int(flask.request.cookies.get("num_teams"))
 
     name = flask.request.cookies.get("name")
+    
+    editting = flask.request.args.get("editting")    
 
     player_names = []
-
+    netidError = False
     for team in range(1, num_teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
         player_name = (flask.request.args.get("player%s" % (team)))
         if not database.is_user_created(player_name):
+            print(player_name)
+            if player_name != "":
+                netidError = True
             player_names.append('guest')
         else: player_names.append(player_name)
 
@@ -266,25 +271,43 @@ def bracket_seeding_confirmation():
 
     player_set = set(player_names)
     count_guest = sum(1 for item in player_names if item == "guest")
-    netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
+    netid_duplicates = False
+    if count_guest != 0:
+        netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)
 
-
+    if editting is not None:
+        error_message = ""
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
+    
+    if netidError:
+        error_message = "A netid was not found. Make sure that the user associated with the netid has logged in before adding them."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
     
     if '' in team_names:
         error_message = "Please enter a name for each team."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
+    
+    if 'Bye' in team_names:
+        error_message = "You cannot enter a team named \"Bye\". Please change this team name."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if team_duplicates:
-        error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate names."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if netid_duplicates:
-        error_message = "Two or more teams have the same netID. Please do not enter teams with duplicate netIDs."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate netIDs."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
 
@@ -324,11 +347,13 @@ def bracket_random_confirmation():
     name = flask.request.cookies.get("name")
 
     player_names = []
-
+    netidError = False
     for team in range(1, num_teams+1):
         team_names.append(flask.request.args.get("team%s" % (team)))
         player_name = (flask.request.args.get("player%s" % (team)))
         if not database.is_user_created(player_name):
+            if player_name != "":
+                netidError = True
             player_names.append('guest')
         else: player_names.append(player_name)
         
@@ -339,21 +364,27 @@ def bracket_random_confirmation():
     count_guest = sum(1 for item in player_names if item == "guest")
     netid_duplicates = len(player_set) != (len(player_names) - count_guest + 1)    
     
+    if netidError:
+        error_message = "A netid was not found. Make sure that the user associated with the netid has logged in before adding them."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
+        response = flask.make_response(html_code)
+        return response
+    
     if '' in team_names:
         error_message = "Please enter a name for each team."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if team_duplicates:
-        error_message = "Two or more teams have the same name. Please do not enter teams with duplicate names."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate names."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
     
     if netid_duplicates:
-        error_message = "Two or more teams have the same netID. Please do not enter teams with duplicate netIDs."
-        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name)
+        error_message = "Please do not enter teams with duplicate netIDs."
+        html_code = flask.render_template('addteams.html', code=code, num_teams = num_teams, error_message = error_message, team_names = team_names, name = name, player_names = player_names)
         response = flask.make_response(html_code)
         return response
 
@@ -398,7 +429,7 @@ def store_bracket():
     bracket.deserialize(flask.request.cookies.get("bracket"))
 
     code = flask.request.form.get("code")
-    owner = str(flask.request.form.get("owner"))
+    owner = str(flask.request.form.get("netid"))
     name = str(flask.request.form.get("name"))
     num_teams = int(flask.request.form.get("num_teams"))
     players = flask.request.form.getlist("players")
@@ -410,7 +441,6 @@ def store_bracket():
     team_names = ast.literal_eval(team_names)
     team_names = [str(x) for x in team_names] 
 
-    netid = flask.request.cookies.get("netid")
     player_names = flask.request.cookies.get("player_names")
     player_names = ast.literal_eval(player_names)
     player_names = [str(x) for x in player_names] 
@@ -420,10 +450,11 @@ def store_bracket():
     try:
         dud = int(code)
     except:
+        print("netid", owner)
         error_message =  'Please ensure the code is a 4 digit number.'
 
         html_code = flask.render_template('bracketconfirmation.html', 
-            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            team_names=team_names, code=code, netid=owner, num_teams=num_teams, 
             name=name, player_names=player_names, error_message=error_message)
         response = flask.make_response(html_code)
         return response
@@ -432,16 +463,17 @@ def store_bracket():
         error_message =  'Please ensure the code is a positive number.'
 
         html_code = flask.render_template('bracketconfirmation.html', 
-            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            team_names=team_names, code=code, netid=owner, num_teams=num_teams, 
             name=name, player_names=player_names, error_message=error_message)
         response = flask.make_response(html_code)
         return response
     
     if(len(str(code)) != 4):
+        print("netid", owner)
         error_message =  'Please ensure the code is a 4 digit number.'
 
         html_code = flask.render_template('bracketconfirmation.html', 
-            team_names=team_names, code=code, netid=netid, num_teams=num_teams, 
+            team_names=team_names, code=code, netid=owner, num_teams=num_teams, 
             name=name, player_names=player_names, error_message=error_message)
         response = flask.make_response(html_code)
         return response
@@ -465,7 +497,7 @@ def store_bracket():
     if code_exists:
         error_message =  'A bracket with this code already exists. Please create a new code.'
         print("pretty please", team_names)
-        html_code = flask.render_template('bracketconfirmation.html', num_teams = num_teams, team_names=team_names, code=code, error_message=error_message, name=name, netid=netid, player_names=player_names)
+        html_code = flask.render_template('bracketconfirmation.html', num_teams = num_teams, team_names=team_names, code=code, error_message=error_message, name=name, owner=owner, player_names=player_names)
         response = flask.make_response(html_code)
         bracket = Bracket(name, team_names)
         ser_bracket = bracket.serialize()
@@ -612,7 +644,15 @@ def profile():
         disp = database.get_display_name_from_code(bracket[0], user)
         extra_info.append((status, disp))
 
+    extra_info_2 = []
+
+    for bracket in hb:
+        status = 'In Progress' if bracket[4][-1][-1] == None else 'Finished'
+        disp = database.get_display_name_from_code(bracket[0], user)
+        extra_info_2.append((status, disp))
+
     pb = zip(pb, extra_info)
+    hb = zip(hb, extra_info_2)
     html_code = flask.render_template('profile.html', user=user, hosted_brackets=hb, participating_brackets=pb)
     response = flask.make_response(html_code)
     return response
