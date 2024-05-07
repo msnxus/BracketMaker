@@ -644,24 +644,36 @@ def profile():
     netid = _cas.authenticate()
     user = netid.rstrip()
 
+    print("TRYING TO GET BRACKETS")
+
     hb = database.get_owned_brackets(user)
     pb = database.get_participating_brackets(user)
+
+    print("GOT BRACKETS FOR PROFILE")
     extra_info = []
 
+    print("TRYING TO GO THROUGH PARTICIPANT BRACKETS")
     for bracket in pb:
         status = 'In Progress' if bracket[4][-1][-1] == None else 'Finished'
         disp = database.get_display_name_from_code(bracket[0], user)
         extra_info.append((status, disp))
 
+    print("GOT THROUGH PARTICIPANT BRACKETS")
     extra_info_2 = []
 
+    print("TRYING TO GO THROUGH OWNED BRACKETS")
     for bracket in hb:
         status = 'In Progress' if bracket[4][-1][-1] == None else 'Finished'
-        disp = database.get_display_name_from_code(bracket[0], user)
+        print("STATUS GOT")
+        disp = None
+        print("DISPLAY NAME GOT")
         extra_info_2.append((status, disp))
+    print("GOT THROUGH OWNED BRACKETS")
 
     pb = zip(pb, extra_info)
     hb = zip(hb, extra_info_2)
+
+    print("TRYING TO MAKE HTML")
     html_code = flask.render_template('profile.html', user=user, hosted_brackets=hb, participating_brackets=pb)
     response = flask.make_response(html_code)
     return response
