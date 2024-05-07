@@ -666,7 +666,7 @@ def profile():
 
     for bracket in hb:
         status = 'In Progress' if bracket[4][-1][-1] == None else 'Finished'
-        disp = database.get_display_name_from_code(bracket[0], user)
+        disp = None
         extra_info_2.append((status, disp))
 
     pb = zip(pb, extra_info)
