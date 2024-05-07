@@ -9,6 +9,7 @@
     html {
       height: 100%;
     }
+
     /* Black and white theme with gray accents */
     body {
       background-color: #f0f0f0;
@@ -22,7 +23,7 @@
       font-size: 20px;
       height: 100%;
     }
-  
+
     .header {
       display: flex;
       /* Use flexbox */
@@ -33,7 +34,7 @@
       background-color: #f0f0f0;
       /* Light gray background */
     }
-  
+
     .header h1 {
       flex-grow: 1;
       margin: 0;
@@ -43,62 +44,67 @@
       text-align: center;
       /* Centered text */
     }
-  
+
     .center-text {
       text-align: center;
     }
-  
+
     .page-wrap {
-        min-height: 100%;
-        /* equal to footer height */
-        margin-bottom: -100px; 
-      }
-      .page-wrap:after {
-        content: "";
-        display: block;
-      }
-      .site-footer, .page-wrap:after {
-        height: 100px; 
-      }
-      .site-footer {
-        width: 80%;
-        margin: auto;
-      }
+      min-height: 100%;
+      /* equal to footer height */
+      margin-bottom: -100px;
+    }
+
+    .page-wrap:after {
+      content: "";
+      display: block;
+    }
+
+    .site-footer,
+    .page-wrap:after {
+      height: 100px;
+    }
+
+    .site-footer {
+      width: 80%;
+      margin: auto;
+    }
   </style>
 </head>
 
 <body>
   <div class="page-wrap">
-  <div class="header">
-    <h1>BracketMaker</h1>
-  </div>
-  <hr>
-  <h1 align="center">Create a Bracket</h1><br>
-  <p>To begin creating your bracket, please enter a <b>name</b> for your bracket and the total <b>number of teams</b>.</p>
-  <form action="/createbracket/addteams/?" method="get">
-    <table>
-      <tr>
-        <td align="right">Bracket Name:</td>
-        <th><input type="text" name="name" value="{{name}}" /></th>
-      </tr>
-      <tr>
-        <td align="right">Total Number of Teams:</td>
-        <th><input type="text" name="num_teams" value="{{num_teams}}" /></th>
-      </tr>
-      <tr>
-        <td></td>
-        <td><input type="submit" value="Continue" /></td>
-      </tr>
-     
-    </table>
-    {% if error_message != 'None' %}
-    <p align="left" style="color: red;">{{ error_message }}</p>
-    {% endif %}
+    <div class="header">
+      <h1>BracketMaker</h1>
     </div>
-    <div class="site-footer">
-        {% include 'footer.html' %}
+    <hr>
+    <h1 align="center">Create a Bracket</h1><br>
+    <p>To begin creating your bracket, please enter a <b>name</b> for your bracket and the total <b>number of teams</b>.
+    </p>
+    <form action="/createbracket/addteams/?" method="get">
+      <table>
+        <tr>
+          <td align="right">Bracket Name:</td>
+          <th><input type="text" name="name" value="{{name}}" /></th>
+        </tr>
+        <tr>
+          <td align="right">Total Number of Teams:</td>
+          <th><input type="text" name="num_teams" value="{{num_teams}}" /></th>
+        </tr>
+        <tr>
+          <td></td>
+          <td><input type="submit" value="Continue" /></td>
+        </tr>
+
+      </table>
+      {% if error_message != 'None' %}
+      <p align="left" style="color: red;">{{ error_message }}</p>
+      {% endif %}
+  </div>
+  <div class="site-footer">
+    {% include 'footer.html' %}
     </footer>
-    
+
 </body>
 
 </html>

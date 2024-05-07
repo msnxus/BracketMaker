@@ -9,6 +9,7 @@
       html {
          height: 100%;
       }
+
       /* Black and white theme with gray accents */
       body {
          background-color: #f0f0f0;
@@ -49,68 +50,73 @@
       }
 
       .page-wrap {
-        min-height: 100%;
-        /* equal to footer height */
-        margin-bottom: -100px; 
+         min-height: 100%;
+         /* equal to footer height */
+         margin-bottom: -100px;
       }
+
       .page-wrap:after {
-        content: "";
-        display: block;
+         content: "";
+         display: block;
       }
-      .site-footer, .page-wrap:after {
-        height: 100px; 
+
+      .site-footer,
+      .page-wrap:after {
+         height: 100px;
       }
+
       .site-footer {
-        width: 80%;
-        margin: auto;
+         width: 80%;
+         margin: auto;
       }
    </style>
 </head>
 
 <body>
    <div class="page-wrap">
-   <div class="header">
-      <h1>BracketMaker</h1>
-   </div>
-   <hr>
-   <h1 align="center">View a Bracket</h1><br>
-   <p> To <b>search</b> for a bracket, please type in any information about the bracket(s) you wish to view.
-      The table will automatically update.</p>
-   <p> To <b>view</b> a bracket, please click on the <b>blue code</b> of the bracket you wish to view.
-      You will then be automatically redirected to that bracket.
-   </p>
-   <form action="/entercode/?" method="get">
-      <table>
-         <tr>
-            <td align="right">Code:</td>
-            <th><input type="number" name="code" id="code" value="{{code}}" onkeydown="javascript: return event.keyCode == 69 ? false : true" /></th>
-          </tr>
+      <div class="header">
+         <h1>BracketMaker</h1>
+      </div>
+      <hr>
+      <h1 align="center">View a Bracket</h1><br>
+      <p> To <b>search</b> for a bracket, please type in any information about the bracket(s) you wish to view.
+         The table will automatically update.</p>
+      <p> To <b>view</b> a bracket, please click on the <b>blue code</b> of the bracket you wish to view.
+         You will then be automatically redirected to that bracket.
+      </p>
+      <form action="/entercode/?" method="get">
+         <table>
+            <tr>
+               <td align="right">Code:</td>
+               <th><input type="number" name="code" id="code" value="{{code}}"
+                     onkeydown="javascript: return event.keyCode == 69 ? false : true" /></th>
+            </tr>
 
-          <tr>
-            <td align="right">Bracket Name:</td>
-            <th><input type="text" name="name" id="name" value="{{name}}" /></th>
-          </tr>
+            <tr>
+               <td align="right">Bracket Name:</td>
+               <th><input type="text" name="name" id="name" value="{{name}}" /></th>
+            </tr>
 
-          <tr>
-            <td align="right">Owner NetId:</td>
-            <th><input type="text" name="owner" id="owner" value="{{owner}}" /></th>
-          </tr>
+            <tr>
+               <td align="right">Owner NetId:</td>
+               <th><input type="text" name="owner" id="owner" value="{{owner}}" /></th>
+            </tr>
 
-          <tr>
-          <td></td>
-        </tr>
-        </table>
+            <tr>
+               <td></td>
+            </tr>
+         </table>
       </form>
-        {% if error_message != 'None' %}
-        <p style = "color: red;">{{ error_message }}</p>
-        {% endif %}
+      {% if error_message != 'None' %}
+      <p style="color: red;">{{ error_message }}</p>
+      {% endif %}
 
-   <br>
-   <!--generate the codes table-->
+      <br>
+      <!--generate the codes table-->
 
-   <div style="width: max-content;">
-      <div id="resultsDiv"></div>
-   </div>
+      <div style="width: max-content;">
+         <div id="resultsDiv"></div>
+      </div>
 
    </div>
    <footer class="site-footer">
@@ -126,31 +132,31 @@
       "use strict";
 
 
- function handleResponse(data) {
-   console.log("Data: " + data)
-    $("#resultsDiv").html(data);
- }
+      function handleResponse(data) {
+         console.log("Data: " + data)
+         $("#resultsDiv").html(data);
+      }
 
- function handleError(request) {
-   console.log("ERror")
-    if (request.statusText !== "abort")
-      alert("Error: Failed to fetch data from server");
- }
+      function handleError(request) {
+         console.log("ERror")
+         if (request.statusText !== "abort")
+            alert("Error: Failed to fetch data from server");
+      }
 
       let request = null;
 
- function getResults() {
-    let code = $("#code").val();
-    let name = $("#name").val();
-    let owner = $("#owner").val();
+      function getResults() {
+         let code = $("#code").val();
+         let name = $("#name").val();
+         let owner = $("#owner").val();
 
-    let encodedCode = encodeURIComponent(code);
-    let encodedName = encodeURIComponent(name);
-    let encodedOwner = encodeURIComponent(owner);
-    
-    let url = "/coderesults?code=" + encodedCode;
-    url += "&name=" + encodedName
-    url += "&owner=" + encodedOwner
+         let encodedCode = encodeURIComponent(code);
+         let encodedName = encodeURIComponent(name);
+         let encodedOwner = encodeURIComponent(owner);
+
+         let url = "/coderesults?code=" + encodedCode;
+         url += "&name=" + encodedName
+         url += "&owner=" + encodedOwner
 
          if (request !== null)
             request.abort();
@@ -173,12 +179,12 @@
          timer = setTimeout(getResults, 500);
       }
 
- function setup() {
-    $("#code").on("input", debouncedGetResults);
-    $("#name").on("input", debouncedGetResults);
-    $("#owner").on("input", debouncedGetResults);
-    debouncedGetResults();
- }
+      function setup() {
+         $("#code").on("input", debouncedGetResults);
+         $("#name").on("input", debouncedGetResults);
+         $("#owner").on("input", debouncedGetResults);
+         debouncedGetResults();
+      }
 
       $("document").ready(setup);
 

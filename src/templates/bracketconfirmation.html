@@ -9,6 +9,7 @@
     html {
       height: 100%;
     }
+
     /* Black and white theme with gray accents */
     body {
       background-color: #f0f0f0;
@@ -70,95 +71,101 @@
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
+
     .page-wrap {
-        min-height: 100%;
-        /* equal to footer height */
-        margin-bottom: -100px; 
-      }
-      .page-wrap:after {
-        content: "";
-        display: block;
-      }
-      .site-footer, .page-wrap:after {
-        height: 100px; 
-      }
-      .site-footer {
-        width: 80%;
-        margin: auto;
-      }
+      min-height: 100%;
+      /* equal to footer height */
+      margin-bottom: -100px;
+    }
+
+    .page-wrap:after {
+      content: "";
+      display: block;
+    }
+
+    .site-footer,
+    .page-wrap:after {
+      height: 100px;
+    }
+
+    .site-footer {
+      width: 80%;
+      margin: auto;
+    }
   </style>
 </head>
 
 <body>
   <div class="page-wrap">
-  <div class="header">
-    <h1>BracketMaker</h1>
-  </div>
-  <hr><br>
-  <h1 align='center'> Welcome to {{ name }} Bracket</h1><br>
-  <p> Below is your <b>bracket code.</b> Make sure to <b>save it.</b></p>
-  <p> <b>Review</b> the bracket details and <b>edit</b> if necessary. Click <b>Create Bracket</b> to finalize.</p>
-
-  <!-- Here, we can allow users to create their own code, or let them use one we generate -->
-  <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
-  <form action="/storebracket/" method="post">
-    <!-- Players having same name is intentional, flask sees as a list -->
-    <div class="input-container">
-      {% for player in player_names %}
-      <input type="hidden" name="players" value="{{ player }}">
-      {% endfor %}
-      Name: <input type="text" name="name" value="{{ name }}" readonly
-        style="color: gray; border: none; background: none;" class="non-clickable" />
-      <br>
-      Number of Teams: <input type="text" name="num_teams" value="{{ num_teams }}" readonly
-        style="color: gray; border: none; background: none;" class="non-clickable" />
-      <br>
-      Owner: <input type="text" name="netid" value="{{ netid }}" readonly
-        style="color: gray; border: none; background: none;" class="non-clickable" />
-      <br>
-      <b>Code:</b> <input type="number" name="code" value="{{ code }}" readonly 
-        style="border: none; font-weight: bold; background: none; width: 135px;" class="non-clickable" />
-      <br>
-      Players Can Update Scores? <input type="checkbox" id="player_updates" name="player_updates"  unchecked style="transform: scale(1.5); margin-right: 25px;"/>  
-      <input type="submit" value="Create Bracket" />
-      
+    <div class="header">
+      <h1>BracketMaker</h1>
     </div>
+    <hr><br>
+    <h1 align='center'> Welcome to {{ name }} Bracket</h1><br>
+    <p> Below is your <b>bracket code.</b> Make sure to <b>save it.</b></p>
+    <p> <b>Review</b> the bracket details and <b>edit</b> if necessary. Click <b>Create Bracket</b> to finalize.</p>
 
-  </form>
-  <br>
-  {% if error_message != 'None' %}
-  <p style="color: red;">{{ error_message }}</p>
-  {% endif %}
-  <h4> Here are your teams and netIDs</h4>
-  <table>
-    <tr>
-      <th>Team name</th>
-      <th>NetID name</th>
-    </tr>
-    {% for team, player in zip(team_names, player_names) %}
-    <tr>
-      <td>{{ team }}</td>
-      <td>{{ player }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-  <br>
-  <p>Something wrong?</p>
-  <form action="/createbracket/seeding_confirmation/" method="get">
-    <input type="hidden" name="num_teams" value="{{ num_teams }}">
-    <input type="hidden" name="name" value="{{ name }}">
-    {% for team in range(1, num_teams + 1) %}
+    <!-- Here, we can allow users to create their own code, or let them use one we generate -->
+    <!-- I only included this here because i want the code to end up in the url. I hope there's a better way to do this -->
+    <form action="/storebracket/" method="post">
+      <!-- Players having same name is intentional, flask sees as a list -->
+      <div class="input-container">
+        {% for player in player_names %}
+        <input type="hidden" name="players" value="{{ player }}">
+        {% endfor %}
+        Name: <input type="text" name="name" value="{{ name }}" readonly
+          style="color: gray; border: none; background: none;" class="non-clickable" />
+        <br>
+        Number of Teams: <input type="text" name="num_teams" value="{{ num_teams }}" readonly
+          style="color: gray; border: none; background: none;" class="non-clickable" />
+        <br>
+        Owner: <input type="text" name="netid" value="{{ netid }}" readonly
+          style="color: gray; border: none; background: none;" class="non-clickable" />
+        <br>
+        <b>Code:</b> <input type="number" name="code" value="{{ code }}" readonly
+          style="border: none; font-weight: bold; background: none; width: 135px;" class="non-clickable" />
+        <br>
+        Players Can Update Scores? <input type="checkbox" id="player_updates" name="player_updates" unchecked
+          style="transform: scale(1.5); margin-right: 25px;" />
+        <input type="submit" value="Create Bracket" />
+
+      </div>
+
+    </form>
+    <br>
+    {% if error_message != 'None' %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+    <h4> Here are your teams and netIDs</h4>
+    <table>
+      <tr>
+        <th>Team name</th>
+        <th>NetID name</th>
+      </tr>
+      {% for team, player in zip(team_names, player_names) %}
+      <tr>
+        <td>{{ team }}</td>
+        <td>{{ player }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <br>
+    <p>Something wrong?</p>
+    <form action="/createbracket/seeding_confirmation/" method="get">
+      <input type="hidden" name="num_teams" value="{{ num_teams }}">
+      <input type="hidden" name="name" value="{{ name }}">
+      {% for team in range(1, num_teams + 1) %}
       <input type="hidden" name={{"team%s" % (team)}} value="{{team_names[team - 1]}}" />
       {% if player_names[team-1] == "guest" %}
-        <input type="hidden" name={{"player%s" % (team)}} value="" />
+      <input type="hidden" name={{"player%s" % (team)}} value="" />
       {% else %}
-        <input type="hidden" name={{"player%s" % (team)}} value="{{player_names[team-1]}}" />
+      <input type="hidden" name={{"player%s" % (team)}} value="{{player_names[team-1]}}" />
       {% endif %}
-    {% endfor %}
-    <input type="hidden" name="editting" value="True">
-    <input type="submit" value="Edit Names" />
-  </form>
-  
+      {% endfor %}
+      <input type="hidden" name="editting" value="True">
+      <input type="submit" value="Edit Names" />
+    </form>
+
   </div>
   <footer class="site-footer">
     {% include 'footer.html' %}

@@ -1,50 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Bracket</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='bracketstyle.css') }}">
 
 
   <style>
     html {
       height: 100%;
     }
+
     body {
-        background-color: #f0f0f0;
-        /* Light gray background */
-        color: #333;
-        /* Dark gray text */
-        padding: 2rem;
-        /* Overall padding */
-        font-family: Arial, sans-serif;
-        /* Modern font */
-        font-size: 20px;
-        height: 100%;
-      }
-      .header {
-        display: flex;
-        /* Use flexbox */
-        align-items: center;
-        /* Vertically center content */
-        padding: 1rem;
-        /* Padding for spacing */
-        background-color: #f0f0f0;
-        /* Light gray background */
-      }
-    
-      .header h1 {
-        flex-grow: 1;
-        margin: 0;
-        /* No margin to keep content aligned */
-        font-size: 2.5rem;
-        /* Smaller font for compact header */
-        text-align: center;
-        /* Centered text */
-      }
-      .center-text {
-        text-align: center;
-      }
+      background-color: #f0f0f0;
+      /* Light gray background */
+      color: #333;
+      /* Dark gray text */
+      padding: 2rem;
+      /* Overall padding */
+      font-family: Arial, sans-serif;
+      /* Modern font */
+      font-size: 20px;
+      height: 100%;
+    }
+
+    .header {
+      display: flex;
+      /* Use flexbox */
+      align-items: center;
+      /* Vertically center content */
+      padding: 1rem;
+      /* Padding for spacing */
+      background-color: #f0f0f0;
+      /* Light gray background */
+    }
+
+    .header h1 {
+      flex-grow: 1;
+      margin: 0;
+      /* No margin to keep content aligned */
+      font-size: 2.5rem;
+      /* Smaller font for compact header */
+      text-align: center;
+      /* Centered text */
+    }
+
+    .center-text {
+      text-align: center;
+    }
+
     input[type="number"] {
       background-color: transparent;
       width: auto;
@@ -69,22 +74,27 @@
       transform: scale(1.5);
       transform-origin: top left;
     }
+
     .page-wrap {
-        min-height: 100%;
-        /* equal to footer height */
-        margin-bottom: -100px; 
-      }
-      .page-wrap:after {
-        content: "";
-        display: block;
-      }
-      .site-footer, .page-wrap:after {
-        height: 100px; 
-      }
-      .site-footer {
-        width: 80%;
-        margin: auto;
-      }
+      min-height: 100%;
+      /* equal to footer height */
+      margin-bottom: -100px;
+    }
+
+    .page-wrap:after {
+      content: "";
+      display: block;
+    }
+
+    .site-footer,
+    .page-wrap:after {
+      height: 100px;
+    }
+
+    .site-footer {
+      width: 80%;
+      margin: auto;
+    }
   </style>
 </head>
 
@@ -96,79 +106,80 @@
     <hr>
     <h1 align='center'> {{name}} </h1>
 
-    
-  
+
+
     <p>Welcome to the <b>{{name}}</b> bracket!</p>
     <p>Your code to view this bracket is <b>{{code}}.</b></p>
-      <main id="tournament">
-        {% for round in range(rounds - 1)%}
-        <ul class="round round-{{ round + 1}}">
-          <li class="spacer">&nbsp;</li>
-          {% for i in range(round_indicies[round][0], round_indicies[round][1])%}
-          {% if (i % 2) != 0 %}
-          {% set index = i + 1 %}
-          {% if bracket_list[i][0] == "Bye" or bracket_list[i+1][0] == "Bye" %}
-          <li class="game game-top ">{{bracket_list[i][0]}}</li>
-          <li class="game game-spacer">&nbsp;</li>
-          <li class="game game-bottom ">{{bracket_list[i+1][0]}}</li>
-          <li class="spacer">&nbsp;</li>
-          {% else %}
-          <li class="game game-top ">{{bracket_list[i][0]}} <span>
-              <div>
-                {{bracket_list[i][1]}}
-              </div>
-            </span></li>
-          <li class="game game-spacer">&nbsp;</li>
-          <li class="game game-bottom ">{{bracket_list[i + 1][0]}} <span>
-              <div>
-                {{bracket_list[index][1]}}
-              </div>
-            </span></li>
-
-            <li class="spacer">&nbsp;</li>
-          {% endif %}
-          {% endif%}
-          {% endfor %}
-        </ul>
-        {% endfor %}
-
-        {% if bracket_list[bracket_list|length - 1] != None %}
-        <ul class="round round-{{ rounds}}">
-          <li class="spacer">&nbsp;</li>
-
-
-          <li class="game game-top ">{{bracket_list[bracket_list|length - 1][0]}}</li>
-
-
-          <li class="lastspacer">&nbsp;</li>
-        </ul>
-
+    <main id="tournament">
+      {% for round in range(rounds - 1)%}
+      <ul class="round round-{{ round + 1}}">
+        <li class="spacer">&nbsp;</li>
+        {% for i in range(round_indicies[round][0], round_indicies[round][1])%}
+        {% if (i % 2) != 0 %}
+        {% set index = i + 1 %}
+        {% if bracket_list[i][0] == "Bye" or bracket_list[i+1][0] == "Bye" %}
+        <li class="game game-top ">{{bracket_list[i][0]}}</li>
+        <li class="game game-spacer">&nbsp;</li>
+        <li class="game game-bottom ">{{bracket_list[i+1][0]}}</li>
+        <li class="spacer">&nbsp;</li>
         {% else %}
+        <li class="game game-top ">{{bracket_list[i][0]}} <span>
+            <div>
+              {{bracket_list[i][1]}}
+            </div>
+          </span></li>
+        <li class="game game-spacer">&nbsp;</li>
+        <li class="game game-bottom ">{{bracket_list[i + 1][0]}} <span>
+            <div>
+              {{bracket_list[index][1]}}
+            </div>
+          </span></li>
 
-        <ul class="round round-{{ rounds}}">
-          <li class="spacer">&nbsp;</li>
-
-
-          <li class="game game-top ">&nbsp;</li>
-
-
-          <li class="lastspacer">&nbsp;</li>
-        </ul>
-
+        <li class="spacer">&nbsp;</li>
         {% endif %}
+        {% endif%}
+        {% endfor %}
+      </ul>
+      {% endfor %}
+
+      {% if bracket_list[bracket_list|length - 1] != None %}
+      <ul class="round round-{{ rounds}}">
+        <li class="spacer">&nbsp;</li>
 
 
-        {% if bracket_list[bracket_list|length - 1] != None %}
-        <p style="font-size: 24px; color: darkgreen;">THE WINNER IS {{bracket_list[bracket_list|length - 1][0]}}</p>
-        {% endif %}
+        <li class="game game-top ">{{bracket_list[bracket_list|length - 1][0]}}</li>
 
-      </main>
-      
+
+        <li class="lastspacer">&nbsp;</li>
+      </ul>
+
+      {% else %}
+
+      <ul class="round round-{{ rounds}}">
+        <li class="spacer">&nbsp;</li>
+
+
+        <li class="game game-top ">&nbsp;</li>
+
+
+        <li class="lastspacer">&nbsp;</li>
+      </ul>
+
+      {% endif %}
+
+
+      {% if bracket_list[bracket_list|length - 1] != None %}
+      <p style="font-size: 24px; color: darkgreen;">THE WINNER IS {{bracket_list[bracket_list|length - 1][0]}}</p>
+      {% endif %}
+
+    </main>
+
     <br><br>
-    </div>
-    <footer class="site-footer" style="display: flex; flex-direction: column;">
-      {% include 'footer.html' %}
-    </footer>
+  </div>
+  <footer class="site-footer" style="display: flex; flex-direction: column;">
+    {% include 'footer.html' %}
+  </footer>
   </div>
 </body>
+
 </html>
