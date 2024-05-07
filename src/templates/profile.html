@@ -80,16 +80,16 @@
             <th>Name</th>
             <th>Number of Teams</th>
             <th>Time Created</th>
-            <th>Host</th>
+            <th>Status</th>
         </tr>
         <!-- Table Data Rows -->
         {% for bracket in hosted_brackets %}
         <tr>
-            <td><a href="/viewbracketpage/?code={{ bracket[0] }}">{{ bracket[0] }}</a></td>
-            <td>{{ bracket[1] }}</td>
-            <td>{{ bracket[2] }}</td>
-            <td>{{ bracket[3] }}</td>
-            <td>{{ bracket[5] }}</td>
+            <td><a href="/viewbracketpage/?code={{ bracket[0][0] }}">{{ bracket[0][0] }}</a></td>
+            <td>{{ bracket[0][1] }}</td>
+            <td>{{ bracket[0][2] }}</td>
+            <td>{{ bracket[0][3] }}</td>
+            <td>{{ bracket[1][0] }}</td>
         </tr>
         {% endfor %}
     </table>
