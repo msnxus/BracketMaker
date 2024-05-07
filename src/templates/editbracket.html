@@ -117,15 +117,27 @@
           <li class="spacer">&nbsp;</li>
           {% else %}
           <li class="game game-top ">{{bracket_list[i][0]}} <span>
-              <div>
-                <input type="number" name="{{i|string}}" value="{{bracket_list[i][1]}}" id="{{i}}" style="min-width: 60px;" onkeydown="javascript: return event.keyCode == 69 ? false : true" >
-              </div>
+              {% if bracket_list[i][0] is defined and bracket_list[i+1][0] is defined %}
+                <div>
+                  <input type="number" name="{{i|string}}" value="{{bracket_list[i][1]}}" id="{{i}}" style="min-width: 60px;" onkeydown="javascript: return event.keyCode == 69 ? false : true" >
+                </div>
+
+              {%else%}
+
+              &nbsp;
+              {% endif %}
             </span></li>
           <li class="game game-spacer">&nbsp;</li>
           <li class="game game-bottom ">{{bracket_list[i + 1][0]}} <span>
+            {% if bracket_list[i][0] is defined and bracket_list[i+1][0] is defined %}
               <div>
                 <input type="number" name="{{index|string}}" value="{{bracket_list[index][1]}}" id="{{index}}" style="min-width: 60px;" onkeydown="javascript: return event.keyCode == 69 ? false : true" >
               </div>
+
+            {%else %}
+            &nbsp;
+
+            {% endif %}
             </span></li>
 
             <li class="spacer">&nbsp;</li>
@@ -152,7 +164,7 @@
           <li class="spacer">&nbsp;</li>
 
 
-          <li class="game game-top ">  </li>
+          <li class="game game-top "> &nbsp;</li>
 
 
           <li class="lastspacer">&nbsp;</li>
@@ -169,6 +181,11 @@
         <input type="submit" value="Update Bracket" , class="submit-btn">
       
     </form>
+    {% if error_message != None %}
+      {% if error_message == 'True'%}
+        <p style="color: red;">Your version of the bracket was conflicting with the current one. Please try again.</p>
+      {% endif %}
+    {% endif %}
     <br><br>
     <!-- </div> -->
     <footer class="site-footer" style="display: flex; flex-direction: column;" >

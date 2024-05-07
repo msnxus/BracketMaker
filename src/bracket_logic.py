@@ -303,10 +303,8 @@ class Bracket():
         if round >= self.max_round() or round < 0: return None # invalid round
 
         index = self.player_index_by_round(player, round)
-        try:
-            return int(self._bracket_list[index][1])
-        except:
-            return 0
+        return int(self._bracket_list[index][1])
+        
 
     # Determines if bracket is complete based on if there is a champion
     def is_complete(self):
