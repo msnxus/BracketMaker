@@ -10,6 +10,7 @@
     html {
       height: 100%;
     }
+
     body {
       background-color: #f0f0f0;
       /* Light gray background */
@@ -19,21 +20,31 @@
       /* Overall padding */
       font-family: Arial, sans-serif;
       /* Modern font */
-      font-size: 20px;  
+      font-size: 20px;
       height: 100%;
     }
+
     .header {
-      display: flex; /* Use flexbox */
-      align-items: center; /* Vertically center content */
-      padding: 1rem; /* Padding for spacing */
-      background-color: #f0f0f0; /* Light gray background */
+      display: flex;
+      /* Use flexbox */
+      align-items: center;
+      /* Vertically center content */
+      padding: 1rem;
+      /* Padding for spacing */
+      background-color: #f0f0f0;
+      /* Light gray background */
     }
+
     .header h1 {
       flex-grow: 1;
-      margin: 0; /* No margin to keep content aligned */
-      font-size: 2.5rem; /* Smaller font for compact header */
-      text-align: center; /* Centered text */
+      margin: 0;
+      /* No margin to keep content aligned */
+      font-size: 2.5rem;
+      /* Smaller font for compact header */
+      text-align: center;
+      /* Centered text */
     }
+
     .center-text {
       text-align: center;
     }
@@ -69,65 +80,68 @@
     }
 
     .page-wrap {
-        min-height: 100%;
-        /* equal to footer height */
-        margin-bottom: -100px; 
-      }
-      .page-wrap:after {
-        content: "";
-        display: block;
-      }
-      .site-footer, .page-wrap:after {
-        height: 100px; 
-      }
-      .site-footer {
-        width: 80%;
-        margin: auto;
-      }
+      min-height: 100%;
+      /* equal to footer height */
+      margin-bottom: -100px;
+    }
 
+    .page-wrap:after {
+      content: "";
+      display: block;
+    }
+
+    .site-footer,
+    .page-wrap:after {
+      height: 100px;
+    }
+
+    .site-footer {
+      width: 80%;
+      margin: auto;
+    }
   </style>
 </head>
 
 <body>
   <div class="page-wrap">
-  <div class="header">
-    
-    <h1>BracketMaker</h1> <!-- Centered header text -->
-  </div>
-  <hr>
-  {% if user %}
-  <div class="container">
+    <div class="header">
 
-  <div style ="display: flex; justify-content: flex-end;">
-    <div class="button-group">
-      <form action="/profile" method="get">
-        <button class="btn-custom">Profile</button>
-      </form>
-      <form action="/logout" method="get">
-        <button class="btn-custom">Logout</button>
-      </form>
+      <h1>BracketMaker</h1> <!-- Centered header text -->
     </div>
-  </div>
-  </div>
-  {% else %}
-  <div class="container">
+    <hr>
+    {% if user %}
+    <div class="container">
 
-  <div style="display: flex; justify-content: flex-end;">
-    <div class="button-group">
-      <form action="/login" method="get">
-        <button class="btn-custom">Login</button>
-      </form>
+      <div style="display: flex; justify-content: flex-end;">
+        <div class="button-group">
+          <form action="/profile" method="get">
+            <button class="btn-custom">Profile</button>
+          </form>
+          <form action="/logout" method="get">
+            <button class="btn-custom">Logout</button>
+          </form>
+        </div>
+      </div>
     </div>
-  </div>
-  </div>
-  <br>
-  {% endif %}
-    {% if user %} 
+    {% else %}
+    <div class="container">
+
+      <div style="display: flex; justify-content: flex-end;">
+        <div class="button-group">
+          <form action="/login" method="get">
+            <button class="btn-custom">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <br>
+    {% endif %}
+    {% if user %}
     <!-- Welcome Section -->
     <div class="center-text spaced">
       <h1>Welcome, {{user}}!</h1>
     </div>
-    
+
 
     <!-- Index Directions -->
     <div class="spaced">
@@ -148,29 +162,32 @@
     <!-- Login Section -->
     <!-- <p align="center">To create a bracket, please click the 'login' button on the right, and enter your CAS
       information.<br>Alternatively, view the existing brackets!</p> -->
-      <p align="center">BracketMaker allows users to create, view, and edit brackets!</p>
-      <p align="center">In order to <b>create</b> or <b>edit</b> a bracket, you must login.</p>
-    
-      <p align="center"> Guests can <b>view</b> existing brackets 
-        by selecting the <b>View a Bracket</b> button below.</p>
-    
+    <p align="center">BracketMaker allows users to create, view, and edit brackets!</p>
+    <p align="center">In order to <b>create</b> or <b>edit</b> a bracket, you must login.</p>
+
+    <p align="center"> Guests can <b>view</b> existing brackets
+      by selecting the <b>View a Bracket</b> button below.</p>
+
     <!-- Index Directions -->
     <div class="spaced center-text">
       <form action="/entercode" method="get">
         <button class="btn-custom">View a Bracket</button>
       </form>
-      
-    
+
+
+
+    </div>
+    {% endif %}
+
 
   </div>
-    {% endif %}
-    
-    
-  </div>
-  
-  
+
+
   <footer class="site-footer">
-    {% include 'footer.html' %}
+    <hr>
+    <div style="text-align: center;">
+      Created by the BracketMaker Team.
+    </div>
   </footer>
 </body>
 
